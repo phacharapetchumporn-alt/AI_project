@@ -1,0 +1,618 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --bg-dark: #0a0b10;
+    --primary-color: #6366f1;
+    --primary-glow: rgba(99, 102, 241, 0.4);
+    --secondary-color: #a855f7;
+    --accent-yellow: #fbbf24;
+    --text-main: #ffffff;
+    --text-muted: #9ca3af;
+    --glass-bg: rgba(17, 24, 39, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-glow: rgba(255, 255, 255, 0.03);
+    --font-heading: 'Outfit', 'Kanit', sans-serif;
+    --font-body: 'Kanit', sans-serif;
+    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Full Screen Background Image with Dark Overlay */
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(180deg,
+            rgba(10, 11, 16, 0.75) 0%,
+            rgba(10, 11, 16, 0.92) 50%,
+            rgba(10, 11, 16, 0.98) 100%), url('../images/church_bg.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    filter: brightness(0.85) contrast(1.05);
+}
+
+/* Header/Navigation */
+header {
+    width: 100%;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(10, 11, 16, 0.8), transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.logo-text h1 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.logo-text p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 24px;
+}
+
+.nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--text-main);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.phone-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.phone-btn:hover {
+    color: var(--text-main);
+}
+
+.give-btn {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.give-btn:hover {
+    color: var(--primary-color);
+}
+
+.action-btn {
+    background-color: #ffffff;
+    color: #0d0e12;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Main Dashboard Layout */
+main {
+    max-width: 1400px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 120px 48px 48px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    position: relative;
+}
+
+/* Hero Section (Left Column) */
+.hero-content {
+    flex: 1.2;
+    max-width: 620px;
+}
+
+.hero-content h2 {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    line-height: 1.25;
+    font-weight: 800;
+    margin-bottom: 24px;
+    background: linear-gradient(to right, #ffffff, #d1d5db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-content p.subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+/* Info Cards in background column */
+.info-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.info-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 20px 24px;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.info-card .card-tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--accent-yellow);
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+.info-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.info-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Camera Stream Section (Right Column - Floating Portrait) */
+.camera-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.camera-card {
+    width: 380px;
+    height: 600px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 28px;
+    backdrop-filter: blur(20px);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: var(--card-shadow), 0 0 40px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden;
+}
+
+.camera-card:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: var(--card-shadow), 0 0 50px rgba(99, 102, 241, 0.15);
+}
+
+/* Camera Card Glow Effect */
+.camera-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 60%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.video-container {
+    width: 100%;
+    height: 100%;
+    background-color: #0c0d13;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.webcam-video,
+.webcam-stream {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+/* Camera indicator / Status dot */
+.camera-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(10, 11, 16, 0.6);
+    border: 1px solid var(--glass-border);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 5;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.indicator-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.indicator-dot.active {
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: pulse 1.5s infinite alternate;
+}
+
+/* Translation UI Floating Overlay */
+.translation-overlay {
+    position: absolute;
+    bottom: 120px;
+    left: 20px;
+    right: 20px;
+    z-index: 5;
+    background: rgba(10, 11, 16, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.translation-overlay.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.prediction-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.label-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.confidence-badge {
+    font-size: 0.7rem;
+    background: var(--primary-glow);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+
+.predicted-word {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #fff, #c7d2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.sentence-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sentence-title {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.sentence-text {
+    font-size: 0.95rem;
+    color: #e5e7eb;
+    line-height: 1.4;
+    min-height: 24px;
+    word-break: break-all;
+}
+
+/* Action Controls Inside Camera Card */
+.camera-controls {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    z-index: 10;
+}
+
+.profile-avatar-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    background-size: cover;
+    background-position: center;
+    background-color: var(--glass-bg);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.profile-avatar-btn:hover {
+    transform: scale(1.08);
+    border-color: #ffffff;
+}
+
+.translate-toggle-btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.15);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease;
+}
+
+.translate-toggle-btn:hover {
+    transform: scale(1.08);
+    background-color: #f3f4f6;
+}
+
+.translate-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Translate symbol styles */
+.translate-icon {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0a0b10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* External Control Panel (Under the camera card for sentence commands) */
+.sentence-actions-bar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+
+.control-btn {
+    background: rgba(10, 11, 16, 0.7);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    font-family: var(--font-body);
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+/* Mode Notification Toast */
+.toast-msg {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(99, 102, 241, 0.9);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(5px);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toast-msg.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+    main {
+        flex-direction: column-reverse;
+        padding-top: 100px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .hero-content {
+        max-width: 100%;
+    }
+
+    .hero-content h2 {
+        font-size: 2.2rem;
+    }
+
+    .info-cards {
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 16px 20px;
+    }
+
+    .nav-links {
+        display: none;
+        /* Hide nav links on small screens */
+    }
+
+    main {
+        padding: 90px 20px 20px 20px;
+    }
+
+    .camera-card {
+        width: 100%;
+        height: 500px;
+    }
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Grace Community Church - ระบบแปลภาษามือเรียลไทม์อัจฉริยะด้วยเทคโนโลยี Bi-LSTM และ MediaPipe เพื่อการสื่อสารอย่างไร้รอยต่อ">
+    <title>Grace Community Church - Real-time Sign Language Translator</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Full-screen Background Image with Gradient Overlay -->
+    <div class="background-container" id="bg-container"></div>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fa-solid fa-cross"></i>
+            </div>
+            <div class="logo-text">
+                <h1 id="main-title">Grace Community Church</h1>
+                <p>Love God. Love People.</p>
+            </div>
+        </div>
+        <nav aria-label="Main Navigation">
+            <ul class="nav-links">
+                <li><a href="#" id="nav-about">About</a></li>
+                <li><a href="#" id="nav-services">Services</a></li>
+                <li><a href="#" id="nav-events">Events</a></li>
+                <li><a href="#" id="nav-ministries">Ministries</a></li>
+                <li><a href="#" id="nav-sermons">Sermons</a></li>
+                <li><a href="#" id="nav-contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <button class="phone-btn" id="btn-phone" aria-label="Call Church"><i class="fa-solid fa-phone"></i></button>
+            <button class="give-btn" id="btn-give">Give</button>
+            <button class="action-btn" id="btn-plan">Plan Your Visit</button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Left Side: Hero content and church schedule -->
+        <section class="hero-content" aria-labelledby="hero-title">
+            <h2 id="hero-title">Whether you're new or looking for a church home, you're welcome here. Let's grow
+                together.</h2>
+            <p class="subtitle" id="hero-sub">ยินดีต้อนรับสู่คริสตจักรเกรซ คอมมูนิตี้
+                ที่ซึ่งทุกคนสามารถมีส่วนร่วมและเติบโตไปด้วยกันในความรักของพระเจ้า
+                คอนเนคกับเราผ่านกิจกรรมและบริการนมัสการทุกวันอาทิตย์</p>
+
+            <div class="info-cards">
+                <!-- Sunday Service Schedule Card -->
+                <article class="info-card" id="card-sunday-service">
+                    <span class="card-tag">Sunday Services</span>
+                    <h3>Sunday Services</h3>
+                    <p>Sunday 10:30 AM & 6:00 PM</p>
+                </article>
+
+                <!-- Youth Connect Card -->
+                <article class="info-card" id="card-youth-group">
+                    <span class="card-tag">Connect</span>
+                    <h3>Youth Group</h3>
+                    <p>Friday 6:30 PM</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Right Side: Webcam feed in a portrait floating card -->
+        <section class="camera-wrapper" aria-label="Sign Language Translator">
+            <div class="camera-card" id="camera-translator">
+
+                <!-- Internal Action Controls Floating inside the Video Frame -->
+                <div class="sentence-actions-bar">
+                    <button class="control-btn" id="btn-clear-sentence" title="Clear All Words">
+                        <i class="fa-solid fa-trash-can"></i> ล้างหน้าจอ
+                    </button>
+                    <button class="control-btn" id="btn-backspace-sentence" title="Delete Last Word">
+                        <i class="fa-solid fa-delete-left"></i> ลบคำล่าสุด
+                    </button>
+                </div>
+
+                <!-- Camera Indicator (Online / Demo status) -->
+                <div class="camera-indicator" id="cam-status">
+                    <span class="indicator-dot active" id="status-dot"></span>
+                    <span id="status-text">OFFLINE (DEMO)</span>
+                </div>
+
+                <div class="video-container">
+                    <!-- HTML5 Video element for Client webcam fallback (Demo mode) -->
+                    <video id="client-webcam" class="webcam-video" autoplay playsinline muted></video>
+
+                    <!-- Stream Image from Flask backend prediction camera (Real-time mode) -->
+                    <img id="flask-stream" class="webcam-stream" src="" alt="Live sign language stream"
+                        style="display: none;">
+
+                    <!-- Gesture Overlay Info -->
+                    <div class="translation-overlay" id="trans-overlay">
+                        <div class="prediction-label">
+                            <span class="label-title">คำที่ตรวจพบ</span>
+                            <span class="confidence-badge" id="prediction-confidence">0.0%</span>
+                        </div>
+                        <div class="predicted-word" id="prediction-word">กำลังรอสัญญาณมือ...</div>
+
+                        <div class="divider"></div>
+
+                        <div class="sentence-label">
+                            <span class="sentence-title">ประโยคสะสม</span>
+                            <div class="sentence-text" id="sentence-output">...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar controls inside the card -->
+                <div class="camera-controls">
+                    <!-- Avatar Profile Button (matches the round avatar on the left in the screenshot) -->
+                    <button class="profile-avatar-btn" id="btn-profile" aria-label="User profile"
+                        style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80');"></button>
+
+                    <!-- Translate Toggle Button (matches the white circle and translate icon in the screenshot) -->
+                    <button class="translate-toggle-btn" id="btn-toggle-translate"
+                        aria-label="Toggle Sign Language Translation">
+                        <div class="translate-icon">
+                            <i class="fa-solid fa-language"></i>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Toast -->
+    <div class="toast-msg" id="toast-notification">
+        <i class="fa-solid fa-circle-info"></i>
+        <span id="toast-text">เริ่มต้นโหมดสาธิต (Frontend Only)</span>
+    </div>
+
+    <!-- Application Script -->
+    <script src="../static/js/app.js"></script>
+</body>
+
+</html>
