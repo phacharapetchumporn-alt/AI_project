@@ -1,4 +1,5 @@
 import cv2
+# pyrefly: ignore [missing-import]
 import mediapipe as mp
 import numpy as np
 import os
@@ -40,25 +41,13 @@ print("กด [S] = เริ่ม/หยุดอัดอัตโนมั�
 # =========================
 # MediaPipe & Camera Setup
 # =========================
-mp_holistic    = mp.solutions.holistic
-mp_drawing     = mp.solutions.drawing_utils
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
-mp_pose        = mp.solutions.pose
 
-# Pose landmark indices ที่เกี่ยวกับแขน
-POSE_ARM_CONNECTIONS = [
-    (mp_holistic.PoseLandmark.LEFT_SHOULDER,  mp_holistic.PoseLandmark.LEFT_ELBOW),
-    (mp_holistic.PoseLandmark.LEFT_ELBOW,     mp_holistic.PoseLandmark.LEFT_WRIST),
-    (mp_holistic.PoseLandmark.RIGHT_SHOULDER, mp_holistic.PoseLandmark.RIGHT_ELBOW),
-    (mp_holistic.PoseLandmark.RIGHT_ELBOW,    mp_holistic.PoseLandmark.RIGHT_WRIST),
-    # ไหล่ซ้าย-ขวา
-    (mp_holistic.PoseLandmark.LEFT_SHOULDER,  mp_holistic.PoseLandmark.RIGHT_SHOULDER),
-]
-
-holistic = mp_holistic.Holistic(
+hands = mp_hands.Hands(
     static_image_mode=False,
-    model_complexity=1,
-    smooth_landmarks=True,
+    max_num_hands=2,
     min_detection_confidence=0.6,
     min_tracking_confidence=0.6
 )
@@ -69,42 +58,6 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 is_recording_mode = False
 prev_time = time.time()
-
-
-def draw_arm_skeleton(frame, pose_landmarks):
-    """วาด skeleton แขนทั้งสองข้าง (ไหล่ → ข้อศอก → ข้อมือ)"""
-    if pose_landmarks is None:
-        return
-    h, w = frame.shape[:2]
-    lm = pose_landmarks.landmark
-
-    for start_idx, end_idx in POSE_ARM_CONNECTIONS:
-        p1 = lm[start_idx]
-        p2 = lm[end_idx]
-        # ข้ามถ้า visibility ต่ำ
-        if p1.visibility < 0.4 or p2.visibility < 0.4:
-            continue
-        x1, y1 = int(p1.x * w), int(p1.y * h)
-        x2, y2 = int(p2.x * w), int(p2.y * h)
-        # เส้น skeleton แขน — สีฟ้าอมเขียว
-        cv2.line(frame, (x1, y1), (x2, y2), (0, 210, 180), 3, cv2.LINE_AA)
-
-    # วาด joint circles
-    arm_joints = [
-        mp_holistic.PoseLandmark.LEFT_SHOULDER,
-        mp_holistic.PoseLandmark.LEFT_ELBOW,
-        mp_holistic.PoseLandmark.LEFT_WRIST,
-        mp_holistic.PoseLandmark.RIGHT_SHOULDER,
-        mp_holistic.PoseLandmark.RIGHT_ELBOW,
-        mp_holistic.PoseLandmark.RIGHT_WRIST,
-    ]
-    for idx in arm_joints:
-        p = lm[idx]
-        if p.visibility < 0.4:
-            continue
-        x, y = int(p.x * w), int(p.y * h)
-        cv2.circle(frame, (x, y), 7, (0, 230, 200), -1, cv2.LINE_AA)
-        cv2.circle(frame, (x, y), 7, (255, 255, 255), 1, cv2.LINE_AA)
 
 
 def draw_progress_bar(frame, x, y, w, h, progress, color_fill=(0, 200, 100), color_bg=(60, 60, 60)):
@@ -182,31 +135,20 @@ while cap.isOpened():
     display_frame = cv2.flip(frame, 1)
     rgb = cv2.cvtColor(display_frame, cv2.COLOR_BGR2RGB)
     rgb.flags.writeable = False
-    results = holistic.process(rgb)
+    results = hands.process(rgb)
     rgb.flags.writeable = True
 
     has_hand = False
 
-    # วาด skeleton แขน (ต้องวาดก่อน เพื่อให้อยู่ด้านล่าง hand)
-    draw_arm_skeleton(display_frame, results.pose_landmarks)
-
-    # วาด Hand landmarks ทั้งสองข้าง
-    if results.left_hand_landmarks:
+    if results.multi_hand_landmarks:
         has_hand = True
-        mp_drawing.draw_landmarks(
-            display_frame, results.left_hand_landmarks,
-            mp_holistic.HAND_CONNECTIONS,
-            mp_drawing_styles.get_default_hand_landmarks_style(),
-            mp_drawing_styles.get_default_hand_connections_style()
-        )
-    if results.right_hand_landmarks:
-        has_hand = True
-        mp_drawing.draw_landmarks(
-            display_frame, results.right_hand_landmarks,
-            mp_holistic.HAND_CONNECTIONS,
-            mp_drawing_styles.get_default_hand_landmarks_style(),
-            mp_drawing_styles.get_default_hand_connections_style()
-        )
+        for hand_landmarks in results.multi_hand_landmarks:
+            mp_drawing.draw_landmarks(
+                display_frame, hand_landmarks,
+                mp_hands.HAND_CONNECTIONS,
+                mp_drawing_styles.get_default_hand_landmarks_style(),
+                mp_drawing_styles.get_default_hand_connections_style()
+            )
 
     draw_ui(display_frame, fps, sequence_count, is_recording_mode, has_hand)
     cv2.imshow("Sign Language Data Collector", display_frame)
@@ -275,49 +217,32 @@ while cap.isOpened():
             rec_flipped = cv2.flip(rec_frame, 1)
             rec_rgb = cv2.cvtColor(rec_flipped, cv2.COLOR_BGR2RGB)
             rec_rgb.flags.writeable = False
-            rec_results = holistic.process(rec_rgb)
+            rec_results = hands.process(rec_rgb)
             rec_rgb.flags.writeable = True
 
-            left_hand  = [0.0] * 63
+            left_hand = [0.0] * 63
             right_hand = [0.0] * 63
             detected_this_frame = False
 
-            # ดึง landmarks จาก Holistic (left/right แยกถึงกันเลย)
-            if rec_results.left_hand_landmarks:
+            if rec_results.multi_hand_landmarks and rec_results.multi_handedness:
                 detected_this_frame = True
                 frame_hand_count += 1
-                lm_list = []
-                for lm in rec_results.left_hand_landmarks.landmark:
-                    lm_list.extend([lm.x, lm.y, lm.z])
-                left_hand = lm_list
+                for i, hand_lm in enumerate(rec_results.multi_hand_landmarks):
+                    lm_list = []
+                    for lm in hand_lm.landmark:
+                        lm_list.extend([lm.x, lm.y, lm.z])
 
-            if rec_results.right_hand_landmarks:
-                detected_this_frame = True
-                if not rec_results.left_hand_landmarks:  # นับ ถ้ายังไม่นับ
-                    frame_hand_count += 1
-                lm_list = []
-                for lm in rec_results.right_hand_landmarks.landmark:
-                    lm_list.extend([lm.x, lm.y, lm.z])
-                right_hand = lm_list
+                    hand_label = rec_results.multi_handedness[i].classification[0].label
+                    if hand_label == "Left":
+                        left_hand = lm_list
+                    elif hand_label == "Right":
+                        right_hand = lm_list
 
-            # วาด arm skeleton
-            draw_arm_skeleton(rec_flipped, rec_results.pose_landmarks)
-
-            # วาด hand landmarks
-            if rec_results.left_hand_landmarks:
-                mp_drawing.draw_landmarks(
-                    rec_flipped, rec_results.left_hand_landmarks,
-                    mp_holistic.HAND_CONNECTIONS,
-                    mp_drawing_styles.get_default_hand_landmarks_style(),
-                    mp_drawing_styles.get_default_hand_connections_style()
-                )
-            if rec_results.right_hand_landmarks:
-                mp_drawing.draw_landmarks(
-                    rec_flipped, rec_results.right_hand_landmarks,
-                    mp_holistic.HAND_CONNECTIONS,
-                    mp_drawing_styles.get_default_hand_landmarks_style(),
-                    mp_drawing_styles.get_default_hand_connections_style()
-                )
+                    mp_drawing.draw_landmarks(
+                        rec_flipped, hand_lm, mp_hands.HAND_CONNECTIONS,
+                        mp_drawing_styles.get_default_hand_landmarks_style(),
+                        mp_drawing_styles.get_default_hand_connections_style()
+                    )
 
             sequence.append(left_hand + right_hand)
 
