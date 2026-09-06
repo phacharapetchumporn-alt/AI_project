@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnToggleTranslate = document.getElementById('btn-toggle-translate');
     const btnClear = document.getElementById('btn-clear-sentence');
     const btnBackspace = document.getElementById('btn-backspace-sentence');
+    const cameraCard = document.getElementById('camera-translator');
+    const btnExpandCam = document.getElementById('btn-expand-cam');
+    const expandIcon = document.getElementById('expand-icon');
+    const expandText = document.getElementById('expand-text');
     const toast = document.getElementById('toast-notification');
     const toastText = document.getElementById('toast-text');
 
@@ -92,7 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             localStream = await navigator.mediaDevices.getUserMedia({
-                video: { width: 640, height: 480, facingMode: 'user' }
+                video: {
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
+                    facingMode: 'user'
+                }
             });
             clientWebcam.srcObject = localStream;
             showToast('เข้าถึงกล้องเว็บแคมผ่านเบราว์เซอร์สำเร็จ');
@@ -261,6 +269,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // Give click
     document.getElementById('btn-give').addEventListener('click', () => {
         showToast('ขอบคุณสำหรับการบริจาคถวายให้กับคริสตจักร');
+    });
+
+    // Toggle Almost Fullscreen (เกือบเต็มจอ / Theater Mode)
+    function toggleTheaterMode(forceState = null) {
+        if (!cameraCard) return;
+        const isTheater = forceState !== null ? forceState : !cameraCard.classList.contains('theater-mode');
+
+        if (isTheater) {
+            cameraCard.classList.add('theater-mode');
+            if (expandIcon) expandIcon.className = 'fa-solid fa-compress';
+            if (expandText) expandText.textContent = 'ย่อขนาด';
+            if (btnExpandCam) btnExpandCam.title = 'ย่อขนาดจอกล้อง (Esc)';
+            showToast('ขยายจอกล้องเกือบเต็มจอ (กด Esc หรือคลิกซ้ำเพื่อย่อ)');
+        } else {
+            cameraCard.classList.remove('theater-mode');
+            if (expandIcon) expandIcon.className = 'fa-solid fa-expand';
+            if (expandText) expandText.textContent = 'ขยายเกือบเต็มจอ';
+            if (btnExpandCam) btnExpandCam.title = 'ขยายเกือบเต็มจอ (F)';
+            showToast('ย่อจอกล้องสู่ขนาดปกติ');
+        }
+    }
+
+    if (btnExpandCam) {
+        btnExpandCam.addEventListener('click', () => toggleTheaterMode());
+    }
+
+    // Keyboard shortcuts: 'F' to toggle fullscreen, 'Escape' to exit
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === 'Escape' && cameraCard.classList.contains('theater-mode')) {
+            toggleTheaterMode(false);
+        } else if (e.key === 'f' || e.key === 'F') {
+            toggleTheaterMode();
+        }
     });
 
     // Start App

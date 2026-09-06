@@ -1,3 +1,4 @@
+import sys
 import cv2
 import numpy as np
 import torch
@@ -9,6 +10,14 @@ import time
 import os
 from collections import deque
 from PIL import Image, ImageDraw, ImageFont
+
+# Set UTF-8 encoding for console on Windows
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 # =========================
 # Thai Text Renderer
@@ -37,8 +46,32 @@ def draw_thai_text(img, text, position, font_size=30, color=(255, 255, 255)):
 
 
 # =========================
-# Attention Layer (ต้องตรงกับ train_model.py)
+# Model Architectures
 # =========================
+class BiLSTMModel(nn.Module):
+    """โมเดล 2-Layer Bi-LSTM (โครงสร้างดั้งเดิมของ action_model.pth)"""
+    def __init__(self, input_size=126, hidden_size=128, num_layers=2, num_classes=6, dropout=0.2):
+        super().__init__()
+        self.lstm = nn.LSTM(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            batch_first=True,
+            bidirectional=True,
+            dropout=dropout if num_layers > 1 else 0.0
+        )
+        self.fc1 = nn.Linear(hidden_size * 2, 64)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(64, num_classes)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out = self.fc1(out[:, -1, :])
+        out = self.relu(out)
+        out = self.fc2(out)
+        return out
+
+
 class TemporalAttention(nn.Module):
     def __init__(self, hidden_size):
         super().__init__()
@@ -52,6 +85,7 @@ class TemporalAttention(nn.Module):
 
 
 class BiLSTMAttentionModel(nn.Module):
+    """โมเดล 3-Layer Bi-LSTM with Temporal Attention"""
     def __init__(self, input_size=126, hidden_size=192, num_layers=3, num_classes=10, dropout=0.3):
         super().__init__()
         self.lstm = nn.LSTM(
@@ -104,8 +138,20 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model_path = 'action_model_best.pth' if os.path.exists('action_model_best.pth') else 'action_model.pth'
 print(f"📦 โหลดโมเดล: {model_path}")
 
-model = BiLSTMAttentionModel(num_classes=num_classes)
-model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
+checkpoint = torch.load(model_path, map_location=device, weights_only=True)
+
+# ตรวจสอบโครงสร้างโมเดลจาก Checkpoint อัตโนมัติ
+use_scaler = False
+if 'norm.weight' in checkpoint or 'fc3.weight' in checkpoint:
+    print("🧠 ตรวจพบโมเดลโครงสร้าง: BiLSTMAttentionModel (พร้อม Temporal Attention)")
+    model = BiLSTMAttentionModel(num_classes=num_classes)
+    use_scaler = (scaler is not None)
+else:
+    print("🧠 ตรวจพบโมเดลโครงสร้าง: BiLSTMModel (Standard 2-Layer Bi-LSTM)")
+    model = BiLSTMModel(num_classes=num_classes)
+    use_scaler = False
+
+model.load_state_dict(checkpoint)
 model.to(device)
 model.eval()
 
@@ -280,6 +326,10 @@ def draw_hud(frame, fps, has_hand, sentence, current_label, confidence, vote_cou
 # =========================
 # 5. Main Loop
 # =========================
+window_name = "Sign Language Real-time Translation"
+cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+cv2.resizeWindow(window_name, 1280, 720)
+
 while cap.isOpened():
     success, frame = cap.read()
     if not success:
@@ -331,8 +381,8 @@ while cap.isOpened():
 
     keypoints = np.array(left_hand + right_hand, dtype=np.float32)
 
-    # Normalize ถ้ามี scaler
-    if scaler is not None:
+    # Normalize เฉพาะกรณีที่โมเดลถูกเทรนร่วมกับ scaler
+    if use_scaler and scaler is not None:
         keypoints = (keypoints - scaler['mean']) / scaler['std']
 
     sequence.append(keypoints.tolist())

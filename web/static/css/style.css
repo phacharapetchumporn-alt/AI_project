@@ -176,39 +176,41 @@ nav {
 
 /* Main Dashboard Layout */
 main {
-    max-width: 1400px;
+    max-width: 1680px;
     min-height: 100vh;
     margin: 0 auto;
-    padding: 120px 48px 48px 48px;
+    padding: 110px 48px 40px 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 40px;
     position: relative;
+    transition: all 0.3s ease;
 }
 
 /* Hero Section (Left Column) */
 .hero-content {
-    flex: 1.2;
-    max-width: 620px;
+    flex: 0 0 380px;
+    max-width: 400px;
+    transition: all 0.3s ease;
 }
 
 .hero-content h2 {
     font-family: var(--font-heading);
-    font-size: 2.8rem;
+    font-size: 2.2rem;
     line-height: 1.25;
     font-weight: 800;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     background: linear-gradient(to right, #ffffff, #d1d5db);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .hero-content p.subtitle {
-    font-size: 1.1rem;
+    font-size: 0.98rem;
     color: var(--text-muted);
     line-height: 1.6;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
 }
 
 /* Info Cards in background column */
@@ -255,17 +257,22 @@ main {
     color: var(--text-muted);
 }
 
-/* Camera Stream Section (Right Column - Floating Portrait) */
+/* Camera Stream Section (Expanded Center-Stage) */
 .camera-wrapper {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    min-width: 0;
 }
 
 .camera-card {
-    width: 380px;
-    height: 600px;
+    width: 100%;
+    max-width: 1050px;
+    height: 72vh;
+    min-height: 520px;
+    max-height: 760px;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 28px;
@@ -274,14 +281,32 @@ main {
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: var(--card-shadow), 0 0 40px rgba(0, 0, 0, 0.5);
-    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: var(--card-shadow), 0 0 50px rgba(0, 0, 0, 0.6);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
 }
 
 .camera-card:hover {
-    border-color: rgba(99, 102, 241, 0.3);
-    box-shadow: var(--card-shadow), 0 0 50px rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: var(--card-shadow), 0 0 50px rgba(99, 102, 241, 0.2);
+}
+
+/* Almost Fullscreen (เกือบเต็มจอ) Mode */
+.camera-card.theater-mode {
+    position: fixed;
+    top: 24px;
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+    width: calc(100vw - 48px);
+    max-width: none;
+    height: calc(100vh - 48px);
+    max-height: none;
+    z-index: 1000;
+    border-radius: 24px;
+    border: 1.5px solid rgba(99, 102, 241, 0.5);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 80px rgba(99, 102, 241, 0.3), 0 0 0 1000vmax rgba(5, 6, 10, 0.88);
+    backdrop-filter: blur(25px);
 }
 
 /* Camera Card Glow Effect */
@@ -353,25 +378,27 @@ main {
 /* Translation UI Floating Overlay */
 .translation-overlay {
     position: absolute;
-    bottom: 120px;
-    left: 20px;
-    right: 20px;
+    bottom: 95px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 48px);
+    max-width: 640px;
     z-index: 5;
-    background: rgba(10, 11, 16, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 16px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: rgba(10, 11, 16, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 18px 24px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
     gap: 12px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease;
 }
 
 .translation-overlay.hidden {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateX(-50%) translateY(15px);
     pointer-events: none;
 }
 
@@ -576,16 +603,18 @@ main {
 }
 
 /* Responsive styles */
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
     main {
         flex-direction: column-reverse;
         padding-top: 100px;
         text-align: center;
         justify-content: center;
+        gap: 32px;
     }
 
     .hero-content {
         max-width: 100%;
+        flex: auto;
     }
 
     .hero-content h2 {
@@ -595,9 +624,14 @@ main {
     .info-cards {
         text-align: left;
     }
+
+    .camera-card {
+        height: 60vh;
+        min-height: 460px;
+    }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     header {
         padding: 16px 20px;
     }
@@ -608,11 +642,45 @@ main {
     }
 
     main {
-        padding: 90px 20px 20px 20px;
+        padding: 85px 16px 20px 16px;
     }
 
     .camera-card {
         width: 100%;
-        height: 500px;
+        height: 520px;
+        border-radius: 20px;
+    }
+
+    .camera-card.theater-mode {
+        top: 12px;
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+        height: calc(100vh - 24px);
+        border-radius: 18px;
+    }
+
+    .translation-overlay {
+        bottom: 80px;
+        width: calc(100% - 24px);
+        padding: 14px 16px;
+    }
+
+    .sentence-actions-bar {
+        left: 12px;
+        top: 12px;
+        gap: 6px;
+    }
+
+    .control-btn {
+        padding: 6px 10px;
+        font-size: 0.72rem;
+    }
+
+    .camera-indicator {
+        right: 12px;
+        top: 12px;
+        padding: 5px 10px;
     }
 }
