@@ -3,7 +3,7 @@
 ระบบจดจำสัญลักษณ์มือและท่าทางการเคลื่อนไหวแบบเรียลไทม์ (Real-time Sign Language / Gesture Recognition System) โดยใช้เทคโนโลยีการตรวจจับข้อต่อมือ **MediaPipe Hands** ร่วมกับโมเดลโครงข่ายประสาทเทียม **Bidirectional LSTM (Bi-LSTM)** บนเฟรมเวิร์ก **PyTorch** และการแปลงโมเดลเพื่อใช้งานข้ามแพลตฟอร์มผ่าน **ONNX** และ **TensorFlow Lite (TFLite)**
 
 ---
-
+ 
 
 ## 📌 ขอบเขตของโปรเจกต์ (Project Scope)
 
