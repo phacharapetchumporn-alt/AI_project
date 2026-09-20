@@ -249,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clientWebcam.muted = true;
             try {
                 await clientWebcam.play();
+                if (typeof startCapture === 'function') startCapture();
             } catch (pErr) {
                 console.warn('Autoplay prevented:', pErr);
             }
@@ -301,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stopStreamTracks();
         if (clientWebcam) clientWebcam.srcObject = null;
         isCameraRunning = false;
+        if (typeof stopCapture === 'function') stopCapture();
         if (apiInterval) clearInterval(apiInterval);
         if (mockInterval) clearInterval(mockInterval);
         showCameraFallback('กล้องถูกปิดอยู่', 'แตะปุ่มด้านล่างหรือไอคอนกล้องเพื่อเปิดการทำงานใหม่');

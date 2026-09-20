@@ -13,6 +13,14 @@ import ipaddress
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response  # type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash  # type: ignore
 
+try:
+    from inference_engine import InferenceEngine
+    engine = InferenceEngine()
+    print("[AI] Initialized InferenceEngine")
+except Exception as e:
+    print(f"[AI] Error loading InferenceEngine: {e}")
+    engine = None
+
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = os.environ.get('SECRET_KEY', 'signsubs_super_secret_key_2026_dev')
 
@@ -220,6 +228,37 @@ def control_action():
     return jsonify(current_prediction)
 
 
+@app.route('/api/process_frame', methods=['POST'])
+def process_frame():
+    data = request.get_json(silent=True) or {}
+    b64_str = data.get('image')
+    
+    if not b64_str or engine is None:
+        return jsonify({'success': False, 'message': 'No image or engine not loaded'})
+        
+    try:
+        label, confidence = engine.process_base64_image(b64_str)
+        if label:
+            # Simple voting could be implemented here or on client side
+            # For simplicity we just take the confident prediction
+            if label != current_prediction.get('last_confirmed', ''):
+                sentence = current_prediction.get('sentence', '')
+                words = sentence.split(' ') if sentence else []
+                words.append(label)
+                if len(words) > 7:
+                    words = words[-7:]
+                current_prediction['sentence'] = ' '.join(words).strip()
+                current_prediction['last_confirmed'] = label
+                
+            current_prediction['prediction'] = label
+            current_prediction['confidence'] = f"{confidence*100:.1f}%"
+            
+        return jsonify({'success': True, 'prediction': current_prediction.get('prediction', '')})
+    except Exception as e:
+        print("Error processing frame:", e)
+        return jsonify({'success': False, 'error': str(e)})
+
+
 @app.route('/video_feed')
 def video_feed():
     # Return placeholder 204 or streaming generator
@@ -228,14 +267,6 @@ def video_feed():
 
 import sys
 import socket
-
-# Ensure UTF-8 output on Windows console
-if sys.platform == 'win32':
-    try:
-        sys.stdout.reconfigure(encoding='utf-8')
-        sys.stderr.reconfigure(encoding='utf-8')
-    except Exception:
-        pass
 
 def get_lan_ip():
     """Detect local LAN IP for mobile access"""
