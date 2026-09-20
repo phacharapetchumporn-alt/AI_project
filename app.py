@@ -282,10 +282,14 @@ def get_lan_ip():
 def generate_self_signed_cert(cert_path='cert.pem', key_path='key.pem', lan_ip='127.0.0.1'):
     """Generate a self-signed SSL certificate for HTTPS mobile camera access."""
     try:
-        from cryptography import x509
-        from cryptography.x509.oid import NameOID
-        from cryptography.hazmat.primitives import hashes, serialization
-        from cryptography.hazmat.primitives.asymmetric import rsa
+        # pyrefly: ignore [missing-import]
+        from cryptography import x509  # type: ignore
+        # pyrefly: ignore [missing-import]
+        from cryptography.x509.oid import NameOID  # type: ignore
+        # pyrefly: ignore [missing-import]
+        from cryptography.hazmat.primitives import hashes, serialization  # type: ignore
+        # pyrefly: ignore [missing-import]
+        from cryptography.hazmat.primitives.asymmetric import rsa  # type: ignore
 
         # Check if existing cert is still valid (skip regeneration)
         if os.path.exists(cert_path) and os.path.exists(key_path):

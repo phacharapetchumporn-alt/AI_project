@@ -1,12 +1,19 @@
 import os
-import cv2
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import mediapipe as mp
+# pyrefly: ignore [missing-import]
+import cv2  # type: ignore
+# pyrefly: ignore [missing-import]
+import numpy as np  # type: ignore
+# pyrefly: ignore [missing-import]
+import torch  # type: ignore
+# pyrefly: ignore [missing-import]
+import torch.nn as nn  # type: ignore
+# pyrefly: ignore [missing-import]
+import torch.nn.functional as F  # type: ignore
+# pyrefly: ignore [missing-import]
+import mediapipe as mp  # type: ignore
 try:
-    import mediapipe.python.solutions as mp_solutions
+    # pyrefly: ignore [missing-import]
+    import mediapipe.python.solutions as mp_solutions  # type: ignore
     mp.solutions = mp_solutions
 except Exception:
     pass
@@ -115,10 +122,12 @@ class InferenceEngine:
                 self.mp_holistic = mp.python.solutions.holistic
             else:
                 try:
-                    import mediapipe.python.solutions.holistic as mp_holistic
+                    # pyrefly: ignore [missing-import]
+                    import mediapipe.python.solutions.holistic as mp_holistic  # type: ignore
                     self.mp_holistic = mp_holistic
                 except Exception:
-                    from mediapipe.solutions import holistic as mp_holistic
+                    # pyrefly: ignore [missing-import]
+                    from mediapipe.solutions import holistic as mp_holistic  # type: ignore
                     self.mp_holistic = mp_holistic
 
             if self.mp_holistic:
