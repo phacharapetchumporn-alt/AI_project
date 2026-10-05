@@ -992,11 +992,215 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExpandCam.addEventListener('click', () => toggleTheaterMode());
     }
 
-    // Keyboard shortcuts: 'F' to toggle fullscreen, 'Escape' to exit
+    // ==========================================================================
+    // About Our Website Modal System (เกี่ยวกับเว็บของเรา)
+    // ==========================================================================
+    const aboutModalOverlay = document.getElementById('about-modal-overlay');
+    const btnCloseAboutModal = document.getElementById('btn-close-about-modal');
+    const btnAboutCloseFooter = document.getElementById('btn-about-close-footer');
+    const btnAboutStartCam = document.getElementById('btn-about-start-cam');
+
+    // Navigation and trigger buttons
+    const navAbout = document.getElementById('nav-about');
+    const navServices = document.getElementById('nav-services');
+    const navTech = document.getElementById('nav-tech');
+    const navGestures = document.getElementById('nav-gestures');
+    const navContact = document.getElementById('nav-contact');
+    const btnHeaderAbout = document.getElementById('btn-header-about');
+    const btnHeroAbout = document.getElementById('btn-hero-about');
+    const btnHeroStartCam = document.getElementById('btn-hero-start-cam');
+    const cardAiTech = document.getElementById('card-ai-tech');
+    const cardFeatures = document.getElementById('card-features');
+    const btnPhone = document.getElementById('btn-phone');
+
+    // Tab buttons and panes
+    const aboutTabButtons = document.querySelectorAll('.about-tab-btn');
+    const aboutTabPanes = document.querySelectorAll('.about-tab-pane');
+
+    // Function to switch tab inside About Modal
+    function switchAboutTab(targetTabId) {
+        if (!targetTabId) return;
+
+        aboutTabButtons.forEach(btn => {
+            const tabId = btn.getAttribute('data-tab');
+            if (tabId === targetTabId) {
+                btn.classList.add('active');
+                btn.setAttribute('aria-selected', 'true');
+            } else {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            }
+        });
+
+        aboutTabPanes.forEach(pane => {
+            if (pane.id === targetTabId) {
+                pane.classList.add('active');
+            } else {
+                pane.classList.remove('active');
+            }
+        });
+
+        const modalBody = document.querySelector('.about-modal-body');
+        if (modalBody) modalBody.scrollTop = 0;
+    }
+
+    // Function to open About Modal with a specific tab
+    function openAboutModal(targetTabId = 'tab-overview') {
+        if (!aboutModalOverlay) return;
+        switchAboutTab(targetTabId);
+        aboutModalOverlay.classList.add('open');
+        aboutModalOverlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Function to close About Modal
+    function closeAboutModal() {
+        if (!aboutModalOverlay) return;
+        aboutModalOverlay.classList.remove('open');
+        aboutModalOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    // Click listeners on tab buttons
+    aboutTabButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tabId = btn.getAttribute('data-tab');
+            switchAboutTab(tabId);
+        });
+    });
+
+    // Event listeners to open modal from various triggers
+    if (navAbout) {
+        navAbout.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-overview');
+        });
+    }
+
+    if (navServices) {
+        navServices.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-services');
+        });
+    }
+
+    if (navTech) {
+        navTech.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-tech');
+        });
+    }
+
+    if (navGestures) {
+        navGestures.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-guide');
+        });
+    }
+
+    if (navContact) {
+        navContact.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-contact');
+        });
+    }
+
+    if (btnHeaderAbout) {
+        btnHeaderAbout.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-overview');
+        });
+    }
+
+    if (btnHeroAbout) {
+        btnHeroAbout.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-overview');
+        });
+    }
+
+    if (cardAiTech) {
+        cardAiTech.addEventListener('click', () => openAboutModal('tab-tech'));
+        cardAiTech.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openAboutModal('tab-tech');
+            }
+        });
+    }
+
+    if (cardFeatures) {
+        cardFeatures.addEventListener('click', () => openAboutModal('tab-services'));
+        cardFeatures.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openAboutModal('tab-services');
+            }
+        });
+    }
+
+    if (btnPhone) {
+        btnPhone.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal('tab-contact');
+        });
+    }
+
+    // Modal Close Triggers
+    if (btnCloseAboutModal) {
+        btnCloseAboutModal.addEventListener('click', closeAboutModal);
+    }
+
+    if (btnAboutCloseFooter) {
+        btnAboutCloseFooter.addEventListener('click', closeAboutModal);
+    }
+
+    if (aboutModalOverlay) {
+        aboutModalOverlay.addEventListener('click', (e) => {
+            if (e.target === aboutModalOverlay) {
+                closeAboutModal();
+            }
+        });
+    }
+
+    // CTA: Start Camera from Hero or inside About Modal
+    function handleStartCameraCTA() {
+        closeAboutModal();
+        if (cameraCard) {
+            cameraCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (!isCameraRunning) {
+            startClientCamera(currentFacingMode);
+        } else {
+            showToast('กล้องกำลังทำงานอยู่แล้ว พร้อมตรวจจับภาษามือ');
+        }
+    }
+
+    if (btnHeroStartCam) {
+        btnHeroStartCam.addEventListener('click', handleStartCameraCTA);
+    }
+
+    if (btnAboutStartCam) {
+        btnAboutStartCam.addEventListener('click', handleStartCameraCTA);
+    }
+
+    // Keyboard shortcuts: 'Escape' to close modals or exit fullscreen, 'F' to toggle fullscreen
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-        if (e.key === 'Escape' && cameraCard.classList.contains('theater-mode')) {
-            toggleTheaterMode(false);
+
+        if (e.key === 'Escape') {
+            if (aboutModalOverlay && aboutModalOverlay.classList.contains('open')) {
+                closeAboutModal();
+                return;
+            }
+            if (authModalOverlay && authModalOverlay.classList.contains('open')) {
+                closeAuthModal();
+                return;
+            }
+            if (cameraCard && cameraCard.classList.contains('theater-mode')) {
+                toggleTheaterMode(false);
+            }
         } else if (e.key === 'f' || e.key === 'F') {
             toggleTheaterMode();
         }
@@ -1005,3 +1209,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start App
     initCamera();
 });
+
