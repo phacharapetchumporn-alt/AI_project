@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Grace Community Church - ระบบแปลภาษามือเรียลไทม์อัจฉริยะด้วยเทคโนโลยี Bi-LSTM และ MediaPipe เพื่อการสื่อสารอย่างไร้รอยต่อ">
+    <title>SignSubs - Real-time Sign Language Translator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Full-screen Background Image with Gradient Overlay -->
+    <div class="background-container" id="bg-container"></div>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fa-solid fa-ear-deaf"></i>
+            </div>
+            <div class="logo-text">
+                <h1 id="main-title">SignSubs</h1>
+                <p>Translator sign language to Thai language</p>
+            </div>
+        </div>
+        <nav aria-label="Main Navigation">
+            <ul class="nav-links">
+                <li><a href="#" id="nav-about">About</a></li>
+                <li><a href="#" id="nav-services">Services</a></li>
+                <li><a href="#" id="nav-events">Events</a></li>
+                <li><a href="#" id="nav-ministries">Ministries</a></li>
+                <li><a href="#" id="nav-sermons">Sermons</a></li>
+                <li><a href="#" id="nav-contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <button class="phone-btn" id="btn-phone" aria-label="Call Church"><i class="fa-solid fa-phone"></i></button>
+
+            <!-- Logged-out buttons -->
+            <div class="auth-buttons-group" id="auth-buttons-group">
+                <button class="give-btn" id="btn-give"><i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ</button>
+                <button class="action-btn" id="btn-plan"><i class="fa-solid fa-user-plus"></i> สมัครสมาชิก</button>
+            </div>
+
+            <!-- Logged-in user profile pill -->
+            <div class="user-profile-widget" id="user-profile-widget" style="display: none;">
+                <button class="user-pill" id="user-pill" aria-expanded="false" aria-haspopup="true">
+                    <img id="user-avatar-img"
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                        alt="Avatar" class="user-pill-avatar">
+                    <span class="user-pill-name" id="user-display-name">ผู้ใช้งาน</span>
+                    <i class="fa-solid fa-chevron-down user-pill-chevron" id="user-chevron"></i>
+                </button>
+                <div class="user-dropdown" id="user-dropdown">
+                    <div class="user-dropdown-header">
+                        <div class="dropdown-username" id="dropdown-username">ผู้ใช้งาน</div>
+                        <div class="dropdown-email" id="dropdown-email">user@signsubs.ai</div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item" id="menu-profile"><i class="fa-solid fa-id-badge"></i>
+                        ข้อมูลโปรไฟล์</a>
+                    <a href="#" class="dropdown-item" id="menu-history"><i class="fa-solid fa-clock-rotate-left"></i>
+                        ประวัติการแปล</a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item logout-item" id="btn-logout"><i
+                            class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Left Side: Hero content and church schedule -->
+        <section class="hero-content" aria-labelledby="hero-title">
+            <h2 id="hero-title">Welcome to a world without sound—connecting every heart through seamless sign language.
+            </h2>
+            <p class="subtitle" id="hero-sub">
+                ยินดีต้อนรับสู่โลกไร้เสียง เปลี่ยนภาษามือให้เป็นความเข้าใจ เติมเต็มทุกการสื่อสารได้อย่างลงตัว
+            </p>
+
+            <div class="info-cards">
+                <!-- Sunday Service Schedule Card -->
+                <article class="info-card" id="card-sunday-service">
+                    <span class="card-tag">Sunday Services</span>
+                    <h3>Sunday Services</h3>
+                    <p>Sunday 10:30 AM & 6:00 PM</p>
+                </article>
+
+                <!-- Youth Connect Card -->
+                <article class="info-card" id="card-youth-group">
+                    <span class="card-tag">Connect</span>
+                    <h3>Youth Group</h3>
+                    <p>Friday 6:30 PM</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Right Side: Webcam feed in a portrait floating card -->
+        <section class="camera-wrapper" aria-label="Sign Language Translator">
+            <div class="camera-card" id="camera-translator">
+
+                <!-- Modern Responsive HUD Header (No overlap on mobile) -->
+                <div class="camera-top-hud">
+                    <!-- Status Badge (Left) -->
+                    <div class="camera-indicator" id="cam-status">
+                        <span class="indicator-dot active" id="status-dot"></span>
+                        <span id="status-text">พร้อมใช้งาน</span>
+                    </div>
+
+                    <!-- Action Controls (Right) -->
+                    <div class="hud-actions-group">
+                        <button class="hud-btn" id="btn-flip-cam" title="สลับกล้องหน้า/หลัง (สำหรับมือถือ)">
+                            <i class="fa-solid fa-camera-rotate"></i>
+                            <span class="hud-btn-text">สลับกล้อง</span>
+                        </button>
+                        <button class="hud-btn" id="btn-clear-sentence" title="ล้างประโยคทั้งหมด">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span class="hud-btn-text">ล้าง</span>
+                        </button>
+                        <button class="hud-btn" id="btn-backspace-sentence" title="ลบคำล่าสุด">
+                            <i class="fa-solid fa-delete-left"></i>
+                        </button>
+                        <button class="hud-btn" id="btn-expand-cam" title="ขยายเต็มจอ (กด F หรือคลิก)">
+                            <i class="fa-solid fa-expand" id="expand-icon"></i>
+                            <span class="hud-btn-text" id="expand-text">เต็มจอ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="video-container" id="video-container">
+                    <!-- HTML5 Video element for Client webcam & Phone Camera -->
+                    <video id="client-webcam" class="webcam-video" autoplay playsinline muted></video>
+
+                    <!-- Stream Image fallback if backend streaming is active -->
+                    <img id="flask-stream" class="webcam-stream" src="" alt="Live sign language stream"
+                        style="display: none;">
+
+                    <!-- Futuristic Scanning Reticle Overlay -->
+                    <div class="hud-scanner-overlay" id="scanner-hud">
+                        <div class="scanner-frame">
+                            <div class="scanner-corner top-left"></div>
+                            <div class="scanner-corner top-right"></div>
+                            <div class="scanner-corner bottom-left"></div>
+                            <div class="scanner-corner bottom-right"></div>
+                            <div class="scanner-laser"></div>
+                            <div class="scanner-badge"><i class="fa-solid fa-hands-asl-interpreting"></i>
+                                กำลังตรวจจับภาษามือ</div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Placeholder & Permission Prompt Screen -->
+                    <div class="camera-fallback-screen" id="camera-fallback-screen" style="display: none;">
+                        <div class="fallback-glow"></div>
+                        <div class="fallback-icon">
+                            <i class="fa-solid fa-video-slash" id="fallback-icon-i"></i>
+                        </div>
+                        <h3 id="fallback-title">กล้องยังไม่ได้เปิดทำงาน</h3>
+                        <p id="fallback-desc">
+                            แตะปุ่มด้านล่างเพื่ออนุญาตให้เข้าถึงกล้องโทรศัพท์มือถือหรือคอมพิวเตอร์ของคุณ</p>
+
+                        <div class="fallback-actions">
+                            <button class="btn-primary-camera" id="btn-start-camera">
+                                <i class="fa-solid fa-camera"></i> <span>แตะเปิดกล้องเดี๋ยวนี้</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Gesture Overlay Info -->
+                    <div class="translation-overlay" id="trans-overlay">
+                        <div class="overlay-header">
+                            <div class="prediction-label">
+                                <span class="label-title">คำที่ตรวจพบ</span>
+                                <span class="confidence-badge" id="prediction-confidence">0.0%</span>
+                            </div>
+                            <button class="btn-speak-inline" id="btn-speak-inline" title="อ่านออกเสียงภาษาไทย">
+                                <i class="fa-solid fa-volume-high"></i> <span>อ่านเสียง</span>
+                            </button>
+                        </div>
+                        <div class="predicted-word" id="prediction-word">กำลังรอสัญญาณมือ...</div>
+
+                        <div class="divider"></div>
+
+                        <div class="sentence-label">
+                            <span class="sentence-title">ประโยคสะสม</span>
+                            <div class="sentence-text" id="sentence-output">...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Floating Control Bar (Mobile-Friendly Touch HUD) -->
+                <div class="camera-controls">
+                    <!-- Camera Power Toggle -->
+                    <button class="cam-dock-btn active" id="btn-camera-power" title="เปิด/ปิดกล้อง">
+                        <i class="fa-solid fa-video" id="icon-cam-power"></i>
+                        <span class="dock-label">กล้อง</span>
+                    </button>
+
+                    <!-- Switch Camera Front/Back -->
+                    <button class="cam-dock-btn" id="btn-flip-cam-bottom" title="สลับกล้องหน้า/หลัง">
+                        <i class="fa-solid fa-camera-rotate"></i>
+                        <span class="dock-label">สลับ</span>
+                    </button>
+
+                    <!-- Center Primary Translation Switch -->
+                    <button class="translate-toggle-btn" id="btn-toggle-translate"
+                        aria-label="Toggle Sign Language Translation" title="เปิด/ปิด การตรวจจับ">
+                        <div class="translate-icon">
+                            <i class="fa-solid fa-language"></i>
+                        </div>
+                    </button>
+
+                    <!-- Text-To-Speech Thai Voice Button -->
+                    <button class="cam-dock-btn" id="btn-speak-sentence" title="อ่านออกเสียงภาษาไทย">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span class="dock-label">เสียง</span>
+                    </button>
+
+                    <!-- Mobile Fullscreen Toggle -->
+                    <button class="cam-dock-btn" id="btn-mobile-fullscreen" title="ขยายเต็มหน้าจอ">
+                        <i class="fa-solid fa-expand" id="icon-mobile-fs"></i>
+                        <span class="dock-label">จอเต็ม</span>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Toast -->
+    <div class="toast-msg" id="toast-notification">
+        <i class="fa-solid fa-circle-info"></i>
+        <span id="toast-text">เริ่มต้นโหมดสาธิต (Frontend Only)</span>
+    </div>
+
+    <!-- Auth Modal Dialog (Glassmorphism) -->
+    <div class="auth-modal-overlay" id="auth-modal-overlay" aria-hidden="true">
+        <div class="auth-modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+            <!-- Close Button -->
+            <button class="auth-close-btn" id="btn-close-auth-modal" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="auth-header">
+                <div class="auth-logo-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 id="auth-modal-title">เข้าสู่ระบบ SignSubs</h2>
+                <p id="auth-modal-subtitle">เพื่อใช้งานระบบแปลภาษามือเรียลไทม์และบันทึกประวัติ</p>
+            </div>
+
+            <!-- Tabs: Login / Register -->
+            <div class="auth-tabs" role="tablist">
+                <button type="button" class="auth-tab-btn active" id="tab-login" role="tab" aria-selected="true">
+                    <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ
+                </button>
+                <button type="button" class="auth-tab-btn" id="tab-register" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-user-plus"></i> สมัครสมาชิก
+                </button>
+            </div>
+
+            <!-- Alert Box for Error / Success Messages -->
+            <div class="auth-alert" id="auth-alert" style="display: none;">
+                <i class="fa-solid fa-circle-exclamation" id="auth-alert-icon"></i>
+                <span id="auth-alert-text"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form" id="form-login">
+                <div class="form-group">
+                    <label for="login-username"><i class="fa-solid fa-user"></i> ชื่อผู้ใช้ หรือ อีเมล</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="text" id="login-username" placeholder="demo@signsubs.ai หรือ admin" required
+                            autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password"><i class="fa-solid fa-lock"></i> รหัสผ่าน</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-key input-icon"></i>
+                        <input type="password" id="login-password" placeholder="กรอกรหัสผ่านของคุณ (demo: 123456)"
+                            required autocomplete="current-password">
+                        <button type="button" class="btn-toggle-password" id="btn-toggle-login-pwd"
+                            aria-label="แสดงหรือซ่อนรหัสผ่าน">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="login-remember" checked>
+                        <span class="custom-checkbox"></span>
+                        <span>จดจำฉันในระบบ</span>
+                    </label>
+                    <a href="javascript:void(0)" class="forgot-link" id="link-forgot-pwd">ลืมรหัสผ่าน?</a>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="btn-submit-login">
+                    <span>เข้าสู่ระบบ</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="form-register" style="display: none;">
+                <div class="form-group">
+                    <label for="reg-username"><i class="fa-solid fa-user"></i> ชื่อผู้ใช้งาน (Username)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="reg-username" placeholder="เช่น user_signsubs" required
+                            autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email"><i class="fa-solid fa-envelope"></i> อีเมล (Email)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-at input-icon"></i>
+                        <input type="email" id="reg-email" placeholder="example@email.com" required
+                            autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-password"><i class="fa-solid fa-lock"></i> รหัสผ่าน (Password)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-key input-icon"></i>
+                        <input type="password" id="reg-password" placeholder="อย่างน้อย 6 ตัวอักษร" required
+                            autocomplete="new-password">
+                        <button type="button" class="btn-toggle-password" id="btn-toggle-reg-pwd"
+                            aria-label="แสดงหรือซ่อนรหัสผ่าน">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-confirm-password"><i class="fa-solid fa-shield-halved"></i> ยืนยันรหัสผ่าน</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-check-double input-icon"></i>
+                        <input type="password" id="reg-confirm-password" placeholder="กรอกรหัสผ่านอีกครั้ง" required
+                            autocomplete="new-password">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="btn-submit-register">
+                    <span>สมัครสมาชิก</span>
+                    <i class="fa-solid fa-user-check"></i>
+                </button>
+            </form>
+
+            <!-- Social Login Section -->
+            <div class="auth-divider">
+                <span>หรือเข้าใช้งานผ่าน</span>
+            </div>
+
+            <div class="social-auth-grid">
+                <button type="button" class="social-auth-btn" id="btn-social-google">
+                    <i class="fa-brands fa-google"></i> Google
+                </button>
+                <button type="button" class="social-auth-btn" id="btn-social-github">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+ 
+</html>

@@ -1,0 +1,1392 @@
+[
+  {
+    "gloss": "1",
+    "instances": [
+      {
+        "video_id": "29_06_0198",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "03_06_0198",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "17_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "11_06_0198",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "04_06_0198",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "14_06_0198",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "07_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "19_06_0198",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "24_06_0198",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "01_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "16_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "15_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "09_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "28_06_0198",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "21_06_0198",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "06_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "10_06_0198",
+        "split": "train",
+        "region": 0
+      },
+      {
+        "video_id": "25_06_0198",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "18_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "08_06_0198",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "26_06_0198",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "12_06_0198",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "20_06_0198",
+        "split": "val",
+        "region": 1
+      },
+      {
+        "video_id": "05_06_0198",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "13_06_0198",
+        "split": "val",
+        "region": 3
+      },
+      {
+        "video_id": "23_06_0198",
+        "split": "test",
+        "region": 2
+      },
+      {
+        "video_id": "02_06_0198",
+        "split": "test",
+        "region": 4
+      }
+    ]
+  },
+  {
+    "gloss": "2",
+    "instances": [
+      {
+        "video_id": "03_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "19_06_0199",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "06_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "16_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "18_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "04_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "01_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "02_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "12_06_0199",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "26_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "24_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "21_06_0199",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "05_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "09_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "11_06_0199",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "14_06_0199",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "29_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "15_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "20_06_0199",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "17_06_0199",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "25_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "23_06_0199",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "08_06_0199",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "10_06_0199",
+        "split": "val",
+        "region": 0
+      },
+      {
+        "video_id": "28_06_0199",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "07_06_0199",
+        "split": "test",
+        "region": 4
+      },
+      {
+        "video_id": "13_06_0199",
+        "split": "test",
+        "region": 3
+      }
+    ]
+  },
+  {
+    "gloss": "3",
+    "instances": [
+      {
+        "video_id": "21_06_0200",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "24_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "13_06_0200",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "03_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "25_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "09_06_0200",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "14_06_0200",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "29_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "28_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "23_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "16_06_0200",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "20_06_0200",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "04_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "05_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "19_06_0200",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "06_06_0200",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "10_06_0200",
+        "split": "train",
+        "region": 0
+      },
+      {
+        "video_id": "26_06_0200",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "07_06_0200",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "18_06_0200",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "15_06_0200",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "02_06_0200",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "08_06_0200",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "01_06_0200",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "17_06_0200",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "11_06_0200",
+        "split": "test",
+        "region": 3
+      },
+      {
+        "video_id": "12_06_0200",
+        "split": "test",
+        "region": 3
+      }
+    ]
+  },
+  {
+    "gloss": "4",
+    "instances": [
+      {
+        "video_id": "12_06_0201",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "18_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "21_06_0201",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "03_06_0201",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "28_06_0201",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "11_06_0201",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "13_06_0201",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "23_06_0201",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "09_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "29_06_0201",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "04_06_0201",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "15_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "10_06_0201",
+        "split": "train",
+        "region": 0
+      },
+      {
+        "video_id": "16_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "08_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "17_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "07_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "26_06_0201",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "06_06_0201",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "24_06_0201",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "19_06_0201",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "20_06_0201",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "14_06_0201",
+        "split": "val",
+        "region": 3
+      },
+      {
+        "video_id": "02_06_0201",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "05_06_0201",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "25_06_0201",
+        "split": "test",
+        "region": 2
+      },
+      {
+        "video_id": "01_06_0201",
+        "split": "test",
+        "region": 4
+      }
+    ]
+  },
+  {
+    "gloss": "5",
+    "instances": [
+      {
+        "video_id": "21_06_0202",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "17_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "20_06_0202",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "09_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "02_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "05_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "18_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "23_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "25_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "29_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "28_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "19_06_0202",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "14_06_0202",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "07_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "04_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "03_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "16_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "24_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "08_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "01_06_0202",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "26_06_0202",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "15_06_0202",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "13_06_0202",
+        "split": "val",
+        "region": 3
+      },
+      {
+        "video_id": "11_06_0202",
+        "split": "val",
+        "region": 3
+      },
+      {
+        "video_id": "12_06_0202",
+        "split": "test",
+        "region": 3
+      },
+      {
+        "video_id": "06_06_0202",
+        "split": "test",
+        "region": 4
+      }
+    ]
+  },
+  {
+    "gloss": "6",
+    "instances": [
+      {
+        "video_id": "23_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "20_06_0203",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "24_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "25_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "14_06_0203",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "28_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "09_06_0203",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "06_06_0203",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "16_06_0203",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "26_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "13_06_0203",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "05_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "12_06_0203",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "03_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "15_06_0203",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "07_06_0203",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "29_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "19_06_0203",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "01_06_0203",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "17_06_0203",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "04_06_0203",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "02_06_0203",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "18_06_0203",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "08_06_0203",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "21_06_0203",
+        "split": "test",
+        "region": 1
+      },
+      {
+        "video_id": "11_06_0203",
+        "split": "test",
+        "region": 3
+      }
+    ]
+  },
+  {
+    "gloss": "7",
+    "instances": [
+      {
+        "video_id": "08_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "20_06_0204",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "12_06_0204",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "09_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "02_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "25_06_0204",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "16_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "26_06_0204",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "05_06_0204",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "24_06_0204",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "17_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "13_06_0204",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "14_06_0204",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "15_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "11_06_0204",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "07_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "23_06_0204",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "03_06_0204",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "21_06_0204",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "19_06_0204",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "04_06_0204",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "06_06_0204",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "28_06_0204",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "01_06_0204",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "29_06_0204",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "10_06_0204",
+        "split": "test",
+        "region": 0
+      },
+      {
+        "video_id": "18_06_0204",
+        "split": "test",
+        "region": 4
+      }
+    ]
+  },
+  {
+    "gloss": "8",
+    "instances": [
+      {
+        "video_id": "04_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "19_06_0205",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "08_06_0205",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "20_06_0205",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "25_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "03_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "11_06_0205",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "16_06_0205",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "17_06_0205",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "09_06_0205",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "13_06_0205",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "14_06_0205",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "29_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "02_06_0205",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "26_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "28_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "24_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "12_06_0205",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "15_06_0205",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "23_06_0205",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "07_06_0205",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "21_06_0205",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "18_06_0205",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "10_06_0205",
+        "split": "val",
+        "region": 0
+      },
+      {
+        "video_id": "05_06_0205",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "06_06_0205",
+        "split": "test",
+        "region": 4
+      },
+      {
+        "video_id": "01_06_0205",
+        "split": "test",
+        "region": 4
+      }
+    ]
+  },
+  {
+    "gloss": "9",
+    "instances": [
+      {
+        "video_id": "07_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "06_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "08_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "19_06_0206",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "10_06_0206",
+        "split": "train",
+        "region": 0
+      },
+      {
+        "video_id": "14_06_0206",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "18_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "13_06_0206",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "01_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "25_06_0206",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "17_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "12_06_0206",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "24_06_0206",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "15_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "11_06_0206",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "21_06_0206",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "03_06_0206",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "23_06_0206",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "09_06_0206",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "20_06_0206",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "04_06_0206",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "26_06_0206",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "02_06_0206",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "16_06_0206",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "29_06_0206",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "05_06_0206",
+        "split": "test",
+        "region": 2
+      },
+      {
+        "video_id": "28_06_0206",
+        "split": "test",
+        "region": 2
+      }
+    ]
+  },
+  {
+    "gloss": "10",
+    "instances": [
+      {
+        "video_id": "13_06_0207",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "21_06_0207",
+        "split": "train",
+        "region": 1
+      },
+      {
+        "video_id": "17_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "24_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "16_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "25_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "06_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "02_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "28_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "03_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "01_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "29_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "08_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "23_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "10_06_0207",
+        "split": "train",
+        "region": 0
+      },
+      {
+        "video_id": "07_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "11_06_0207",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "09_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "26_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "15_06_0207",
+        "split": "train",
+        "region": 4
+      },
+      {
+        "video_id": "04_06_0207",
+        "split": "train",
+        "region": 2
+      },
+      {
+        "video_id": "14_06_0207",
+        "split": "train",
+        "region": 3
+      },
+      {
+        "video_id": "18_06_0207",
+        "split": "val",
+        "region": 4
+      },
+      {
+        "video_id": "20_06_0207",
+        "split": "val",
+        "region": 1
+      },
+      {
+        "video_id": "05_06_0207",
+        "split": "val",
+        "region": 2
+      },
+      {
+        "video_id": "19_06_0207",
+        "split": "test",
+        "region": 1
+      },
+      {
+        "video_id": "12_06_0207",
+        "split": "test",
+        "region": 3
+      }
+    ]
+  }
+]
