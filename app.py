@@ -6,6 +6,7 @@ Supports HTTPS (self-signed cert) for mobile camera access via getUserMedia.
 """
 
 import os
+import sys
 import sqlite3
 import datetime
 import ipaddress
@@ -63,11 +64,12 @@ init_db()
 
 @app.route('/')
 def index():
-    return render_template('index (1).html')
+    template_name = 'index.html' if os.path.exists(os.path.join(app.template_folder, 'index.html')) else 'index (1).html'
+    return render_template(template_name)
 
 @app.route('/index.html')
 def index_html():
-    return render_template('index (1).html')
+    return index()
 
 @app.route('/api/server-info', methods=['GET'])
 def api_server_info():
