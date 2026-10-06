@@ -45,6 +45,17 @@
 ## 🛠️ โครงสร้างของโปรเจกต์ (Project Directory Structure)
 
 ```text
+├── static/                        # ไฟล์ Static ของ Web Application
+│   ├── css/
+│   │   └── style.css              # สไตล์ UI แบบ Glassmorphism & Dark Mode
+│   ├── js/
+│   │   └── app.js                 # สคริปต์ควบคุมกล้องหน้าเว็บ, WebRTC/Canvas, Auth
+│   └── images/
+│       └── church_bg.jpg          # ภาพพื้นหลังระบบ
+│
+├── templates/                     # โฟลเดอร์เทมเพลต HTML (Jinja2)
+│   └── index.html                 # หน้าเว็บหลัก SignSubs Real-time Dashboard
+│
 ├── sequences/                     # โฟลเดอร์เก็บข้อมูลดิบ .npy แยกตามคลาส
 │   ├── 1/                         # ข้อมูลตัวอย่างสำหรับคลาสสัญลักษณ์เลข 1
 │   ├── 2/                         # ข้อมูลตัวอย่างสำหรับคลาสสัญลักษณ์เลข 2
@@ -55,6 +66,7 @@
 │   ├── action_model_float16.tflite
 │   └── action_model_float32.tflite
 │
+├── app.py                         # เว็บเซิร์ฟเวอร์ Flask Backend + Authentication + HTTPS
 ├── collect_data.py                # สคริปต์เปิดกล้องบันทึกชุดข้อมูลสัญลักษณ์มือ (.npy)
 ├── train_model.py                 # สคริปต์โหลดข้อมูลดิบ, เทรนโมเดล PyTorch และบันทึก .pth
 ├── export_tflite_pth.py           # สคริปต์แปลง PyTorch (.pth) -> ONNX -> TFLite
@@ -62,8 +74,11 @@
 │
 ├── action_model.pth               # ไฟล์โมเดล PyTorch (Model Weights) ที่พร้อมใช้งาน
 ├── action_model.onnx              # ไฟล์โมเดลในรูปแบบตัวกลาง ONNX
-├── label_encoder.pkl              # ไฟล์เก็บวัตถุแปลงคลาสตัวอักษรกลับมาแสดงผล
-└── README.md                      # เอกสารอธิบายโปรเจกต์และขอบเขตการทำงาน (ไฟล์นี้)
+├── label_encoder.pkl              # ไฟล์เก็บตัวแปลงคลาส (Label Encoder)
+├── scaler.pkl                     # ไฟล์เก็บตัวปรับสเกลข้อมูล (Standard Scaler)
+├── requirements.txt               # รายการ Dependencies ทั้งหมดของโปรเจกต์
+├── .gitignore                     # กำหนดไฟล์ที่ไม่ต้องติดตามใน Git
+└── README.md                      # เอกสารอธิบายโปรเจกต์และคู่มือการใช้งาน (ไฟล์นี้)
 ```
 
 ---
@@ -71,6 +86,10 @@
 ## 💻 เทคโนโลยีที่เลือกใช้ (Tech Stack)
 
 * **Language:** Python 3.8+
+* **Web & Backend:**
+  * [Flask](https://flask.palletsprojects.com/) (Web Server & REST APIs)
+  * [SQLite3](https://sqlite.org/) (ระบบจัดเก็บข้อมูลผู้ใช้และระบบล็อกอิน)
+  * [Cryptography](https://cryptography.io/) (การสร้าง Self-signed SSL Certificate สำหรับกล้องมือถือ)
 * **Deep Learning & ML:**
   * [PyTorch](https://pytorch.org/) (สร้าง, เทรน และประเมินผลโมเดล Bi-LSTM)
   * [Scikit-Learn](https://scikit-learn.org/) (จัดการเตรียมข้อมูลการเทรน/ทดสอบ)
@@ -86,9 +105,9 @@
 ## 🚀 ขั้นตอนการเริ่มใช้งาน (Usage Instructions)
 
 ### 1. ติดตั้ง Dependencies ที่จำเป็น
-ติดตั้งโมดูลที่เกี่ยวข้องผ่าน PowerShell หรือ Command Prompt:
+ติดตั้งโมดูลที่เกี่ยวข้องทั้งหมดผ่านไฟล์ `requirements.txt`:
 ```bash
-pip install opencv-python mediapipe numpy torch torchvision scikit-learn pillow onnx onnx2tf
+pip install -r requirements.txt
 ```
 
 ### 2. การเก็บรวบรวมข้อมูลใหม่ (Optional)
@@ -106,7 +125,7 @@ python collect_data.py
 ```bash
 python train_model.py
 ```
-* ระบบจะทำการโหลดข้อมูลทั้งหมด, แสดงชื่อคำศัพท์ที่ตรวจพบ, เทรนโมเดลเป็นจำนวน 50 Epochs, แสดงความถูกต้อง (Accuracy) และบันทึกผลลัพธ์ลงเป็นไฟล์ `action_model.pth` และ `label_encoder.pkl`
+* ระบบจะทำการโหลดข้อมูลทั้งหมด, แสดงชื่อคำศัพท์ที่ตรวจพบ, เทรนโมเดล, แสดงความถูกต้อง (Accuracy) และบันทึกผลลัพธ์ลงเป็นไฟล์ `action_model.pth` และ `label_encoder.pkl`
 
 ### 4. การส่งออกโมเดลไปยัง ONNX และ TFLite
 รันสคริปต์นี้เพื่อทำโมเดลให้มีขนาดเล็กลงและรองรับแพลตฟอร์มอื่น:
@@ -115,7 +134,7 @@ python export_tflite_pth.py
 ```
 * ไฟล์ผลลัพธ์จะไปอยู่ที่โฟลเดอร์ `tflite_output/`
 
-### 5. การทดสอบรันระบบจดจำสัญลักษณ์มือสด
+### 5. การทดสอบรันระบบจดจำสัญลักษณ์มือสดผ่าน Desktop Window
 เปิดกล้องเว็บแคมเพื่อเริ่มการทำนายสัญลักษณ์มือในทันที:
 ```bash
 python realtime_predict.py
@@ -126,3 +145,11 @@ python realtime_predict.py
   * กด `Backspace` เพื่อลบคำศัพท์คำล่าสุดออกจากประโยค
   * กด `C` เพื่อล้างหน้าจอและข้อความประโยคใหม่ทั้งหมด
   * กด `Q` เพื่อปิดการทำงาน
+
+### 6. การเปิดใช้งาน Web Application (SignSubs Web Dashboard)
+รันเว็บเซิร์ฟเวอร์แบบ HTTPS เพื่อรองรับการเปิดกล้องผ่านทั้งเบราว์เซอร์ PC และสมาร์ตโฟนผ่านเครือข่าย Wi-Fi เดียวกัน:
+```bash
+python app.py
+```
+* เปิดเบราว์เซอร์แล้วเข้าไปที่ `https://localhost:5000` (หรือ IP ที่แจ้งบน Terminal สำหรับมือถือ)
+* บัญชีสาธิตเบื้องต้น: ผู้ใช้ `admin` / รหัสผ่าน `123456`
