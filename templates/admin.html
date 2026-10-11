@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignSubs - ระบบจัดการหลังบ้าน (Admin Backoffice)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Admin Custom CSS -->
+    <link rel="stylesheet" href="../static/css/admin.css">
+</head>
+
+<body>
+    <!-- Ambient Background Glows -->
+    <div class="bg-ambient-orb bg-orb-1"></div>
+    <div class="bg-ambient-orb bg-orb-2"></div>
+
+    <!-- ======================================================================
+         Sidebar Navigation
+         ====================================================================== -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-icon">
+                <i class="fa-solid fa-gauge-high"></i>
+            </div>
+            <div class="sidebar-brand-text">
+                <h2>SignSubs</h2>
+                <span>Admin Backoffice</span>
+            </div>
+        </div>
+
+        <div class="sidebar-nav-container">
+            <div>
+                <div class="nav-section-title">เมนูหลัก (Core)</div>
+                <ul class="sidebar-nav-menu">
+                    <li>
+                        <button class="nav-item-btn active" data-view="overview" id="nav-btn-overview">
+                            <span class="nav-item-btn-left">
+                                <i class="fa-solid fa-chart-pie"></i>
+                                <span>ภาพรวมระบบ</span>
+                            </span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item-btn" data-view="users" id="nav-btn-users">
+                            <span class="nav-item-btn-left">
+                                <i class="fa-solid fa-users-gear"></i>
+                                <span>จัดการผู้ใช้งาน</span>
+                            </span>
+                            <span class="nav-badge" id="sidebar-user-count">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item-btn" data-view="gestures" id="nav-btn-gestures">
+                            <span class="nav-item-btn-left">
+                                <i class="fa-solid fa-hands-asl-interpreting"></i>
+                                <span>คลังคำศัพท์ภาษามือ</span>
+                            </span>
+                            <span class="nav-badge" id="sidebar-gesture-count">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item-btn" data-view="translations" id="nav-btn-translations">
+                            <span class="nav-item-btn-left">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                <span>ประวัติการแปล AI</span>
+                            </span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="nav-section-title">ระบบและบันทึก (System)</div>
+                <ul class="sidebar-nav-menu">
+                    <li>
+                        <button class="nav-item-btn" data-view="logs" id="nav-btn-logs">
+                            <span class="nav-item-btn-left">
+                                <i class="fa-solid fa-shield-virus"></i>
+                                <span>บันทึกกิจกรรม (Logs)</span>
+                            </span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item-btn" data-view="settings" id="nav-btn-settings">
+                            <span class="nav-item-btn-left">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>ตั้งค่าระบบ & AI</span>
+                            </span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="margin-top: auto;">
+                <div class="nav-section-title">หน้าบ้าน (Frontend)</div>
+                <ul class="sidebar-nav-menu">
+                    <li>
+                        <a href="/" class="nav-item-btn" target="_blank" title="ไปยังหน้าเว็บไซต์หลัก">
+                            <span class="nav-item-btn-left">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                <span>ไปยังหน้าเว็บไซต์</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sidebar Footer / Current Admin Info -->
+        <div class="sidebar-footer">
+            <div class="user-profile-bar">
+                <div class="user-profile-left">
+                    <div class="user-avatar-circle" id="sidebar-admin-avatar">AD</div>
+                    <div>
+                        <div class="user-meta-name" id="sidebar-admin-name">Admin</div>
+                        <div class="user-meta-role">
+                            <i class="fa-solid fa-circle-check"></i> Superadmin
+                        </div>
+                    </div>
+                </div>
+                <a href="/admin/logout" class="btn-sidebar-logout" title="ออกจากระบบหลังบ้าน" id="btn-sidebar-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ======================================================================
+         Main Admin Content
+         ====================================================================== -->
+    <main class="admin-main">
+        <!-- Topbar -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="mobile-menu-btn" id="btn-mobile-menu" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1 class="topbar-page-title" id="page-title">
+                    <i class="fa-solid fa-chart-pie"></i> ภาพรวมระบบ (Dashboard Overview)
+                </h1>
+            </div>
+
+            <div class="topbar-right">
+                <div class="status-pill" title="สถานะเซิร์ฟเวอร์">
+                    <span class="status-dot dot-green"></span>
+                    <span>Server Live</span>
+                </div>
+                <div class="status-pill" id="ai-engine-status-pill" title="สถานะโมเดลแปลภาษามือ">
+                    <i class="fa-solid fa-robot" style="color: var(--accent-cyan);"></i>
+                    <span id="ai-engine-status-text">Bi-LSTM Ready</span>
+                </div>
+                <button class="btn-topbar-action" id="btn-refresh-data" title="รีเฟรชข้อมูล">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>รีเฟรช</span>
+                </button>
+                <a href="/" class="btn-topbar-action" title="เปิดหน้าเว็บหลัก">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าหลัก</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Dynamic Page Content -->
+        <div class="admin-page-content">
+
+            <!-- ==============================================================
+                 VIEW 1: OVERVIEW DASHBOARD
+                 ============================================================== -->
+            <section class="admin-view-pane active" id="view-overview">
+                <!-- 4 Stat Metric Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info-left">
+                            <span class="stat-label">ผู้ใช้งานทั้งหมด</span>
+                            <span class="stat-value" id="stat-total-users">0</span>
+                            <span class="stat-subtext positive">
+                                <i class="fa-solid fa-arrow-trend-up"></i>
+                                <span id="stat-active-users">ใช้งานล่าสุด 0 คน</span>
+                            </span>
+                        </div>
+                        <div class="stat-icon-right icon-purple">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info-left">
+                            <span class="stat-label">การแปลภาษามือทั้งหมด</span>
+                            <span class="stat-value" id="stat-total-translations">0</span>
+                            <span class="stat-subtext positive">
+                                <i class="fa-solid fa-bullseye"></i>
+                                <span id="stat-avg-confidence">ความแม่นยำเฉลี่ย 97.4%</span>
+                            </span>
+                        </div>
+                        <div class="stat-icon-right icon-cyan">
+                            <i class="fa-solid fa-language"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info-left">
+                            <span class="stat-label">คลังคำศัพท์ในโมเดล</span>
+                            <span class="stat-value" id="stat-total-gestures">0</span>
+                            <span class="stat-subtext">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span id="stat-active-gestures">พร้อมตรวจจับ 100%</span>
+                            </span>
+                        </div>
+                        <div class="stat-icon-right icon-green">
+                            <i class="fa-solid fa-hands-asl-interpreting"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info-left">
+                            <span class="stat-label">สถานะ AI Engine</span>
+                            <span class="stat-value" id="stat-ai-status" style="font-size: 1.5rem; color: var(--accent-cyan);">Online</span>
+                            <span class="stat-subtext">
+                                <i class="fa-solid fa-microchip"></i>
+                                <span id="stat-ai-device">MediaPipe + Bi-LSTM (CPU)</span>
+                            </span>
+                        </div>
+                        <div class="stat-icon-right icon-yellow">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts & Breakdown Section -->
+                <div class="dashboard-grid-two">
+                    <!-- Weekly Translation Chart -->
+                    <div class="card-widget">
+                        <div class="card-widget-header">
+                            <h2 class="card-widget-title">
+                                <i class="fa-solid fa-chart-line"></i> สถิติการตรวจจับภาษามือรายสัปดาห์
+                            </h2>
+                            <span class="status-pill" style="font-size: 0.76rem;">7 วันล่าสุด</span>
+                        </div>
+                        <div class="card-widget-body">
+                            <div class="chart-container">
+                                <canvas id="chart-translations"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gesture Categories Breakdown -->
+                    <div class="card-widget">
+                        <div class="card-widget-header">
+                            <h2 class="card-widget-title">
+                                <i class="fa-solid fa-layer-group"></i> สัดส่วนหมวดหมู่คำศัพท์
+                            </h2>
+                        </div>
+                        <div class="card-widget-body" id="category-bars-container">
+                            <!-- Populated dynamically via JS -->
+                            <div class="category-item">
+                                <div class="category-meta">
+                                    <span>ตัวเลข (Numbers 1-10)</span>
+                                    <span>62.5%</span>
+                                </div>
+                                <div class="category-bar-bg">
+                                    <div class="category-bar-fill" style="width: 62.5%;"></div>
+                                </div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-meta">
+                                    <span>การทักทาย (Greetings)</span>
+                                    <span>12.5%</span>
+                                </div>
+                                <div class="category-bar-bg">
+                                    <div class="category-bar-fill" style="width: 12.5%;"></div>
+                                </div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-meta">
+                                    <span>คำตอบรับ (Responses)</span>
+                                    <span>12.5%</span>
+                                </div>
+                                <div class="category-bar-bg">
+                                    <div class="category-bar-fill" style="width: 12.5%;"></div>
+                                </div>
+                            </div>
+                            <div class="category-item">
+                                <div class="category-meta">
+                                    <span>ทั่วไป / ความรู้สึก</span>
+                                    <span>12.5%</span>
+                                </div>
+                                <div class="category-bar-bg">
+                                    <div class="category-bar-fill" style="width: 12.5%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Live Translations & Server Specs -->
+                <div class="dashboard-grid-two">
+                    <!-- Recent Translations -->
+                    <div class="card-widget">
+                        <div class="card-widget-header">
+                            <h2 class="card-widget-title">
+                                <i class="fa-solid fa-bolt-lightning"></i> ประวัติการแปลล่าสุด (Live Feed)
+                            </h2>
+                            <button class="btn-topbar-action" onclick="adminSwitchView('translations')">ดูทั้งหมด</button>
+                        </div>
+                        <div class="card-widget-body" style="padding: 0;">
+                            <div class="table-responsive" style="border: none; border-radius: 0; box-shadow: none;">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ผู้ใช้งาน</th>
+                                            <th>ท่าทาง (Gloss)</th>
+                                            <th>คำแปลภาษาไทย</th>
+                                            <th>ความแม่นยำ</th>
+                                            <th>เวลา</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="overview-recent-translations">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Server Environment Specs -->
+                    <div class="card-widget">
+                        <div class="card-widget-header">
+                            <h2 class="card-widget-title">
+                                <i class="fa-solid fa-server"></i> สภาพแวดล้อมระบบ (Server Environment)
+                            </h2>
+                        </div>
+                        <div class="card-widget-body">
+                            <div class="server-info-list" id="server-info-details">
+                                <div class="server-info-row">
+                                    <span class="server-info-label"><i class="fa-brands fa-python"></i> Python Runtime</span>
+                                    <span class="server-info-val" id="spec-python">Python 3.x</span>
+                                </div>
+                                <div class="server-info-row">
+                                    <span class="server-info-label"><i class="fa-solid fa-network-wired"></i> Local LAN IP</span>
+                                    <span class="server-info-val" id="spec-lan-ip">127.0.0.1:5000</span>
+                                </div>
+                                <div class="server-info-row">
+                                    <span class="server-info-label"><i class="fa-solid fa-lock"></i> SSL Certificate</span>
+                                    <span class="server-info-val" id="spec-ssl" style="color: var(--accent-green);">Active (HTTPS)</span>
+                                </div>
+                                <div class="server-info-row">
+                                    <span class="server-info-label"><i class="fa-solid fa-database"></i> Database Engine</span>
+                                    <span class="server-info-val" id="spec-db">SQLite 3 (signsubs.db)</span>
+                                </div>
+                                <div class="server-info-row">
+                                    <span class="server-info-label"><i class="fa-solid fa-brain"></i> AI Architecture</span>
+                                    <span class="server-info-val" id="spec-ai-arch">Bi-LSTM (126 Keypoints)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================================================
+                 VIEW 2: USER MANAGEMENT
+                 ============================================================== -->
+            <section class="admin-view-pane" id="view-users">
+                <div class="table-toolbar">
+                    <div class="toolbar-search-group">
+                        <div class="search-input-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="users-search-input" class="search-control" placeholder="ค้นหาชื่อผู้ใช้ หรือ อีเมล...">
+                        </div>
+                    </div>
+                    <div class="toolbar-filters">
+                        <select class="select-filter" id="users-filter-role">
+                            <option value="">ทุกสิทธิ์ (All Roles)</option>
+                            <option value="admin">ผู้ดูแลระบบ (Admin)</option>
+                            <option value="user">สมาชิกทั่วไป (User)</option>
+                        </select>
+                        <select class="select-filter" id="users-filter-status">
+                            <option value="">ทุกสถานะ (All Status)</option>
+                            <option value="active">ปกติ (Active)</option>
+                            <option value="banned">ระงับ (Banned)</option>
+                        </select>
+                        <button class="btn-primary-action" id="btn-add-user">
+                            <i class="fa-solid fa-user-plus"></i> เพิ่มผู้ใช้ใหม่
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ผู้ใช้งาน</th>
+                                <th>อีเมล</th>
+                                <th>บทบาท (Role)</th>
+                                <th>สถานะ (Status)</th>
+                                <th>เข้าสู่ระบบล่าสุด</th>
+                                <th>วันที่สมัคร</th>
+                                <th style="text-align: right;">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==============================================================
+                 VIEW 3: GESTURE VOCABULARY MANAGEMENT
+                 ============================================================== -->
+            <section class="admin-view-pane" id="view-gestures">
+                <div class="table-toolbar">
+                    <div class="toolbar-search-group">
+                        <div class="search-input-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="gestures-search-input" class="search-control" placeholder="ค้นหาคีย์, คำแปลไทย, ภาษาอังกฤษ...">
+                        </div>
+                    </div>
+                    <div class="toolbar-filters">
+                        <select class="select-filter" id="gestures-filter-category">
+                            <option value="">ทุกหมวดหมู่ (All Categories)</option>
+                            <option value="ตัวเลข">ตัวเลข (Numbers)</option>
+                            <option value="การทักทาย">การทักทาย (Greetings)</option>
+                            <option value="คำตอบรับ">คำตอบรับ (Responses)</option>
+                            <option value="ความรู้สึก">ความรู้สึก (Feelings)</option>
+                            <option value="ฉุกเฉิน/ขอความช่วยเหลือ">ฉุกเฉิน (Emergency)</option>
+                            <option value="ทั่วไป">ทั่วไป (General)</option>
+                        </select>
+                        <button class="btn-primary-action" id="btn-add-gesture">
+                            <i class="fa-solid fa-plus"></i> เพิ่มคำศัพท์ภาษามือ
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>คีย์ (Code)</th>
+                                <th>คำแปลภาษาไทย</th>
+                                <th>ภาษาอังกฤษ</th>
+                                <th>หมวดหมู่</th>
+                                <th>ระดับความยาก</th>
+                                <th>จำนวนตัวอย่าง</th>
+                                <th>สถานะใช้งาน</th>
+                                <th style="text-align: right;">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gestures-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==============================================================
+                 VIEW 4: TRANSLATION HISTORY
+                 ============================================================== -->
+            <section class="admin-view-pane" id="view-translations">
+                <div class="table-toolbar">
+                    <div class="toolbar-search-group">
+                        <div class="search-input-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="translations-search-input" class="search-control" placeholder="ค้นหาคำศัพท์ หรือ ผู้ใช้งาน...">
+                        </div>
+                    </div>
+                    <div class="toolbar-filters">
+                        <button class="btn-topbar-action" id="btn-export-translations">
+                            <i class="fa-solid fa-file-csv"></i> ส่งออก CSV
+                        </button>
+                        <button class="btn-danger-action" id="btn-clear-translations">
+                            <i class="fa-solid fa-trash-can"></i> ล้างประวัติทั้งหมด
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ผู้ใช้งาน</th>
+                                <th>ท่าทาง (Gloss Key)</th>
+                                <th>คำแปลภาษาไทย</th>
+                                <th>ความแม่นยำ AI</th>
+                                <th>วันเวลาที่ตรวจจับ</th>
+                                <th style="text-align: right;">ลบ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="translations-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==============================================================
+                 VIEW 5: SYSTEM & AUDIT LOGS
+                 ============================================================== -->
+            <section class="admin-view-pane" id="view-logs">
+                <div class="table-toolbar">
+                    <div class="toolbar-search-group">
+                        <div class="search-input-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="logs-search-input" class="search-control" placeholder="ค้นหากิจกรรม, ผู้ดำเนินการ, IP...">
+                        </div>
+                    </div>
+                    <div class="toolbar-filters">
+                        <button class="btn-danger-action" id="btn-clear-logs">
+                            <i class="fa-solid fa-trash-can"></i> ล้างบันทึกกิจกรรม
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>วันเวลา</th>
+                                <th>กิจกรรม (Action)</th>
+                                <th>ผู้ดำเนินการ (Actor)</th>
+                                <th>IP Address</th>
+                                <th>รายละเอียดกิจกรรม</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==============================================================
+                 VIEW 6: SYSTEM & AI SETTINGS
+                 ============================================================== -->
+            <section class="admin-view-pane" id="view-settings">
+                <div class="card-widget" style="max-width: 800px; margin: 0 auto; width: 100%;">
+                    <div class="card-widget-header">
+                        <h2 class="card-widget-title">
+                            <i class="fa-solid fa-sliders"></i> กำหนดค่าระบบและพารามิเตอร์ AI
+                        </h2>
+                    </div>
+                    <div class="card-widget-body">
+                        <form id="settings-form" style="display: flex; flex-direction: column; gap: 20px;">
+                            <!-- Confidence Threshold -->
+                            <div class="form-field">
+                                <label class="form-label" for="setting-threshold">
+                                    เกณฑ์ความแม่นยำขั้นต่ำของ AI (Confidence Threshold) : 
+                                    <strong id="threshold-val-display" style="color: var(--accent-cyan);">75%</strong>
+                                </label>
+                                <input type="range" id="setting-threshold" min="50" max="99" value="75" style="width: 100%; accent-color: var(--primary);">
+                                <span style="font-size: 0.78rem; color: var(--text-tertiary);">
+                                    หาก AI คำนวณความมั่นใจได้ต่ำกว่าค่านี้ จะไม่นำมาแสดงผลเป็นคำแปล
+                                </span>
+                            </div>
+
+                            <hr style="border-color: var(--border-color);">
+
+                            <!-- Allow Registration -->
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 600; color: #fff;">อนุญาตให้ผู้ใช้ใหม่สมัครสมาชิก (Allow Registration)</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-tertiary);">เปิดหรือปิดฟอร์มลงทะเบียนสมาชิกใหม่บนหน้าเว็บ</div>
+                                </div>
+                                <input type="checkbox" id="setting-allow-reg" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
+                            </div>
+
+                            <!-- Allow Guest Translation -->
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 600; color: #fff;">อนุญาตให้ผู้เยี่ยมชมใช้งานกล้องแปล (Allow Guest Translation)</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-tertiary);">อนุญาตให้บุคคลทั่วไปที่ไม่ได้ล็อกอินใช้งานระบบแปลได้</div>
+                                </div>
+                                <input type="checkbox" id="setting-allow-guest" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
+                            </div>
+
+                            <!-- Maintenance Mode -->
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 600; color: #fff;">โหมดปิดปรับปรุงระบบ (Maintenance Mode)</div>
+                                    <div style="font-size: 0.8rem; color: var(--accent-yellow);">พักการใช้งานระบบหน้าเว็บชั่วคราว</div>
+                                </div>
+                                <input type="checkbox" id="setting-maintenance" style="width: 20px; height: 20px; accent-color: var(--accent-red);">
+                            </div>
+
+                            <hr style="border-color: var(--border-color);">
+
+                            <!-- Announcement Text -->
+                            <div class="form-field">
+                                <label class="form-label" for="setting-announcement">ข้อความประกาศบนเว็บไซต์ (Announcement Banner)</label>
+                                <textarea id="setting-announcement" class="form-textarea" placeholder="พิมพ์ข้อความประกาศที่นี่...">ยินดีต้อนรับสู่ระบบ SignSubs อัปเดตโมเดล Bi-LSTM เวอร์ชั่นล่าสุดเรียบร้อยแล้ว</textarea>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+                                <button type="submit" class="btn-primary-action">
+                                    <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่าระบบ
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ======================================================================
+         MODALS
+         ====================================================================== -->
+
+    <!-- Modal: Add / Edit User -->
+    <div class="modal-overlay" id="modal-user">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-user-title">
+                    <i class="fa-solid fa-user-pen"></i> เพิ่มผู้ใช้งานใหม่
+                </h3>
+                <button class="btn-close-modal" id="btn-close-user-modal">&times;</button>
+            </div>
+            <form id="form-user-save">
+                <input type="hidden" id="user-form-id">
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label">ชื่อผู้ใช้ (Username)</label>
+                        <input type="text" id="user-form-username" class="form-input" required placeholder="เช่น john_doe">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">อีเมล (Email)</label>
+                        <input type="email" id="user-form-email" class="form-input" required placeholder="john@example.com">
+                    </div>
+                    <div class="form-field" id="user-password-group">
+                        <label class="form-label">รหัสผ่าน (Password)</label>
+                        <input type="password" id="user-form-password" class="form-input" placeholder="อย่างน้อย 6 ตัวอักษร">
+                        <span style="font-size: 0.75rem; color: var(--text-tertiary);" id="user-password-hint">เว้นว่างไว้หากไม่ต้องการแก้ไขรหัสผ่าน</span>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">บทบาท (Role)</label>
+                        <select id="user-form-role" class="form-select">
+                            <option value="user">สมาชิกทั่วไป (User)</option>
+                            <option value="admin">ผู้ดูแลระบบ (Admin)</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">สถานะ (Status)</label>
+                        <select id="user-form-status" class="form-select">
+                            <option value="active">ปกติ (Active)</option>
+                            <option value="banned">ระงับการใช้งาน (Banned)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" id="btn-cancel-user-modal">ยกเลิก</button>
+                    <button type="submit" class="btn-primary-action">
+                        <i class="fa-solid fa-check"></i> บันทึกข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add / Edit Gesture -->
+    <div class="modal-overlay" id="modal-gesture">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-gesture-title">
+                    <i class="fa-solid fa-hands-asl-interpreting"></i> เพิ่มคำศัพท์ภาษามือ
+                </h3>
+                <button class="btn-close-modal" id="btn-close-gesture-modal">&times;</button>
+            </div>
+            <form id="form-gesture-save">
+                <input type="hidden" id="gesture-form-id">
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label class="form-label">รหัสคีย์ (Code / Key)</label>
+                        <input type="text" id="gesture-form-key" class="form-input" required placeholder="เช่น 1, hello, thankyou">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">คำแปลภาษาไทย (Thai Name)</label>
+                        <input type="text" id="gesture-form-name-th" class="form-input" required placeholder="เช่น สวัสดี, ขอบคุณ">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">ภาษาอังกฤษ (English Name)</label>
+                        <input type="text" id="gesture-form-name-en" class="form-input" required placeholder="เช่น Hello, Thank you">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">หมวดหมู่ (Category)</label>
+                        <select id="gesture-form-category" class="form-select">
+                            <option value="ตัวเลข">ตัวเลข</option>
+                            <option value="การทักทาย">การทักทาย</option>
+                            <option value="คำตอบรับ">คำตอบรับ</option>
+                            <option value="ความรู้สึก">ความรู้สึก</option>
+                            <option value="ฉุกเฉิน/ขอความช่วยเหลือ">ฉุกเฉิน/ขอความช่วยเหลือ</option>
+                            <option value="ทั่วไป">ทั่วไป</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">ระดับความยาก (Difficulty)</label>
+                        <select id="gesture-form-difficulty" class="form-select">
+                            <option value="ง่าย">ง่าย</option>
+                            <option value="ปานกลาง">ปานกลาง</option>
+                            <option value="ยาก">ยาก</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">คำอธิบายท่าทาง (Description)</label>
+                        <textarea id="gesture-form-desc" class="form-textarea" placeholder="วิธีทำท่าทางภาษามือนี้..."></textarea>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">สถานะใช้งาน</label>
+                        <select id="gesture-form-status" class="form-select">
+                            <option value="1">เปิดใช้งาน (Active)</option>
+                            <option value="0">ปิดใช้งานชั่วคราว (Inactive)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" id="btn-cancel-gesture-modal">ยกเลิก</button>
+                    <button type="submit" class="btn-primary-action">
+                        <i class="fa-solid fa-check"></i> บันทึกข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Admin Logic JavaScript -->
+    <script src="../static/js/admin.js"></script>
+</body>
+</html>
