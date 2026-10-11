@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         settings: '<i class="fa-solid fa-sliders"></i> ตั้งค่าระบบและโมเดล AI (System Settings)'
     };
 
-    window.adminSwitchView = function(viewName) {
+    window.adminSwitchView = function (viewName) {
         if (!viewName) return;
         state.currentView = viewName;
 
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.openEditUserModal = function(userId) {
+    window.openEditUserModal = function (userId) {
         const user = state.users.find(u => u.id === userId);
         if (!user) return;
 
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.deleteUser = async function(userId, username) {
+    window.deleteUser = async function (userId, username) {
         if (!confirm(`คุณต้องการลบผู้ใช้ "${username}" ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) return;
 
         try {
@@ -467,9 +467,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const catFilter = gesturesFilterCategory ? gesturesFilterCategory.value : '';
 
         const filtered = state.gestures.filter(g => {
-            const matchQuery = !query || 
-                g.gesture_key.toLowerCase().includes(query) || 
-                g.name_th.toLowerCase().includes(query) || 
+            const matchQuery = !query ||
+                g.gesture_key.toLowerCase().includes(query) ||
+                g.name_th.toLowerCase().includes(query) ||
                 g.name_en.toLowerCase().includes(query);
             const matchCat = !catFilter || g.category === catFilter;
             return matchQuery && matchCat;
@@ -535,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.openEditGestureModal = function(id) {
+    window.openEditGestureModal = function (id) {
         const item = state.gestures.find(g => g.id === id);
         if (!item) return;
 
@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.deleteGesture = async function(id, name) {
+    window.deleteGesture = async function (id, name) {
         if (!confirm(`คุณต้องการลบคำศัพท์ "${name}" ออกจากคลังใช่หรือไม่?`)) return;
 
         try {
@@ -637,9 +637,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = translationsSearchInput ? translationsSearchInput.value.toLowerCase().trim() : '';
 
         const filtered = state.translations.filter(t => {
-            return !query || 
-                (t.username || '').toLowerCase().includes(query) || 
-                (t.gesture_name || '').toLowerCase().includes(query) || 
+            return !query ||
+                (t.username || '').toLowerCase().includes(query) ||
+                (t.gesture_name || '').toLowerCase().includes(query) ||
                 (t.translation_text || '').toLowerCase().includes(query);
         });
 
@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (translationsSearchInput) translationsSearchInput.addEventListener('input', renderTranslationsTable);
 
-    window.deleteTranslationLog = async function(id) {
+    window.deleteTranslationLog = async function (id) {
         try {
             const res = await fetch(`/api/admin/translations/${id}`, { method: 'DELETE' });
             if (!res.ok) throw new Error('Error deleting log');
@@ -728,9 +728,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = logsSearchInput ? logsSearchInput.value.toLowerCase().trim() : '';
 
         const filtered = state.logs.filter(l => {
-            return !query || 
-                l.action.toLowerCase().includes(query) || 
-                (l.actor || '').toLowerCase().includes(query) || 
+            return !query ||
+                l.action.toLowerCase().includes(query) ||
+                (l.actor || '').toLowerCase().includes(query) ||
                 (l.details || '').toLowerCase().includes(query);
         });
 

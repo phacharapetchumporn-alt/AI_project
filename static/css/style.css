@@ -467,8 +467,13 @@ main {
 }
 
 @keyframes rotateCam {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(180deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(180deg);
+    }
 }
 
 /* ==========================================================================
@@ -508,9 +513,19 @@ main {
 }
 
 @keyframes laserScan {
-    0% { top: 2%; opacity: 0.25; }
-    50% { opacity: 0.85; }
-    100% { top: 98%; opacity: 0.25; }
+    0% {
+        top: 2%;
+        opacity: 0.25;
+    }
+
+    50% {
+        opacity: 0.85;
+    }
+
+    100% {
+        top: 98%;
+        opacity: 0.25;
+    }
 }
 
 .scanner-corner {
@@ -521,10 +536,33 @@ main {
     border-style: solid;
 }
 
-.scanner-corner.top-left { top: -2px; left: -2px; border-width: 2.5px 0 0 2.5px; border-top-left-radius: 6px; }
-.scanner-corner.top-right { top: -2px; right: -2px; border-width: 2.5px 2.5px 0 0; border-top-right-radius: 6px; }
-.scanner-corner.bottom-left { bottom: -2px; left: -2px; border-width: 0 0 2.5px 2.5px; border-bottom-left-radius: 6px; }
-.scanner-corner.bottom-right { bottom: -2px; right: -2px; border-width: 0 2.5px 2.5px 0; border-bottom-right-radius: 6px; }
+.scanner-corner.top-left {
+    top: -2px;
+    left: -2px;
+    border-width: 2.5px 0 0 2.5px;
+    border-top-left-radius: 6px;
+}
+
+.scanner-corner.top-right {
+    top: -2px;
+    right: -2px;
+    border-width: 2.5px 2.5px 0 0;
+    border-top-right-radius: 6px;
+}
+
+.scanner-corner.bottom-left {
+    bottom: -2px;
+    left: -2px;
+    border-width: 0 0 2.5px 2.5px;
+    border-bottom-left-radius: 6px;
+}
+
+.scanner-corner.bottom-right {
+    bottom: -2px;
+    right: -2px;
+    border-width: 0 2.5px 2.5px 0;
+    border-bottom-right-radius: 6px;
+}
 
 .scanner-badge {
     position: absolute;
@@ -1755,14 +1793,16 @@ main {
     }
 
     .mobile-connect-btn span {
-        display: none; /* Icon only on mobile header */
+        display: none;
+        /* Icon only on mobile header */
     }
 
     .auth-buttons-group {
         gap: 4px;
     }
 
-    .give-btn, .action-btn {
+    .give-btn,
+    .action-btn {
         padding: 6px 10px;
         font-size: 0.75rem;
     }
@@ -1835,7 +1875,8 @@ main {
     }
 
     .hud-btn .hud-btn-text {
-        display: none; /* Hide label text on mobile to avoid overlapping */
+        display: none;
+        /* Hide label text on mobile to avoid overlapping */
     }
 
     .translation-overlay {
@@ -1918,7 +1959,8 @@ main {
     .auth-modal-overlay,
     .mobile-modal-overlay {
         padding: 10px;
-        align-items: flex-end; /* Bottom sheet style on small mobile */
+        align-items: flex-end;
+        /* Bottom sheet style on small mobile */
     }
 
     .auth-modal-card,
@@ -2339,6 +2381,7 @@ main {
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -2983,4 +3026,4 @@ main {
     .about-nav-btn {
         padding: 8px 10px;
     }
-}
+}

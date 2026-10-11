@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -86,8 +89,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .brand-header {
@@ -185,7 +195,7 @@
             background: rgba(15, 23, 42, 0.85);
         }
 
-        .input-control:focus + .input-icon,
+        .input-control:focus+.input-icon,
         .input-wrapper:focus-within i.input-icon {
             color: var(--primary);
         }
@@ -292,6 +302,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="glow-orb orb-1"></div>
     <div class="glow-orb orb-2"></div>
@@ -318,7 +329,8 @@
                 <label class="form-label" for="admin-username">ชื่อผู้ใช้หรืออีเมลผู้ดูแล</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-user input-icon"></i>
-                    <input type="text" id="admin-username" class="input-control" placeholder="admin" required autofocus autocomplete="username">
+                    <input type="text" id="admin-username" class="input-control" placeholder="admin" required autofocus
+                        autocomplete="username">
                 </div>
             </div>
 
@@ -326,7 +338,8 @@
                 <label class="form-label" for="admin-password">รหัสผ่าน</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-key input-icon"></i>
-                    <input type="password" id="admin-password" class="input-control" placeholder="••••••" required autocomplete="current-password">
+                    <input type="password" id="admin-password" class="input-control" placeholder="••••••" required
+                        autocomplete="current-password">
                     <button type="button" class="toggle-pw-btn" id="btn-toggle-pw" aria-label="Toggle Password">
                         <i class="fa-regular fa-eye"></i>
                     </button>
@@ -340,7 +353,8 @@
         </form>
 
         <div class="demo-hint">
-            <i class="fa-solid fa-circle-info"></i> บัญชีเริ่มต้น: ผู้ใช้ <code>admin</code> | รหัสผ่าน <code>123456</code>
+            <i class="fa-solid fa-circle-info"></i> บัญชีเริ่มต้น: ผู้ใช้ <code>admin</code> | รหัสผ่าน
+            <code>123456</code>
         </div>
 
         <a href="/" class="back-link">
@@ -402,4 +416,5 @@
         });
     </script>
 </body>
+
 </html>

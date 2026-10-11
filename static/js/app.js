@@ -35,6 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileHttpsTip = document.getElementById('mobile-https-tip');
     const linkSwitchHttps = document.getElementById('link-switch-https');
     const scannerHud = document.getElementById('scanner-hud');
+    const btnStreamSource = document.getElementById('btn-stream-source');
+    const streamSourceIcon = document.getElementById('stream-source-icon');
+    const streamSourceText = document.getElementById('stream-source-text');
+    const skeletonCanvas = document.getElementById('skeleton-canvas');
+    const skeletonCtx = skeletonCanvas && typeof skeletonCanvas.getContext === 'function' ? skeletonCanvas.getContext('2d') : null;
 
     // Mobile Connect Modal Elements
     const btnOpenMobileModal = document.getElementById('btn-open-mobile-modal');
@@ -50,6 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let isBackendConnected = false;
     let isCameraRunning = false;
     let currentFacingMode = 'user'; // 'user' (front) or 'environment' (back)
+    let currentStreamMode = 'client'; // 'client' or 'server'
+    let isFrameSending = false;
+    let frameCaptureInterval = null;
+    let captureCanvas = document.createElement('canvas');
+    let captureCtx = captureCanvas.getContext('2d');
     let apiInterval = null;
     let mockInterval = null;
     let localStream = null;
@@ -249,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
             clientWebcam.muted = true;
             try {
                 await clientWebcam.play();
-                if (typeof startCapture === 'function') startCapture();
             } catch (pErr) {
                 console.warn('Autoplay prevented:', pErr);
             }
@@ -258,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (scannerHud) scannerHud.style.display = 'block';
 
             const camName = facingMode === 'user' ? 'กล้องหน้า' : 'กล้องหลัง';
-            statusText.textContent = isBackendConnected ? `ONLINE (${camName})` : `LIVE (${camName})`;
+            statusText.textContent = isBackendConnected ? `AI CONNECTED (${camName})` : `LIVE (${camName})`;
             statusDot.className = 'indicator-dot active';
             statusDot.style.backgroundColor = '#10b981';
             statusDot.style.boxShadow = '0 0 8px #10b981';
@@ -266,11 +275,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnCameraPower) btnCameraPower.classList.add('active');
             if (iconCamPower) iconCamPower.className = 'fa-solid fa-video';
 
-            showToast(`เปิด${camName}สำเร็จแล้ว พร้อมตรวจจับ`);
+            showToast(`เปิด${camName}สำเร็จแล้ว เชื่อมต่อ AI TSL LSTM เรียบร้อย`);
 
             if (isBackendConnected) {
-                if (apiInterval) clearInterval(apiInterval);
-                apiInterval = setInterval(pollBackendPrediction, 250);
+                startFrameCapture();
             } else {
                 startMockPredictions();
             }
@@ -302,7 +310,10 @@ document.addEventListener('DOMContentLoaded', () => {
         stopStreamTracks();
         if (clientWebcam) clientWebcam.srcObject = null;
         isCameraRunning = false;
-        if (typeof stopCapture === 'function') stopCapture();
+        stopFrameCapture();
+        if (skeletonCtx && skeletonCanvas) {
+            skeletonCtx.clearRect(0, 0, skeletonCanvas.width, skeletonCanvas.height);
+        }
         if (apiInterval) clearInterval(apiInterval);
         if (mockInterval) clearInterval(mockInterval);
         showCameraFallback('กล้องถูกปิดอยู่', 'แตะปุ่มด้านล่างหรือไอคอนกล้องเพื่อเปิดการทำงานใหม่');
@@ -314,7 +325,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isCameraRunning) {
             stopClientWebcam();
         } else {
-            startClientWebcam(currentFacingMode);
+            if (currentStreamMode === 'server') {
+                switchStreamMode('server');
+            } else {
+                startClientWebcam(currentFacingMode);
+            }
         }
     }
 
@@ -322,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function flipCamera() {
         currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
 
-        // Add rotation animation
         if (btnFlipCam) btnFlipCam.classList.add('rotating');
         if (btnFlipCamBottom) btnFlipCamBottom.classList.add('rotating');
         setTimeout(() => {
@@ -334,9 +348,202 @@ document.addEventListener('DOMContentLoaded', () => {
         startClientWebcam(currentFacingMode);
     }
 
+    // -------------------------------------------------------------------------
+    // AI Frame Capture & Skeleton Landmark Rendering (MediaPipe TSL 150)
+    // -------------------------------------------------------------------------
+
+    // Hand connections
+    const HAND_CONNECTIONS = [
+        [0, 1], [1, 2], [2, 3], [3, 4],       // Thumb
+        [0, 5], [5, 6], [6, 7], [7, 8],       // Index
+        [0, 9], [9, 10], [10, 11], [11, 12],  // Middle
+        [0, 13], [13, 14], [14, 15], [15, 16],// Ring
+        [0, 17], [17, 18], [18, 19], [19, 20] // Pinky
+    ];
+
+    // Upper body Pose connections
+    const POSE_CONNECTIONS = [
+        [11, 12], [11, 13], [13, 15], [12, 14], [14, 16],
+        [11, 23], [12, 24], [23, 24]
+    ];
+
+    function drawSkeleton(landmarks) {
+        if (!skeletonCanvas || !skeletonCtx || !clientWebcam) return;
+
+        const w = clientWebcam.videoWidth || clientWebcam.clientWidth || 640;
+        const h = clientWebcam.videoHeight || clientWebcam.clientHeight || 480;
+
+        if (skeletonCanvas.width !== w || skeletonCanvas.height !== h) {
+            skeletonCanvas.width = w;
+            skeletonCanvas.height = h;
+        }
+
+        skeletonCtx.clearRect(0, 0, w, h);
+        if (!landmarks) return;
+
+        // Draw Pose Connections
+        if (landmarks.pose && landmarks.pose.length > 0) {
+            skeletonCtx.strokeStyle = 'rgba(99, 102, 241, 0.85)';
+            skeletonCtx.lineWidth = 3;
+            skeletonCtx.shadowColor = '#6366f1';
+            skeletonCtx.shadowBlur = 8;
+
+            for (const [startIdx, endIdx] of POSE_CONNECTIONS) {
+                const p1 = landmarks.pose[startIdx];
+                const p2 = landmarks.pose[endIdx];
+                if (p1 && p2 && (p1.v === undefined || p1.v > 0.35) && (p2.v === undefined || p2.v > 0.35)) {
+                    skeletonCtx.beginPath();
+                    skeletonCtx.moveTo(p1.x * w, p1.y * h);
+                    skeletonCtx.lineTo(p2.x * w, p2.y * h);
+                    skeletonCtx.stroke();
+                }
+            }
+
+            // Pose Joints
+            skeletonCtx.shadowBlur = 4;
+            for (let i = 11; i <= 16; i++) {
+                const p = landmarks.pose[i];
+                if (p && (p.v === undefined || p.v > 0.35)) {
+                    skeletonCtx.beginPath();
+                    skeletonCtx.arc(p.x * w, p.y * h, 4.5, 0, 2 * Math.PI);
+                    skeletonCtx.fillStyle = '#c084fc';
+                    skeletonCtx.fill();
+                }
+            }
+        }
+
+        function drawHand(points, lineColor, dotColor) {
+            if (!points || points.length === 0) return;
+            skeletonCtx.strokeStyle = lineColor;
+            skeletonCtx.lineWidth = 2.5;
+            skeletonCtx.shadowColor = lineColor;
+            skeletonCtx.shadowBlur = 6;
+
+            for (const [s, e] of HAND_CONNECTIONS) {
+                const p1 = points[s];
+                const p2 = points[e];
+                if (p1 && p2) {
+                    skeletonCtx.beginPath();
+                    skeletonCtx.moveTo(p1.x * w, p1.y * h);
+                    skeletonCtx.lineTo(p2.x * w, p2.y * h);
+                    skeletonCtx.stroke();
+                }
+            }
+
+            skeletonCtx.shadowBlur = 3;
+            for (const p of points) {
+                if (!p) continue;
+                skeletonCtx.beginPath();
+                skeletonCtx.arc(p.x * w, p.y * h, 3.5, 0, 2 * Math.PI);
+                skeletonCtx.fillStyle = dotColor;
+                skeletonCtx.fill();
+            }
+        }
+
+        // Left Hand (Cyan)
+        if (landmarks.leftHand && landmarks.leftHand.length > 0) {
+            drawHand(landmarks.leftHand, 'rgba(6, 182, 212, 0.9)', '#67e8f9');
+        }
+
+        // Right Hand (Neon Green)
+        if (landmarks.rightHand && landmarks.rightHand.length > 0) {
+            drawHand(landmarks.rightHand, 'rgba(16, 185, 129, 0.9)', '#34d399');
+        }
+    }
+
+    function startFrameCapture() {
+        if (frameCaptureInterval) clearInterval(frameCaptureInterval);
+
+        frameCaptureInterval = setInterval(async () => {
+            if (!isTranslationActive || !isCameraRunning || currentStreamMode !== 'client') return;
+            if (!clientWebcam || clientWebcam.paused || clientWebcam.ended || isFrameSending) return;
+
+            isFrameSending = true;
+            try {
+                captureCanvas.width = 480;
+                captureCanvas.height = 360;
+                captureCtx.drawImage(clientWebcam, 0, 0, captureCanvas.width, captureCanvas.height);
+                const b64 = captureCanvas.toDataURL('image/jpeg', 0.65);
+
+                const response = await fetch(`${serverUrl}/api/process_frame`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: b64 })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        updateUI(data.prediction, data.confidence, data.sentence);
+                        if (data.landmarks) {
+                            drawSkeleton(data.landmarks);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.debug("Frame processing tick skipped:", err);
+            } finally {
+                isFrameSending = false;
+            }
+        }, 100); // 10 FPS real-time
+    }
+
+    function stopFrameCapture() {
+        if (frameCaptureInterval) {
+            clearInterval(frameCaptureInterval);
+            frameCaptureInterval = null;
+        }
+        isFrameSending = false;
+    }
+
+    // Switch between Browser Webcam (Client) and OpenCV Server Stream (/video_feed)
+    function switchStreamMode(mode) {
+        currentStreamMode = mode;
+        if (mode === 'server') {
+            stopFrameCapture();
+            stopStreamTracks();
+            isCameraRunning = true;
+            if (clientWebcam) clientWebcam.style.display = 'none';
+            if (skeletonCanvas) skeletonCanvas.style.display = 'none';
+            if (flaskStream) {
+                flaskStream.src = `${serverUrl}/video_feed?t=${Date.now()}`;
+                flaskStream.style.display = 'block';
+            }
+            if (cameraFallbackScreen) cameraFallbackScreen.style.display = 'none';
+            if (scannerHud) scannerHud.style.display = 'block';
+            if (btnCameraPower) btnCameraPower.classList.add('active');
+            if (iconCamPower) iconCamPower.className = 'fa-solid fa-video';
+
+            if (streamSourceText) streamSourceText.textContent = 'กล้อง OpenCV';
+            if (streamSourceIcon) streamSourceIcon.className = 'fa-solid fa-server';
+            statusText.textContent = 'SERVER STREAM (OpenCV)';
+            statusDot.className = 'indicator-dot active';
+            statusDot.style.backgroundColor = '#6366f1';
+            statusDot.style.boxShadow = '0 0 8px #6366f1';
+
+            if (apiInterval) clearInterval(apiInterval);
+            apiInterval = setInterval(pollBackendPrediction, 250);
+
+            showToast('สลับไปยังกล้องเซิร์ฟเวอร์ OpenCV Direct เรียบร้อย');
+        } else {
+            if (flaskStream) {
+                flaskStream.src = '';
+                flaskStream.style.display = 'none';
+            }
+            if (clientWebcam) clientWebcam.style.display = 'block';
+            if (skeletonCanvas) skeletonCanvas.style.display = 'block';
+            if (streamSourceText) streamSourceText.textContent = 'กล้องเว็บ';
+            if (streamSourceIcon) streamSourceIcon.className = 'fa-solid fa-desktop';
+
+            if (apiInterval) clearInterval(apiInterval);
+            startClientWebcam(currentFacingMode);
+            showToast('สลับไปยังกล้องเบราว์เซอร์ เรียบร้อย');
+        }
+    }
+
     // Poll predictions from Flask backend
     async function pollBackendPrediction() {
-        if (!isTranslationActive || !isCameraRunning) return;
+        if (!isTranslationActive) return;
 
         try {
             const response = await fetch(`${serverUrl}/api/prediction`);
@@ -346,13 +553,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             console.error("Error polling prediction:", err);
-            isBackendConnected = false;
-            clearInterval(apiInterval);
-            startMockPredictions();
         }
     }
 
-    // Simulate predictions for Demo Mode
+    // Simulate predictions for Demo Mode (only if completely offline / local file)
     function startMockPredictions() {
         if (mockInterval) clearInterval(mockInterval);
 
@@ -361,7 +565,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mockInterval = setInterval(() => {
             if (!isTranslationActive || !isCameraRunning) return;
 
-            // 65% chance to detect something
             if (Math.random() > 0.35) {
                 const randomWord = mockWords[Math.floor(Math.random() * mockWords.length)];
                 const randomConfidence = (88 + Math.random() * 11.5).toFixed(1);
@@ -441,6 +644,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnFlipCam) btnFlipCam.addEventListener('click', flipCamera);
     if (btnFlipCamBottom) btnFlipCamBottom.addEventListener('click', flipCamera);
     if (btnCameraPower) btnCameraPower.addEventListener('click', toggleCameraPower);
+    if (btnStreamSource) {
+        btnStreamSource.addEventListener('click', () => {
+            const nextMode = currentStreamMode === 'client' ? 'server' : 'client';
+            switchStreamMode(nextMode);
+        });
+    }
     if (btnStartCamera) btnStartCamera.addEventListener('click', async () => {
         // On first camera open: also check backend connection
         if (!isBackendConnected && !isLocalFile) {
@@ -597,6 +806,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSocialGoogle = document.getElementById('btn-social-google');
     const btnSocialGithub = document.getElementById('btn-social-github');
 
+    // Supabase Client Integration
+    const SUPABASE_URL = 'https://yotvhpskwnmhupvaxenf.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_z8cNBJEv-QhG8ULD8yg63A_RdZeaXGa';
+    let supabaseClient = null;
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (e) {
+            console.warn("Supabase initialization error:", e);
+        }
+    }
+
     // Show Alert inside Auth Modal
     function showAuthAlert(message, type = 'error') {
         if (!authAlert) return;
@@ -735,6 +956,26 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('ออกจากระบบเรียบร้อยแล้ว');
         });
     }
+    //
+    function applyLoggedInUser(user) {
+        if (authButtonsGroup) authButtonsGroup.style.display = 'none';
+        if (userProfileWidget) userProfileWidget.style.display = 'block';
+
+        if (userDisplayName) userDisplayName.textContent = user.username || 'ผู้ใช้งาน';
+        if (dropdownUsername) dropdownUsername.textContent = user.username || 'ผู้ใช้งาน';
+        if (dropdownEmail) dropdownEmail.textContent = user.email || 'user@signsubs.ai';
+        console.log(user);
+
+        // --- ควบคุมการแสดงปุ่ม ADMIN ตาม Role ---
+        const adminMenuItem = document.getElementById('admin-menu-item');
+        if (adminMenuItem) {
+            if (user.role === 'admin') {
+                adminMenuItem.style.display = 'flex'; // หรือ 'block' ตามดีไซน์เดิมของคุณ
+            } else {
+                adminMenuItem.style.display = 'none'; // ซ่อนถ้าไม่ใช่แอดมิน
+            }
+        }
+    }
 
     // Handle Login Submit
     if (formLogin) {
@@ -757,14 +998,39 @@ document.addEventListener('DOMContentLoaded', () => {
             let loginSuccess = false;
             let loggedInUserData = null;
 
-            // Attempt Backend Login if not local file
-            if (!isLocalFile) {
+            // Attempt Supabase Login first if available
+            if (supabaseClient) {
                 try {
-                    const res = await fetch(`${serverUrl}/api/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: usernameInput, password: passwordInput })
-                    });
+                    const { data: supaUsers, error: supaErr } = await supabaseClient
+                        .from('users')
+                        .select('*')
+                        .or(`username.eq.${usernameInput},email.eq.${usernameInput}`)
+                        .eq('password', passwordInput)
+                        .limit(1);
+
+                    if (!supaErr && supaUsers && supaUsers.length > 0) {
+                        loginSuccess = true;
+                        loggedInUserData = {
+                            username: supaUsers[0].username || usernameInput,
+                            email: supaUsers[0].email || (usernameInput.includes('@') ? usernameInput : `${usernameInput}@signsubs.ai`),
+                            role: supaUsers[0].role || 'user'
+                        };
+                    }
+                } catch (sbLoginErr) {
+                    console.warn("Supabase login query skipped:", sbLoginErr);
+                }
+            }
+
+            // Attempt Backend Login if not authenticated via Supabase and not local file
+            if (!loginSuccess && !isLocalFile) {
+                try {
+                    // ตรวจสอบสถานะการเข้าสู่ระบบผ่าน Supabase
+                    if (!loginSuccess) {
+                        showAuthAlert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right"></i>';
+                        return;
+                    }
                     const data = await res.json();
                     if (res.ok && data.success) {
                         loginSuccess = true;
@@ -783,9 +1049,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fallback: Local Authentication (Mock / Frontend mode)
             if (!loginSuccess) {
                 const storedUsers = JSON.parse(localStorage.getItem('signsubs_users') || '[]');
-                const foundUser = storedUsers.find(u => 
-                    (u.username.toLowerCase() === usernameInput.toLowerCase() || 
-                     u.email.toLowerCase() === usernameInput.toLowerCase()) && 
+                const foundUser = storedUsers.find(u =>
+                    (u.username.toLowerCase() === usernameInput.toLowerCase() ||
+                        u.email.toLowerCase() === usernameInput.toLowerCase()) &&
                     u.password === passwordInput
                 );
 
@@ -857,34 +1123,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let regSuccess = false;
             let newUser = { username, email };
+            let supabaseRegistered = false;
 
-            if (!isLocalFile) {
+            // 1. Supabase Registration (จัดการบันทึกข้อมูลผู้ใช้ทั้งหมดที่นี่)
+            if (supabaseClient) {
                 try {
-                    const res = await fetch(`${serverUrl}/api/register`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, email, password })
-                    });
-                    const data = await res.json();
-                    if (res.ok && data.success) {
-                        regSuccess = true;
-                        newUser = data.user || newUser;
-                    } else {
-                        showAuthAlert(data.message || 'ไม่สามารถสมัครสมาชิกได้');
+                    const { data: sbData, error: sbError } = await supabaseClient
+                        .from('users')
+                        .insert([{ username, email, password }]);
+
+                    if (sbError) {
+                        console.error('Supabase registration error:', sbError);
+                        if (sbError.code === '23505' || (sbError.message && sbError.message.toLowerCase().includes('duplicate'))) {
+                            showAuthAlert('ชื่อผู้ใช้หรืออีเมลนี้มีอยู่ในระบบ Supabase แล้ว');
+                        } else {
+                            showAuthAlert('เกิดข้อผิดพลาด: ' + sbError.message);
+                        }
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
                         return;
+                    } else {
+                        // สมัครสมาชิกสำเร็จ
+                        regSuccess = true;
+                        window.location.href = 'index.html';
                     }
-                } catch (err) {
-                    console.log("Backend register unavailable, saving locally:", err);
+                } catch (sbErr) {
+                    console.error("Supabase registration exception:", sbErr);
+                    showAuthAlert('เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
                 }
+            } else {
+                showAuthAlert('ไม่พบการเชื่อมต่อฐานข้อมูล Supabase');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
             }
 
-            // Local fallback registration
+            // 3. Fallback: Local storage
             if (!regSuccess) {
                 const storedUsers = JSON.parse(localStorage.getItem('signsubs_users') || '[]');
                 const exists = storedUsers.some(u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === email.toLowerCase());
-                
+
                 if (exists) {
                     showAuthAlert('ชื่อผู้ใช้หรืออีเมลนี้มีอยู่ในระบบแล้ว');
                     submitBtn.disabled = false;
@@ -1171,7 +1450,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cameraCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         if (!isCameraRunning) {
-            startClientCamera(currentFacingMode);
+            startClientWebcam(currentFacingMode);
         } else {
             showToast('กล้องกำลังทำงานอยู่แล้ว พร้อมตรวจจับภาษามือ');
         }

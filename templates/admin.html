@@ -8,7 +8,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js for Analytics -->
@@ -222,7 +224,8 @@
                     <div class="stat-card">
                         <div class="stat-info-left">
                             <span class="stat-label">สถานะ AI Engine</span>
-                            <span class="stat-value" id="stat-ai-status" style="font-size: 1.5rem; color: var(--accent-cyan);">Online</span>
+                            <span class="stat-value" id="stat-ai-status"
+                                style="font-size: 1.5rem; color: var(--accent-cyan);">Online</span>
                             <span class="stat-subtext">
                                 <i class="fa-solid fa-microchip"></i>
                                 <span id="stat-ai-device">MediaPipe + Bi-LSTM (CPU)</span>
@@ -308,7 +311,8 @@
                             <h2 class="card-widget-title">
                                 <i class="fa-solid fa-bolt-lightning"></i> ประวัติการแปลล่าสุด (Live Feed)
                             </h2>
-                            <button class="btn-topbar-action" onclick="adminSwitchView('translations')">ดูทั้งหมด</button>
+                            <button class="btn-topbar-action"
+                                onclick="adminSwitchView('translations')">ดูทั้งหมด</button>
                         </div>
                         <div class="card-widget-body" style="padding: 0;">
                             <div class="table-responsive" style="border: none; border-radius: 0; box-shadow: none;">
@@ -340,23 +344,29 @@
                         <div class="card-widget-body">
                             <div class="server-info-list" id="server-info-details">
                                 <div class="server-info-row">
-                                    <span class="server-info-label"><i class="fa-brands fa-python"></i> Python Runtime</span>
+                                    <span class="server-info-label"><i class="fa-brands fa-python"></i> Python
+                                        Runtime</span>
                                     <span class="server-info-val" id="spec-python">Python 3.x</span>
                                 </div>
                                 <div class="server-info-row">
-                                    <span class="server-info-label"><i class="fa-solid fa-network-wired"></i> Local LAN IP</span>
+                                    <span class="server-info-label"><i class="fa-solid fa-network-wired"></i> Local LAN
+                                        IP</span>
                                     <span class="server-info-val" id="spec-lan-ip">127.0.0.1:5000</span>
                                 </div>
                                 <div class="server-info-row">
-                                    <span class="server-info-label"><i class="fa-solid fa-lock"></i> SSL Certificate</span>
-                                    <span class="server-info-val" id="spec-ssl" style="color: var(--accent-green);">Active (HTTPS)</span>
+                                    <span class="server-info-label"><i class="fa-solid fa-lock"></i> SSL
+                                        Certificate</span>
+                                    <span class="server-info-val" id="spec-ssl"
+                                        style="color: var(--accent-green);">Active (HTTPS)</span>
                                 </div>
                                 <div class="server-info-row">
-                                    <span class="server-info-label"><i class="fa-solid fa-database"></i> Database Engine</span>
+                                    <span class="server-info-label"><i class="fa-solid fa-database"></i> Database
+                                        Engine</span>
                                     <span class="server-info-val" id="spec-db">SQLite 3 (signsubs.db)</span>
                                 </div>
                                 <div class="server-info-row">
-                                    <span class="server-info-label"><i class="fa-solid fa-brain"></i> AI Architecture</span>
+                                    <span class="server-info-label"><i class="fa-solid fa-brain"></i> AI
+                                        Architecture</span>
                                     <span class="server-info-val" id="spec-ai-arch">Bi-LSTM (126 Keypoints)</span>
                                 </div>
                             </div>
@@ -373,7 +383,8 @@
                     <div class="toolbar-search-group">
                         <div class="search-input-box">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="users-search-input" class="search-control" placeholder="ค้นหาชื่อผู้ใช้ หรือ อีเมล...">
+                            <input type="text" id="users-search-input" class="search-control"
+                                placeholder="ค้นหาชื่อผู้ใช้ หรือ อีเมล...">
                         </div>
                     </div>
                     <div class="toolbar-filters">
@@ -421,7 +432,8 @@
                     <div class="toolbar-search-group">
                         <div class="search-input-box">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="gestures-search-input" class="search-control" placeholder="ค้นหาคีย์, คำแปลไทย, ภาษาอังกฤษ...">
+                            <input type="text" id="gestures-search-input" class="search-control"
+                                placeholder="ค้นหาคีย์, คำแปลไทย, ภาษาอังกฤษ...">
                         </div>
                     </div>
                     <div class="toolbar-filters">
@@ -469,7 +481,8 @@
                     <div class="toolbar-search-group">
                         <div class="search-input-box">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="translations-search-input" class="search-control" placeholder="ค้นหาคำศัพท์ หรือ ผู้ใช้งาน...">
+                            <input type="text" id="translations-search-input" class="search-control"
+                                placeholder="ค้นหาคำศัพท์ หรือ ผู้ใช้งาน...">
                         </div>
                     </div>
                     <div class="toolbar-filters">
@@ -510,7 +523,8 @@
                     <div class="toolbar-search-group">
                         <div class="search-input-box">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="logs-search-input" class="search-control" placeholder="ค้นหากิจกรรม, ผู้ดำเนินการ, IP...">
+                            <input type="text" id="logs-search-input" class="search-control"
+                                placeholder="ค้นหากิจกรรม, ผู้ดำเนินการ, IP...">
                         </div>
                     </div>
                     <div class="toolbar-filters">
@@ -553,10 +567,11 @@
                             <!-- Confidence Threshold -->
                             <div class="form-field">
                                 <label class="form-label" for="setting-threshold">
-                                    เกณฑ์ความแม่นยำขั้นต่ำของ AI (Confidence Threshold) : 
+                                    เกณฑ์ความแม่นยำขั้นต่ำของ AI (Confidence Threshold) :
                                     <strong id="threshold-val-display" style="color: var(--accent-cyan);">75%</strong>
                                 </label>
-                                <input type="range" id="setting-threshold" min="50" max="99" value="75" style="width: 100%; accent-color: var(--primary);">
+                                <input type="range" id="setting-threshold" min="50" max="99" value="75"
+                                    style="width: 100%; accent-color: var(--primary);">
                                 <span style="font-size: 0.78rem; color: var(--text-tertiary);">
                                     หาก AI คำนวณความมั่นใจได้ต่ำกว่าค่านี้ จะไม่นำมาแสดงผลเป็นคำแปล
                                 </span>
@@ -567,36 +582,47 @@
                             <!-- Allow Registration -->
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
-                                    <div style="font-weight: 600; color: #fff;">อนุญาตให้ผู้ใช้ใหม่สมัครสมาชิก (Allow Registration)</div>
-                                    <div style="font-size: 0.8rem; color: var(--text-tertiary);">เปิดหรือปิดฟอร์มลงทะเบียนสมาชิกใหม่บนหน้าเว็บ</div>
+                                    <div style="font-weight: 600; color: #fff;">อนุญาตให้ผู้ใช้ใหม่สมัครสมาชิก (Allow
+                                        Registration)</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-tertiary);">
+                                        เปิดหรือปิดฟอร์มลงทะเบียนสมาชิกใหม่บนหน้าเว็บ</div>
                                 </div>
-                                <input type="checkbox" id="setting-allow-reg" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                <input type="checkbox" id="setting-allow-reg" checked
+                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
                             </div>
 
                             <!-- Allow Guest Translation -->
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
-                                    <div style="font-weight: 600; color: #fff;">อนุญาตให้ผู้เยี่ยมชมใช้งานกล้องแปล (Allow Guest Translation)</div>
-                                    <div style="font-size: 0.8rem; color: var(--text-tertiary);">อนุญาตให้บุคคลทั่วไปที่ไม่ได้ล็อกอินใช้งานระบบแปลได้</div>
+                                    <div style="font-weight: 600; color: #fff;">อนุญาตให้ผู้เยี่ยมชมใช้งานกล้องแปล
+                                        (Allow Guest Translation)</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-tertiary);">
+                                        อนุญาตให้บุคคลทั่วไปที่ไม่ได้ล็อกอินใช้งานระบบแปลได้</div>
                                 </div>
-                                <input type="checkbox" id="setting-allow-guest" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                <input type="checkbox" id="setting-allow-guest" checked
+                                    style="width: 20px; height: 20px; accent-color: var(--primary);">
                             </div>
 
                             <!-- Maintenance Mode -->
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
-                                    <div style="font-weight: 600; color: #fff;">โหมดปิดปรับปรุงระบบ (Maintenance Mode)</div>
-                                    <div style="font-size: 0.8rem; color: var(--accent-yellow);">พักการใช้งานระบบหน้าเว็บชั่วคราว</div>
+                                    <div style="font-weight: 600; color: #fff;">โหมดปิดปรับปรุงระบบ (Maintenance Mode)
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: var(--accent-yellow);">
+                                        พักการใช้งานระบบหน้าเว็บชั่วคราว</div>
                                 </div>
-                                <input type="checkbox" id="setting-maintenance" style="width: 20px; height: 20px; accent-color: var(--accent-red);">
+                                <input type="checkbox" id="setting-maintenance"
+                                    style="width: 20px; height: 20px; accent-color: var(--accent-red);">
                             </div>
 
                             <hr style="border-color: var(--border-color);">
 
                             <!-- Announcement Text -->
                             <div class="form-field">
-                                <label class="form-label" for="setting-announcement">ข้อความประกาศบนเว็บไซต์ (Announcement Banner)</label>
-                                <textarea id="setting-announcement" class="form-textarea" placeholder="พิมพ์ข้อความประกาศที่นี่...">ยินดีต้อนรับสู่ระบบ SignSubs อัปเดตโมเดล Bi-LSTM เวอร์ชั่นล่าสุดเรียบร้อยแล้ว</textarea>
+                                <label class="form-label" for="setting-announcement">ข้อความประกาศบนเว็บไซต์
+                                    (Announcement Banner)</label>
+                                <textarea id="setting-announcement" class="form-textarea"
+                                    placeholder="พิมพ์ข้อความประกาศที่นี่...">ยินดีต้อนรับสู่ระบบ SignSubs อัปเดตโมเดล Bi-LSTM เวอร์ชั่นล่าสุดเรียบร้อยแล้ว</textarea>
                             </div>
 
                             <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
@@ -630,16 +656,20 @@
                 <div class="modal-body">
                     <div class="form-field">
                         <label class="form-label">ชื่อผู้ใช้ (Username)</label>
-                        <input type="text" id="user-form-username" class="form-input" required placeholder="เช่น john_doe">
+                        <input type="text" id="user-form-username" class="form-input" required
+                            placeholder="เช่น john_doe">
                     </div>
                     <div class="form-field">
                         <label class="form-label">อีเมล (Email)</label>
-                        <input type="email" id="user-form-email" class="form-input" required placeholder="john@example.com">
+                        <input type="email" id="user-form-email" class="form-input" required
+                            placeholder="john@example.com">
                     </div>
                     <div class="form-field" id="user-password-group">
                         <label class="form-label">รหัสผ่าน (Password)</label>
-                        <input type="password" id="user-form-password" class="form-input" placeholder="อย่างน้อย 6 ตัวอักษร">
-                        <span style="font-size: 0.75rem; color: var(--text-tertiary);" id="user-password-hint">เว้นว่างไว้หากไม่ต้องการแก้ไขรหัสผ่าน</span>
+                        <input type="password" id="user-form-password" class="form-input"
+                            placeholder="อย่างน้อย 6 ตัวอักษร">
+                        <span style="font-size: 0.75rem; color: var(--text-tertiary);"
+                            id="user-password-hint">เว้นว่างไว้หากไม่ต้องการแก้ไขรหัสผ่าน</span>
                     </div>
                     <div class="form-field">
                         <label class="form-label">บทบาท (Role)</label>
@@ -680,15 +710,18 @@
                 <div class="modal-body">
                     <div class="form-field">
                         <label class="form-label">รหัสคีย์ (Code / Key)</label>
-                        <input type="text" id="gesture-form-key" class="form-input" required placeholder="เช่น 1, hello, thankyou">
+                        <input type="text" id="gesture-form-key" class="form-input" required
+                            placeholder="เช่น 1, hello, thankyou">
                     </div>
                     <div class="form-field">
                         <label class="form-label">คำแปลภาษาไทย (Thai Name)</label>
-                        <input type="text" id="gesture-form-name-th" class="form-input" required placeholder="เช่น สวัสดี, ขอบคุณ">
+                        <input type="text" id="gesture-form-name-th" class="form-input" required
+                            placeholder="เช่น สวัสดี, ขอบคุณ">
                     </div>
                     <div class="form-field">
                         <label class="form-label">ภาษาอังกฤษ (English Name)</label>
-                        <input type="text" id="gesture-form-name-en" class="form-input" required placeholder="เช่น Hello, Thank you">
+                        <input type="text" id="gesture-form-name-en" class="form-input" required
+                            placeholder="เช่น Hello, Thank you">
                     </div>
                     <div class="form-field">
                         <label class="form-label">หมวดหมู่ (Category)</label>
@@ -711,7 +744,8 @@
                     </div>
                     <div class="form-field">
                         <label class="form-label">คำอธิบายท่าทาง (Description)</label>
-                        <textarea id="gesture-form-desc" class="form-textarea" placeholder="วิธีทำท่าทางภาษามือนี้..."></textarea>
+                        <textarea id="gesture-form-desc" class="form-textarea"
+                            placeholder="วิธีทำท่าทางภาษามือนี้..."></textarea>
                     </div>
                     <div class="form-field">
                         <label class="form-label">สถานะใช้งาน</label>
@@ -737,4 +771,5 @@
     <!-- Admin Logic JavaScript -->
     <script src="../static/js/admin.js"></script>
 </body>
+
 </html>

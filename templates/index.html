@@ -30,10 +30,13 @@
         <nav aria-label="Main Navigation">
             <ul class="nav-links">
                 <li><a href="javascript:void(0)" id="nav-about"><i class="fa-solid fa-circle-info"></i> About</a></li>
-                <li><a href="javascript:void(0)" id="nav-services"><i class="fa-solid fa-layer-group"></i> Services</a></li>
+                <li><a href="javascript:void(0)" id="nav-services"><i class="fa-solid fa-layer-group"></i> Services</a>
+                </li>
                 <li><a href="javascript:void(0)" id="nav-tech"><i class="fa-solid fa-brain"></i> AI Tech</a></li>
-                <li><a href="javascript:void(0)" id="nav-gestures"><i class="fa-solid fa-hands-asl-interpreting"></i> Gestures</a></li>
-                <li><a href="javascript:void(0)" id="nav-contact"><i class="fa-solid fa-address-book"></i> Contact</a></li>
+                <li><a href="javascript:void(0)" id="nav-gestures"><i class="fa-solid fa-hands-asl-interpreting"></i>
+                        Gestures</a></li>
+                <li><a href="javascript:void(0)" id="nav-contact"><i class="fa-solid fa-address-book"></i> Contact</a>
+                </li>
             </ul>
         </nav>
         <div class="header-actions">
@@ -41,7 +44,8 @@
                 <i class="fa-solid fa-circle-question"></i>
                 <span class="btn-text">เกี่ยวกับเว็บ</span>
             </button>
-            <button class="phone-btn" id="btn-phone" title="ช่วยเหลือ & ติดต่อเรา" aria-label="Help & Contact"><i class="fa-solid fa-headset"></i></button>
+            <button class="phone-btn" id="btn-phone" title="ช่วยเหลือ & ติดต่อเรา" aria-label="Help & Contact"><i
+                    class="fa-solid fa-headset"></i></button>
 
             <!-- Logged-out buttons -->
             <div class="auth-buttons-group" id="auth-buttons-group">
@@ -68,6 +72,9 @@
                         ข้อมูลโปรไฟล์</a>
                     <a href="#" class="dropdown-item" id="menu-history"><i class="fa-solid fa-clock-rotate-left"></i>
                         ประวัติการแปล</a>
+                    <a href="admin_login.html" class="dropdown-item" id="admin-menu-item"><i
+                            class="fa-solid fa-unlock"></i>
+                        เข้าระบบ ADMIN</a>
                     <div class="dropdown-divider"></div>
                     <button class="dropdown-item logout-item" id="btn-logout"><i
                             class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>
@@ -84,9 +91,11 @@
                 <span class="badge-dot"></span>
                 <span>AI Real-time Sign Language Translator</span>
             </div>
-            <h2 id="hero-title">Welcome to a world without sound—connecting every heart through seamless sign language.</h2>
+            <h2 id="hero-title">Welcome to a world without sound—connecting every heart through seamless sign language.
+            </h2>
             <p class="subtitle" id="hero-sub">
-                ยินดีต้อนรับสู่โลกไร้เสียง เปลี่ยนภาษามือให้เป็นความเข้าใจ เติมเต็มทุกการสื่อสารได้อย่างลงตัวด้วยเทคโนโลยี AI อัจฉริยะ
+                ยินดีต้อนรับสู่โลกไร้เสียง เปลี่ยนภาษามือให้เป็นความเข้าใจ
+                เติมเต็มทุกการสื่อสารได้อย่างลงตัวด้วยเทคโนโลยี AI อัจฉริยะ
             </p>
 
             <div class="hero-cta-group">
@@ -100,7 +109,8 @@
 
             <div class="info-cards">
                 <!-- AI Engine Tech Card -->
-                <article class="info-card interactive-card" id="card-ai-tech" role="button" tabindex="0" title="คลิกเพื่ออ่านการทำงานของ AI">
+                <article class="info-card interactive-card" id="card-ai-tech" role="button" tabindex="0"
+                    title="คลิกเพื่ออ่านการทำงานของ AI">
                     <span class="card-tag"><i class="fa-solid fa-microchip"></i> AI Engine</span>
                     <h3>Bi-LSTM + MediaPipe</h3>
                     <p>ตรวจจับจุดข้อต่อ 126 มิติ เรียลไทม์ ความแม่นยำ 90%+</p>
@@ -108,7 +118,8 @@
                 </article>
 
                 <!-- Smart Features Card -->
-                <article class="info-card interactive-card" id="card-features" role="button" tabindex="0" title="คลิกเพื่อดูบริการและฟีเจอร์ทั้งหมด">
+                <article class="info-card interactive-card" id="card-features" role="button" tabindex="0"
+                    title="คลิกเพื่อดูบริการและฟีเจอร์ทั้งหมด">
                     <span class="card-tag"><i class="fa-solid fa-sparkles"></i> Features</span>
                     <h3>เสียงพูด & สะสมประโยค</h3>
                     <p>แปลงภาษามือเป็นเสียงไทย สลับกล้องมือถือได้</p>
@@ -131,6 +142,11 @@
 
                     <!-- Action Controls (Right) -->
                     <div class="hud-actions-group">
+                        <button class="hud-btn" id="btn-stream-source"
+                            title="สลับโหมด: กล้องเบราว์เซอร์ / เซิร์ฟเวอร์ OpenCV Direct">
+                            <i class="fa-solid fa-desktop" id="stream-source-icon"></i>
+                            <span class="hud-btn-text" id="stream-source-text">กล้องเว็บ</span>
+                        </button>
                         <button class="hud-btn" id="btn-flip-cam" title="สลับกล้องหน้า/หลัง (สำหรับมือถือ)">
                             <i class="fa-solid fa-camera-rotate"></i>
                             <span class="hud-btn-text">สลับกล้อง</span>
@@ -152,6 +168,9 @@
                 <div class="video-container" id="video-container">
                     <!-- HTML5 Video element for Client webcam & Phone Camera -->
                     <video id="client-webcam" class="webcam-video" autoplay playsinline muted></video>
+
+                    <!-- Transparent Skeleton & Landmarks Overlay Canvas -->
+                    <canvas id="skeleton-canvas" class="skeleton-canvas"></canvas>
 
                     <!-- Stream Image fallback if backend streaming is active -->
                     <img id="flask-stream" class="webcam-stream" src="" alt="Live sign language stream"
@@ -406,18 +425,22 @@
                         <i class="fa-solid fa-hands-asl-interpreting"></i>
                     </div>
                     <div class="about-header-info">
-                        <div class="about-tag"><i class="fa-solid fa-sparkles"></i> เกี่ยวกับเว็บของเรา • About SignSubs</div>
+                        <div class="about-tag"><i class="fa-solid fa-sparkles"></i> เกี่ยวกับเว็บของเรา • About SignSubs
+                        </div>
                         <h2 id="about-modal-title">SignSubs — ระบบแปลภาษามืออัจฉริยะ</h2>
-                        <p id="about-modal-subtitle">AI Real-time Thai Sign Language Translator เชื่อมโยงทุกการสื่อสารอย่างไร้รอยต่อ</p>
+                        <p id="about-modal-subtitle">AI Real-time Thai Sign Language Translator
+                            เชื่อมโยงทุกการสื่อสารอย่างไร้รอยต่อ</p>
                     </div>
                 </div>
 
                 <!-- Tab Navigation Buttons -->
                 <div class="about-tabs" role="tablist">
-                    <button type="button" class="about-tab-btn active" data-tab="tab-overview" role="tab" id="about-btn-overview">
+                    <button type="button" class="about-tab-btn active" data-tab="tab-overview" role="tab"
+                        id="about-btn-overview">
                         <i class="fa-solid fa-circle-info"></i> <span>ภาพรวมเว็บ</span>
                     </button>
-                    <button type="button" class="about-tab-btn" data-tab="tab-services" role="tab" id="about-btn-services">
+                    <button type="button" class="about-tab-btn" data-tab="tab-services" role="tab"
+                        id="about-btn-services">
                         <i class="fa-solid fa-layer-group"></i> <span>ฟังก์ชัน & บริการ</span>
                     </button>
                     <button type="button" class="about-tab-btn" data-tab="tab-tech" role="tab" id="about-btn-tech">
@@ -426,7 +449,8 @@
                     <button type="button" class="about-tab-btn" data-tab="tab-guide" role="tab" id="about-btn-guide">
                         <i class="fa-solid fa-book-open"></i> <span>วิธีใช้งาน & ท่าทาง</span>
                     </button>
-                    <button type="button" class="about-tab-btn" data-tab="tab-contact" role="tab" id="about-btn-contact">
+                    <button type="button" class="about-tab-btn" data-tab="tab-contact" role="tab"
+                        id="about-btn-contact">
                         <i class="fa-solid fa-address-book"></i> <span>ผู้พัฒนา & ติดต่อ</span>
                     </button>
                 </div>
@@ -439,8 +463,12 @@
                     <!-- Hero Banner -->
                     <div class="about-hero-box">
                         <div class="about-hero-text">
-                            <h3><i class="fa-solid fa-quote-left"></i> เชื่อมต่อทุกหัวใจ... ให้โลกไร้เสียงเข้าใจกันได้อย่างแท้จริง</h3>
-                            <p><strong>SignSubs</strong> คือเว็บแอปพลิเคชันระบบปัญญาประดิษฐ์ (AI) ที่พัฒนาขึ้นเพื่อทลายอุปสรรคในการสื่อสารระหว่างผู้บกพร่องทางการได้ยินและคนทั่วไป โดยแปลงการเคลื่อนไหวมือและท่าทางภาษามือ (Thai Sign Language) ให้เป็นข้อความและเสียงพูดภาษาไทยแบบทันที (Real-time)</p>
+                            <h3><i class="fa-solid fa-quote-left"></i> เชื่อมต่อทุกหัวใจ...
+                                ให้โลกไร้เสียงเข้าใจกันได้อย่างแท้จริง</h3>
+                            <p><strong>SignSubs</strong> คือเว็บแอปพลิเคชันระบบปัญญาประดิษฐ์ (AI)
+                                ที่พัฒนาขึ้นเพื่อทลายอุปสรรคในการสื่อสารระหว่างผู้บกพร่องทางการได้ยินและคนทั่วไป
+                                โดยแปลงการเคลื่อนไหวมือและท่าทางภาษามือ (Thai Sign Language)
+                                ให้เป็นข้อความและเสียงพูดภาษาไทยแบบทันที (Real-time)</p>
                         </div>
                     </div>
 
@@ -449,17 +477,20 @@
                         <div class="about-feature-box">
                             <div class="about-icon-pill"><i class="fa-solid fa-universal-access"></i></div>
                             <h4>เข้าถึงได้ทันที (Accessibility)</h4>
-                            <p>ใช้งานผ่านเว็บบราวเซอร์ได้โดยตรงบนทุกอุปกรณ์ ทั้งคอมพิวเตอร์ แท็บเล็ต และสมาร์ตโฟน ไม่จำเป็นต้องติดตั้งแอปพลิเคชันหรือฮาร์ดแวร์พิเศษราคาแพง</p>
+                            <p>ใช้งานผ่านเว็บบราวเซอร์ได้โดยตรงบนทุกอุปกรณ์ ทั้งคอมพิวเตอร์ แท็บเล็ต และสมาร์ตโฟน
+                                ไม่จำเป็นต้องติดตั้งแอปพลิเคชันหรือฮาร์ดแวร์พิเศษราคาแพง</p>
                         </div>
                         <div class="about-feature-box">
                             <div class="about-icon-pill"><i class="fa-solid fa-bolt"></i></div>
                             <h4>ประมวลผลเรียลไทม์ (Real-time)</h4>
-                            <p>ตอบสนองรวดเร็วระดับมิลลิวินาที พร้อมอัลกอริทึมกรองความเสถียรเพื่อป้องกันการแปลผิดพลาด ให้การสนทนาลื่นไหลเหมือนพูดคุยต่อหน้า</p>
+                            <p>ตอบสนองรวดเร็วระดับมิลลิวินาที พร้อมอัลกอริทึมกรองความเสถียรเพื่อป้องกันการแปลผิดพลาด
+                                ให้การสนทนาลื่นไหลเหมือนพูดคุยต่อหน้า</p>
                         </div>
                         <div class="about-feature-box">
                             <div class="about-icon-pill"><i class="fa-solid fa-volume-high"></i></div>
                             <h4>สื่อสารสองทาง (Two-way Audio)</h4>
-                            <p>มีระบบอ่านออกเสียงภาษาไทย (Text-to-Speech) ในตัว ช่วยให้ผู้ร่วมสนทนาที่ไม่ได้จ้องหน้าจอสามารถได้ยินข้อความแปลได้ทันที</p>
+                            <p>มีระบบอ่านออกเสียงภาษาไทย (Text-to-Speech) ในตัว
+                                ช่วยให้ผู้ร่วมสนทนาที่ไม่ได้จ้องหน้าจอสามารถได้ยินข้อความแปลได้ทันที</p>
                         </div>
                     </div>
 
@@ -496,7 +527,8 @@
                             <div class="service-icon"><i class="fa-solid fa-video"></i></div>
                             <div class="service-content">
                                 <h4>1. กล้องสดตรวจจับภาษามือ (Live Translation)</h4>
-                                <p>ตรวจจับและวิเคราะห์ท่าทางภาษามือผ่านกล้องเว็บแคม แสดงผลคำที่ตรวจพบพร้อมแถบเปอร์เซ็นต์ความเชื่อมั่น (Confidence Score) ทันที</p>
+                                <p>ตรวจจับและวิเคราะห์ท่าทางภาษามือผ่านกล้องเว็บแคม
+                                    แสดงผลคำที่ตรวจพบพร้อมแถบเปอร์เซ็นต์ความเชื่อมั่น (Confidence Score) ทันที</p>
                             </div>
                         </div>
 
@@ -504,7 +536,8 @@
                             <div class="service-icon"><i class="fa-solid fa-bullhorn"></i></div>
                             <div class="service-content">
                                 <h4>2. ระบบอ่านเสียงภาษาไทย (Thai Text-to-Speech)</h4>
-                                <p>แปลงข้อความประโยคที่สะสมได้ให้กลายเป็นเสียงพูดภาษาไทยที่ฟังชัดเป็นธรรมชาติเพียงแตะปุ่ม "อ่านเสียง" หรือเปิดโหมดอ่านอัตโนมัติ</p>
+                                <p>แปลงข้อความประโยคที่สะสมได้ให้กลายเป็นเสียงพูดภาษาไทยที่ฟังชัดเป็นธรรมชาติเพียงแตะปุ่ม
+                                    "อ่านเสียง" หรือเปิดโหมดอ่านอัตโนมัติ</p>
                             </div>
                         </div>
 
@@ -512,7 +545,8 @@
                             <div class="service-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
                             <div class="service-content">
                                 <h4>3. รองรับสมาร์ตโฟน & สลับกล้องหน้า/หลัง</h4>
-                                <p>ใช้งานบนมือถือได้อย่างสะดวก มีปุ่มสลับกล้องหน้า (Selfie) และกล้องหลัง เหมาะสำหรับให้ผู้ใช้แปลตนเองหรือหันกล้องไปแปลผู้อื่น</p>
+                                <p>ใช้งานบนมือถือได้อย่างสะดวก มีปุ่มสลับกล้องหน้า (Selfie) และกล้องหลัง
+                                    เหมาะสำหรับให้ผู้ใช้แปลตนเองหรือหันกล้องไปแปลผู้อื่น</p>
                             </div>
                         </div>
 
@@ -520,7 +554,8 @@
                             <div class="service-icon"><i class="fa-solid fa-spell-check"></i></div>
                             <div class="service-content">
                                 <h4>4. ระบบสะสมประโยค (Smart Sentence Builder)</h4>
-                                <p>รวบรวมคำศัพท์ต่อเนื่องเป็นข้อความประโยคที่ยาวขึ้น พร้อมเครื่องมือควบคุม: ปุ่ม "ลบคำล่าสุด" และปุ่ม "ล้างประโยคทั้งหมด"</p>
+                                <p>รวบรวมคำศัพท์ต่อเนื่องเป็นข้อความประโยคที่ยาวขึ้น พร้อมเครื่องมือควบคุม: ปุ่ม
+                                    "ลบคำล่าสุด" และปุ่ม "ล้างประโยคทั้งหมด"</p>
                             </div>
                         </div>
 
@@ -528,7 +563,8 @@
                             <div class="service-icon"><i class="fa-solid fa-crosshairs"></i></div>
                             <div class="service-content">
                                 <h4>5. Cyberpunk HUD Scanning Reticle</h4>
-                                <p>กรอบเลเซอร์นำสายตาแบบ Futuristic HUD ช่วยให้ผู้ใช้จัดวางตำแหน่งมือให้อยู่ในจุดโฟกัสที่ดีที่สุดสำหรับ AI</p>
+                                <p>กรอบเลเซอร์นำสายตาแบบ Futuristic HUD
+                                    ช่วยให้ผู้ใช้จัดวางตำแหน่งมือให้อยู่ในจุดโฟกัสที่ดีที่สุดสำหรับ AI</p>
                             </div>
                         </div>
 
@@ -536,7 +572,8 @@
                             <div class="service-icon"><i class="fa-solid fa-user-shield"></i></div>
                             <div class="service-content">
                                 <h4>6. ระบบสมาชิก & บันทึกประวัติส่วนตัว</h4>
-                                <p>สมัครสมาชิกและเข้าสู่ระบบเพื่อจัดเก็บสถิติการใช้งาน บันทึกประวัติการแปลย้อนหลัง และปรับแต่งการใช้งานเฉพาะบุคคล</p>
+                                <p>สมัครสมาชิกและเข้าสู่ระบบเพื่อจัดเก็บสถิติการใช้งาน บันทึกประวัติการแปลย้อนหลัง
+                                    และปรับแต่งการใช้งานเฉพาะบุคคล</p>
                             </div>
                         </div>
                     </div>
@@ -555,7 +592,9 @@
                             <div class="step-badge">01</div>
                             <div class="step-body">
                                 <h4><i class="fa-solid fa-hand"></i> MediaPipe Hands — ตรวจจับข้อต่อ 3 มิติ</h4>
-                                <p>ระบบสกัดจุดเชื่อมต่อ (Landmarks) บนมือข้างละ 21 จุด แต่ละจุดมีพิกัด 3 มิติ (x, y, z) รวม 126 มิติข้อมูลต่อเฟรม ช่วยลดขนาดข้อมูลภาพและตัดสิ่งรบกวนจากพื้นหลังได้อย่างมีประสิทธิภาพ</p>
+                                <p>ระบบสกัดจุดเชื่อมต่อ (Landmarks) บนมือข้างละ 21 จุด แต่ละจุดมีพิกัด 3 มิติ (x, y, z)
+                                    รวม 126 มิติข้อมูลต่อเฟรม
+                                    ช่วยลดขนาดข้อมูลภาพและตัดสิ่งรบกวนจากพื้นหลังได้อย่างมีประสิทธิภาพ</p>
                             </div>
                         </div>
 
@@ -564,7 +603,8 @@
                             <div class="step-badge">02</div>
                             <div class="step-body">
                                 <h4><i class="fa-solid fa-timeline"></i> Temporal Queue Buffer — ลำดับเวลา 30 เฟรม</h4>
-                                <p>เก็บข้อมูลการเคลื่อนไหวย้อนหลัง 30 เฟรมติดต่อกัน (Sequence Dimension: 30 × 126) เพื่อให้โมเดลเข้าใจว่ามือมีการเคลื่อนที่ไปในทิศทางใด ไม่ใช่แค่ดูจากภาพนิ่ง</p>
+                                <p>เก็บข้อมูลการเคลื่อนไหวย้อนหลัง 30 เฟรมติดต่อกัน (Sequence Dimension: 30 × 126)
+                                    เพื่อให้โมเดลเข้าใจว่ามือมีการเคลื่อนที่ไปในทิศทางใด ไม่ใช่แค่ดูจากภาพนิ่ง</p>
                             </div>
                         </div>
 
@@ -572,8 +612,11 @@
                         <div class="pipeline-step">
                             <div class="step-badge">03</div>
                             <div class="step-body">
-                                <h4><i class="fa-solid fa-network-wired"></i> Bi-LSTM Neural Network — โครงข่ายประสาทเทียม 2 ทิศทาง</h4>
-                                <p>ใช้โมเดล Bidirectional LSTM (2 Layers, Hidden Size 128) บนเฟรมเวิร์ก PyTorch วิเคราะห์ข้อมูลทั้งอดีตและอนาคตในลำดับเวลา ช่วยให้จำแนกท่าทางภาษามือได้อย่างแม่นยำสูง</p>
+                                <h4><i class="fa-solid fa-network-wired"></i> Bi-LSTM Neural Network —
+                                    โครงข่ายประสาทเทียม 2 ทิศทาง</h4>
+                                <p>ใช้โมเดล Bidirectional LSTM (2 Layers, Hidden Size 128) บนเฟรมเวิร์ก PyTorch
+                                    วิเคราะห์ข้อมูลทั้งอดีตและอนาคตในลำดับเวลา
+                                    ช่วยให้จำแนกท่าทางภาษามือได้อย่างแม่นยำสูง</p>
                             </div>
                         </div>
 
@@ -581,8 +624,11 @@
                         <div class="pipeline-step">
                             <div class="step-badge">04</div>
                             <div class="step-body">
-                                <h4><i class="fa-solid fa-shield-virus"></i> Noise Reduction & Stability Filter — ระบบป้องกันความผิดพลาด</h4>
-                                <p>ตรวจจับเฉพาะเมื่อมีการยกมือขึ้นมาจริง (Hand Checking), กรองผลลัพธ์ด้วยเกณฑ์ความมั่นใจขั้นต่ำ 90% และตรวจสอบความเสถียรต่อเนื่อง 12 เฟรม เพื่อไม่ให้เกิดการกระพริบของคำ</p>
+                                <h4><i class="fa-solid fa-shield-virus"></i> Noise Reduction & Stability Filter —
+                                    ระบบป้องกันความผิดพลาด</h4>
+                                <p>ตรวจจับเฉพาะเมื่อมีการยกมือขึ้นมาจริง (Hand Checking),
+                                    กรองผลลัพธ์ด้วยเกณฑ์ความมั่นใจขั้นต่ำ 90% และตรวจสอบความเสถียรต่อเนื่อง 12 เฟรม
+                                    เพื่อไม่ให้เกิดการกระพริบของคำ</p>
                             </div>
                         </div>
                     </div>
@@ -612,21 +658,24 @@
                             <div class="step-num">ขั้นที่ 1</div>
                             <div class="step-card-icon"><i class="fa-solid fa-camera-retro"></i></div>
                             <h4>เปิดใช้งานกล้อง</h4>
-                            <p>แตะปุ่ม <strong>"เริ่มเปิดกล้องแปล"</strong> หรือปุ่มกล้องที่มุมจอ แล้วกดยินยอม (Allow) ให้เบราว์เซอร์เข้าถึงกล้องเว็บแคมหรือกล้องมือถือ</p>
+                            <p>แตะปุ่ม <strong>"เริ่มเปิดกล้องแปล"</strong> หรือปุ่มกล้องที่มุมจอ แล้วกดยินยอม (Allow)
+                                ให้เบราว์เซอร์เข้าถึงกล้องเว็บแคมหรือกล้องมือถือ</p>
                         </div>
 
                         <div class="about-step-card">
                             <div class="step-num">ขั้นที่ 2</div>
                             <div class="step-card-icon"><i class="fa-solid fa-hand-sparkles"></i></div>
                             <h4>จัดวางมือในกรอบ</h4>
-                            <p>ยกมือขึ้นมาหน้ากล้องให้อยู่ในกรอบเลเซอร์ HUD โดยให้มีแสงสว่างสม่ำเสมอ เพื่อให้ AI ตรวจจับจุดข้อต่อมือได้อย่างคมชัด</p>
+                            <p>ยกมือขึ้นมาหน้ากล้องให้อยู่ในกรอบเลเซอร์ HUD โดยให้มีแสงสว่างสม่ำเสมอ เพื่อให้ AI
+                                ตรวจจับจุดข้อต่อมือได้อย่างคมชัด</p>
                         </div>
 
                         <div class="about-step-card">
                             <div class="step-num">ขั้นที่ 3</div>
                             <div class="step-card-icon"><i class="fa-solid fa-comment-dots"></i></div>
                             <h4>ทำท่าทาง & ฟังเสียง</h4>
-                            <p>ทำท่าทางภาษามือค้างไว้ประมาณ 1-2 วินาที คำแปลจะปรากฏและนำไปเรียงในประโยคสะสม จากนั้นแตะปุ่ม <strong>"อ่านเสียง"</strong> เพื่อฟังเสียงพูดไทย</p>
+                            <p>ทำท่าทางภาษามือค้างไว้ประมาณ 1-2 วินาที คำแปลจะปรากฏและนำไปเรียงในประโยคสะสม
+                                จากนั้นแตะปุ่ม <strong>"อ่านเสียง"</strong> เพื่อฟังเสียงพูดไทย</p>
                         </div>
                     </div>
 
@@ -701,7 +750,8 @@
                         <div class="contact-box">
                             <div class="contact-box-icon"><i class="fa-solid fa-lightbulb"></i></div>
                             <h4>วิสัยทัศน์และการพัฒนาต่อยอด</h4>
-                            <p>เรากำลังขยายคลังคำศัพท์ภาษามือไทยในชีวิตประจำวัน, คำศัพท์ทางการแพทย์, และคำศัพท์สำหรับสถานศึกษา เพื่อให้ครอบคลุมการใช้งานจริงมากยิ่งขึ้น</p>
+                            <p>เรากำลังขยายคลังคำศัพท์ภาษามือไทยในชีวิตประจำวัน, คำศัพท์ทางการแพทย์,
+                                และคำศัพท์สำหรับสถานศึกษา เพื่อให้ครอบคลุมการใช้งานจริงมากยิ่งขึ้น</p>
                             <div class="contact-meta">
                                 <span><i class="fa-solid fa-code-branch"></i> Version 2.0 (Active)</span>
                                 <span><i class="fa-solid fa-shield-halved"></i> Privacy-First Processing</span>
@@ -714,7 +764,8 @@
             <!-- Modal Footer -->
             <div class="about-modal-footer">
                 <div class="about-footer-note">
-                    <i class="fa-solid fa-heart" style="color: #f43f5e;"></i> สร้างสรรค์ด้วยเทคโนโลยี AI เพื่อสังคมที่เข้าถึงได้ทุกคน
+                    <i class="fa-solid fa-heart" style="color: #f43f5e;"></i> สร้างสรรค์ด้วยเทคโนโลยี AI
+                    เพื่อสังคมที่เข้าถึงได้ทุกคน
                 </div>
                 <div class="about-footer-actions">
                     <button type="button" class="btn-about-close" id="btn-about-close-footer">ปิดหน้าต่าง</button>
@@ -726,7 +777,9 @@
         </div>
     </div>
 
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../static/js/app.js"></script>
 </body>
- 
+
 </html>
