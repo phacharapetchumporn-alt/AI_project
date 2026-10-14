@@ -357,63 +357,97 @@
             <code>123456</code>
         </div>
 
-        <a href="/" class="back-link">
+        <a href="index.html" class="back-link">
             <i class="fa-solid fa-arrow-left"></i> กลับสู่หน้าหลัก SignSubs
         </a>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        const SUPABASE_URL = 'https://yotvhpskwnmhupvaxenf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_z8cNBJEv-QhG8ULD8yg63A_RdZeaXGa';
+        let supabaseClient = null;
+
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } catch (e) {
+                console.warn("Supabase initialization error:", e);
+            }
+        }
+
         const form = document.getElementById('admin-login-form');
         const alertBox = document.getElementById('login-alert');
         const alertText = document.getElementById('login-alert-text');
         const btnSubmit = document.getElementById('btn-login-submit');
         const btnTogglePw = document.getElementById('btn-toggle-pw');
         const pwInput = document.getElementById('admin-password');
+        const usernameInput = document.getElementById('admin-username');
 
-        btnTogglePw.addEventListener('click', () => {
-            const isPassword = pwInput.type === 'password';
-            pwInput.type = isPassword ? 'text' : 'password';
-            btnTogglePw.innerHTML = isPassword ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
-        });
+        if (btnTogglePw && pwInput) {
+            btnTogglePw.addEventListener('click', () => {
+                const isPassword = pwInput.type === 'password';
+                pwInput.type = isPassword ? 'text' : 'password';
+                btnTogglePw.innerHTML = isPassword ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
+            });
+        }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            alertBox.style.display = 'none';
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (alertBox) alertBox.style.display = 'none';
 
-            const username = document.getElementById('admin-username').value.trim();
-            const password = pwInput.value;
+                const username = usernameInput ? usernameInput.value.trim() : '';
+                const password = pwInput ? pwInput.value : '';
 
-            if (!username || !password) return;
+                if (!username || !password) return;
 
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังตรวจสอบสิทธิ์...';
-
-            try {
-                const res = await fetch('/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> สำเร็จ! กำลังเข้าสู่ระบบ...';
-                    window.location.href = data.redirect || '/admin';
-                } else {
-                    alertText.textContent = data.message || 'ไม่สามารถเข้าสู่ระบบได้';
-                    alertBox.style.display = 'flex';
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerHTML = '<span>เข้าสู่ระบบหลังบ้าน</span> <i class="fa-solid fa-arrow-right"></i>';
+                if (btnSubmit) {
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังตรวจสอบสิทธิ์...';
                 }
-            } catch (err) {
-                console.error(err);
-                alertText.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์';
-                alertBox.style.display = 'flex';
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<span>เข้าสู่ระบบหลังบ้าน</span> <i class="fa-solid fa-arrow-right"></i>';
-            }
-        });
+
+                try {
+                    if (!supabaseClient) {
+                        throw new Error("Supabase Client is not initialized");
+                    }
+
+                    // ใช้ชื่อตัวแปร supaUsers และ supaErr ให้สอดคล้องกัน
+                    const { data: supaUsers, error: supaErr } = await supabaseClient
+                        .from('users')
+                        .select('*')
+                        .or(`username.eq.${username},email.eq.${username}`)
+                        .eq('password', password)
+                        .eq('role', 'admin')
+                        .limit(1);
+
+                    if (!supaErr && supaUsers && supaUsers.length > 0) {
+                        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> สำเร็จ! กำลังเข้าสู่ระบบ...';
+
+                        localStorage.setItem('signsubs_current_user', JSON.stringify(supaUsers[0]));
+
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 1000);
+                    } else {
+                        if (alertText) alertText.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง หรือคุณไม่มีสิทธิ์เข้าถึงระบบ Admin';
+                        if (alertBox) alertBox.style.display = 'flex';
+                        if (btnSubmit) {
+                            btnSubmit.disabled = false;
+                            btnSubmit.innerHTML = '<span>เข้าสู่ระบบหลังบ้าน</span> <i class="fa-solid fa-arrow-right"></i>';
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    if (alertText) alertText.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์';
+                    if (alertBox) alertBox.style.display = 'flex';
+                    if (btnSubmit) {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = '<span>เข้าสู่ระบบหลังบ้าน</span> <i class="fa-solid fa-arrow-right"></i>';
+                    }
+                }
+            });
+        }
     </script>
 </body>
 

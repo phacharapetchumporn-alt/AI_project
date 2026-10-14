@@ -17,6 +17,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Admin Custom CSS -->
     <link rel="stylesheet" href="../static/css/admin.css">
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -101,19 +103,6 @@
                 </ul>
             </div>
 
-            <div style="margin-top: auto;">
-                <div class="nav-section-title">หน้าบ้าน (Frontend)</div>
-                <ul class="sidebar-nav-menu">
-                    <li>
-                        <a href="/" class="nav-item-btn" target="_blank" title="ไปยังหน้าเว็บไซต์หลัก">
-                            <span class="nav-item-btn-left">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                <span>ไปยังหน้าเว็บไซต์</span>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
         </div>
 
         <!-- Sidebar Footer / Current Admin Info -->
@@ -128,7 +117,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="/admin/logout" class="btn-sidebar-logout" title="ออกจากระบบหลังบ้าน" id="btn-sidebar-logout">
+                <a href="index.html" class="btn-sidebar-logout" title="ออกจากระบบหลังบ้าน" id="btn-sidebar-logout">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </a>
             </div>
@@ -239,17 +228,86 @@
 
                 <!-- Charts & Breakdown Section -->
                 <div class="dashboard-grid-two">
-                    <!-- Weekly Translation Chart -->
-                    <div class="card-widget">
+                    <!-- Translation Camera Dashboard Card (เชื่อมต่อ server.py) -->
+                    <div class="card-widget translation-cam-card" id="card-translation-camera">
                         <div class="card-widget-header">
                             <h2 class="card-widget-title">
-                                <i class="fa-solid fa-chart-line"></i> สถิติการตรวจจับภาษามือรายสัปดาห์
+                                <i class="fa-solid fa-camera" style="color: var(--accent-cyan);"></i> กล้องลองระบบ
+                                (Translation Camera)
                             </h2>
-                            <span class="status-pill" style="font-size: 0.76rem;">7 วันล่าสุด</span>
+                            <div class="cam-header-controls">
+                                <span class="status-pill" id="cam-server-status-pill"
+                                    title="สถานะเซิร์ฟเวอร์กล้อง server.py">
+                                    <span class="status-dot dot-yellow" id="cam-server-status-dot"></span>
+                                    <span id="cam-server-status-text">กำลังตรวจสอบ server.py...</span>
+                                </span>
+                                <button class="btn-cam-control" id="btn-cam-toggle" title="เปิด/ปิดกล้อง" type="button">
+                                    <i class="fa-solid fa-video"></i>
+                                    <span class="btn-cam-text">ปิดกล้อง</span>
+                                </button>
+                                <button class="btn-cam-control" id="btn-cam-refresh" title="รีเฟรชการเชื่อมต่อ"
+                                    type="button">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                </button>
+                                <button class="btn-cam-control" id="btn-cam-fullscreen" title="ขยายเต็มหน้าจอ"
+                                    type="button">
+                                    <i class="fa-solid fa-expand"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="card-widget-body">
-                            <div class="chart-container">
-                                <canvas id="chart-translations"></canvas>
+                        <div class="card-widget-body cam-card-body">
+                            <div class="camera-stream-container" id="camera-stream-box">
+                                <!-- วิดีโอสตรีมสดจาก server.py (FastAPI Port 8000) -->
+                                <img id="admin-camera-feed" src="http://127.0.0.1:8000/video_feed"
+                                    alt="Translation Camera Stream" class="camera-live-img">
+
+                                <!-- หน้าจอสำรองกรณี server.py ยังไม่ได้รัน (Offline Placeholder) -->
+                                <div class="camera-offline-overlay" id="camera-offline-overlay" style="display: none;">
+                                    <div class="camera-offline-inner">
+                                        <div class="camera-offline-icon">
+                                            <i class="fa-solid fa-video-slash"></i>
+                                        </div>
+                                        <h3 class="camera-offline-title">ยังไม่พบการเชื่อมต่อกับ server.py</h3>
+                                        <p class="camera-offline-desc">
+                                            ระบบกล้องแปลภาษามือเรียลไทม์ทำงานผ่าน <code>train_AI/server.py</code>
+                                            (FastAPI Port 8000)
+                                        </p>
+                                        <div class="camera-cmd-box">
+                                            <span class="cmd-prompt">&gt;</span>
+                                            <code id="cmd-run-server">py -3.12 train_AI/server.py</code>
+                                            <button type="button" class="btn-copy-code" id="btn-copy-server-cmd"
+                                                title="คัดลอกคำสั่ง">
+                                                <i class="fa-solid fa-copy"></i>
+                                            </button>
+                                        </div>
+                                        <div class="camera-offline-actions">
+                                            <button type="button" class="btn-primary-action" id="btn-recheck-server">
+                                                <i class="fa-solid fa-arrows-rotate"></i> ลองเชื่อมต่อใหม่
+                                            </button>
+                                            <a href="http://127.0.0.1:8000" target="_blank" class="btn-topbar-action"
+                                                style="font-size: 0.8rem;">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                เปิดเซิร์ฟเวอร์โดยตรง
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- HUD แถบแสดงสถานะบนภาพกล้อง (Live Detection Overlay) -->
+                                <div class="cam-overlay-hud" id="cam-overlay-hud">
+                                    <div class="hud-item hud-engine">
+                                        <i class="fa-solid fa-microchip" style="color: var(--accent-cyan);"></i>
+                                        <span>MediaPipe + Bi-LSTM (150 Features)</span>
+                                    </div>
+                                    <div class="hud-item hud-prediction">
+                                        <span class="hud-label">ตรวจจับ:</span>
+                                        <span class="hud-value" id="hud-prediction-text">กำลังรอท่าทาง...</span>
+                                    </div>
+                                    <div class="hud-item hud-confidence">
+                                        <span class="hud-label">ความมั่นใจ:</span>
+                                        <span class="hud-value-conf" id="hud-confidence-val">0.0%</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -373,6 +431,22 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Weekly Analytics Chart Section -->
+                <div class="card-widget" style="margin-top: 4px;">
+                    <div class="card-widget-header">
+                        <h2 class="card-widget-title">
+                            <i class="fa-solid fa-chart-line" style="color: var(--primary-light);"></i>
+                            สถิติการแปลย้อนหลัง 7 วัน (Weekly Analytics)
+                        </h2>
+                        <span class="status-pill" style="font-size: 0.76rem;">7 วันล่าสุด</span>
+                    </div>
+                    <div class="card-widget-body">
+                        <div class="chart-container" style="height: 260px;">
+                            <canvas id="chart-translations"></canvas>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- ==============================================================
@@ -411,8 +485,7 @@
                                 <th>ผู้ใช้งาน</th>
                                 <th>อีเมล</th>
                                 <th>บทบาท (Role)</th>
-                                <th>สถานะ (Status)</th>
-                                <th>เข้าสู่ระบบล่าสุด</th>
+                                <th>สถานะ</th>
                                 <th>วันที่สมัคร</th>
                                 <th style="text-align: right;">จัดการ</th>
                             </tr>

@@ -247,6 +247,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    // ==========================================================================
+    // SUPABASE GLOBAL INITIALIZATION
+    // ==========================================================================
+    const SUPABASE_URL = 'https://yotvhpskwnmhupvaxenf.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_z8cNBJEv-QhG8ULD8yg63A_RdZeaXGa';
+
+    // สร้าง client ทันทีโดยอ้างอิงจาก window.supabase
+    let supabaseClient = null;
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
 
     // ==========================================================================
     // 2. USER MANAGEMENT
@@ -263,15 +274,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadUsers() {
         try {
-            const res = await fetch('/api/admin/users');
-            if (!res.ok) throw new Error('Cannot fetch users');
-            state.users = await res.json();
+            // 1. ดึงข้อมูลผู้ใช้ทั้งหมดจากตาราง users ใน Supabase เรียงจากล่าสุดไปเก่าสุด
+            const { data: users, error } = await supabaseClient
+                .from('users')
+                .select('*')
+
+            if (error) {
+                console.error("Error fetching users:", error);
+                throw new Error('Cannot fetch users from Supabase');
+            }
+
+            // 2. เก็บข้อมูลลงใน state ของระบบหน้าแอดมิน
+            state.users = users || [];
+
+            // 3. เรียกฟังก์ชันวาดตารางเดิมที่มีอยู่แล้วในระบบ
             renderUsersTable();
+
         } catch (err) {
             console.error(err);
             showToast('เกิดข้อผิดพลาดในการโหลดรายชื่อผู้ใช้', 'error');
         }
     }
+
+    // เรียกใช้งานฟังก์ชันเมื่อหน้าเว็บโหลดเสร็จ
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUsers();
+    });
 
     function renderUsersTable() {
         if (!usersTableBody) return;
@@ -320,7 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${isBanned ? 'Banned' : 'Active'}
                         </span>
                     </td>
-                    <td style="color: var(--text-secondary); font-size: 0.82rem;">${u.last_login || 'ยังไม่มีข้อมูล'}</td>
                     <td style="color: var(--text-tertiary); font-size: 0.82rem;">${u.created_at || '-'}</td>
                     <td style="text-align: right;">
                         <div class="action-btn-group" style="justify-content: flex-end;">
@@ -835,6 +862,178 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // ==========================================================================
+    // 7. TRANSLATION CAMERA CONTROLLER (server.py Integration)
+    // ==========================================================================
+    const camImg = document.getElementById('admin-camera-feed');
+    const camStatusPill = document.getElementById('cam-server-status-pill');
+    const camStatusDot = document.getElementById('cam-server-status-dot');
+    const camStatusText = document.getElementById('cam-server-status-text');
+    const camOfflineOverlay = document.getElementById('camera-offline-overlay');
+    const btnCamToggle = document.getElementById('btn-cam-toggle');
+    const btnCamRefresh = document.getElementById('btn-cam-refresh');
+    const btnCamFullscreen = document.getElementById('btn-cam-fullscreen');
+    const btnRecheckServer = document.getElementById('btn-recheck-server');
+    const btnCopyServerCmd = document.getElementById('btn-copy-server-cmd');
+    const hudPrediction = document.getElementById('hud-prediction-text');
+    const hudConfidence = document.getElementById('hud-confidence-val');
+    const camStreamBox = document.getElementById('camera-stream-box');
+
+    let isCamRunning = true;
+    let camPollInterval = null;
+    const SERVER_URL = 'http://127.0.0.1:8000';
+
+    async function checkCameraServer() {
+        if (!isCamRunning) return;
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+            // Ping server.py status endpoint
+            const res = await fetch(`${SERVER_URL}/status`, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (res.ok) {
+                const data = await res.json();
+                setCameraOnline(data);
+            } else {
+                setCameraOffline();
+            }
+        } catch (err) {
+            setCameraOffline();
+        }
+    }
+
+    function setCameraOnline(data) {
+        if (camStatusDot) {
+            camStatusDot.className = 'status-dot dot-green';
+        }
+        if (camStatusText) {
+            camStatusText.textContent = 'server.py Live (8000)';
+        }
+        if (camOfflineOverlay) {
+            camOfflineOverlay.style.display = 'none';
+        }
+
+        if (camImg && (!camImg.src || camImg.src.includes('about:blank'))) {
+            camImg.src = `${SERVER_URL}/video_feed?t=${Date.now()}`;
+        }
+
+        if (data) {
+            if (hudPrediction && data.current_prediction) {
+                hudPrediction.textContent = data.current_prediction;
+            }
+            if (hudConfidence && data.confidence_score !== undefined) {
+                hudConfidence.textContent = `${data.confidence_score}%`;
+            }
+        }
+    }
+
+    function setCameraOffline() {
+        if (camStatusDot) {
+            camStatusDot.className = 'status-dot dot-red';
+        }
+        if (camStatusText) {
+            camStatusText.textContent = 'server.py Offline';
+        }
+        if (camOfflineOverlay) {
+            camOfflineOverlay.style.display = 'flex';
+        }
+        if (hudPrediction) {
+            hudPrediction.textContent = 'ไม่ได้เชื่อมต่อ';
+        }
+        if (hudConfidence) {
+            hudConfidence.textContent = '0.0%';
+        }
+    }
+
+    if (btnCamToggle) {
+        btnCamToggle.addEventListener('click', () => {
+            isCamRunning = !isCamRunning;
+            const textSpan = btnCamToggle.querySelector('.btn-cam-text');
+            const icon = btnCamToggle.querySelector('i');
+
+            if (isCamRunning) {
+                if (camImg) camImg.src = `${SERVER_URL}/video_feed?t=${Date.now()}`;
+                btnCamToggle.classList.remove('active');
+                if (textSpan) textSpan.textContent = 'ปิดกล้อง';
+                if (icon) icon.className = 'fa-solid fa-video';
+                checkCameraServer();
+            } else {
+                if (camImg) camImg.src = 'about:blank';
+                btnCamToggle.classList.add('active');
+                if (textSpan) textSpan.textContent = 'เปิดกล้อง';
+                if (icon) icon.className = 'fa-solid fa-video-slash';
+                if (camStatusDot) camStatusDot.className = 'status-dot dot-yellow';
+                if (camStatusText) camStatusText.textContent = 'หยุดชั่วคราว';
+            }
+        });
+    }
+
+    if (btnCamRefresh) {
+        btnCamRefresh.addEventListener('click', () => {
+            if (camImg && isCamRunning) {
+                camImg.src = `${SERVER_URL}/video_feed?t=${Date.now()}`;
+                showToast('กำลังเชื่อมต่อสตรีมกล้องใหม่...');
+            }
+            checkCameraServer();
+        });
+    }
+
+    if (btnCamFullscreen && camStreamBox) {
+        btnCamFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                camStreamBox.requestFullscreen().catch(err => {
+                    console.error('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+    }
+
+    if (btnRecheckServer) {
+        btnRecheckServer.addEventListener('click', () => {
+            if (camStatusText) camStatusText.textContent = 'กำลังทดสอบเชื่อมต่อ...';
+            if (camImg && isCamRunning) camImg.src = `${SERVER_URL}/video_feed?t=${Date.now()}`;
+            checkCameraServer();
+        });
+    }
+
+    if (btnCopyServerCmd) {
+        btnCopyServerCmd.addEventListener('click', () => {
+            const cmdText = document.getElementById('cmd-run-server')?.textContent || 'py -3.12 train_AI/server.py';
+            navigator.clipboard.writeText(cmdText).then(() => {
+                showToast('คัดลอกคำสั่งสำหรับรัน server.py เรียบร้อยแล้ว!');
+            }).catch(() => {
+                showToast('ไม่สามารถคัดลอกได้ กรุณาคัดลอกด้วยตนเอง', 'error');
+            });
+        });
+    }
+
+    // Monitor camera img load/error
+    if (camImg) {
+        camImg.addEventListener('error', () => {
+            if (isCamRunning) {
+                if (camImg.src.includes(':8000')) {
+                    // Fallback to proxy
+                    camImg.src = `/video_feed?t=${Date.now()}`;
+                } else {
+                    setCameraOffline();
+                }
+            }
+        });
+        camImg.addEventListener('load', () => {
+            if (isCamRunning && !camImg.src.includes('about:blank')) {
+                setCameraOnline();
+            }
+        });
+    }
+
+    // Polling status
+    checkCameraServer();
+    camPollInterval = setInterval(checkCameraServer, 3000);
 
     // Initial Load
     loadOverviewStats();

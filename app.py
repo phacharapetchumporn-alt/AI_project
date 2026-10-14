@@ -1,4 +1,4 @@
-﻿"""
+"""
 SignSubs - Flask Backend Server with SQLite Authentication & Admin Backoffice
 Includes user registration, secure password hashing, login sessions,
 full Admin Backoffice management (Users, Gestures, Logs, Settings, Statistics),
@@ -726,7 +726,26 @@ def process_frame():
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(b'', status=204)
+    """Proxy /video_feed from server.py (FastAPI port 8000) or fallback to local InferenceEngine."""
+    import urllib.request
+    try:
+        # Check if server.py is running on port 8000
+        req = urllib.request.urlopen('http://127.0.0.1:8000/video_feed', timeout=2)
+        def generate():
+            while True:
+                chunk = req.read(4096)
+                if not chunk:
+                    break
+                yield chunk
+        return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    except Exception:
+        if engine:
+            try:
+                return Response(engine.generate_video_stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
+            except Exception as e:
+                return Response(f"Inference error: {e}", status=500)
+        return Response(b'', status=503)
+
 
 
 # -----------------------------------------------------------------------------

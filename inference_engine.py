@@ -1,28 +1,6 @@
 import os
-# pyrefly: ignore [missing-import]
-import cv2  # type: ignore
-# pyrefly: ignore [missing-import]
-import numpy as np  # type: ignore
-# pyrefly: ignore [missing-import]
-import torch  # type: ignore
-# pyrefly: ignore [missing-import]
-import torch.nn as nn  # type: ignore
-# pyrefly: ignore [missing-import]
-import torch.nn.functional as F  # type: ignore
-# pyrefly: ignore [missing-import]
-import mediapipe as mp  # type: ignore
-try:
-    # pyrefly: ignore [missing-import]
-    import mediapipe.python.solutions as mp_solutions  # type: ignore
-    mp.solutions = mp_solutions
-except Exception:
-    pass
-import pickle
-import base64
-from collections import deque
-import cv2
-import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+import sys
+import types
 
 # Protect Windows console encoding
 if sys.platform == "win32":
@@ -32,17 +10,30 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-# Protobuf/TensorFlow compatibility fix for Python 3.12
+# Protobuf/TensorFlow compatibility fix for Python 3.12 (MUST be before mediapipe & tensorflow)
 try:
     import google.protobuf.runtime_version
 except ImportError:
-    import types
     rv = types.ModuleType("google.protobuf.runtime_version")
     rv.Domain = type("Domain", (), {"PUBLIC": 1, "INTERNAL": 2})
     rv.ValidateProtobufRuntimeVersion = lambda *args, **kwargs: None
     sys.modules["google.protobuf.runtime_version"] = rv
 
-import mediapipe as mp
+import threading
+import json
+import time
+import base64
+from collections import deque
+import cv2  # type: ignore
+import numpy as np  # type: ignore
+from PIL import Image, ImageDraw, ImageFont
+import mediapipe as mp  # type: ignore
+try:
+    import mediapipe.python.solutions as mp_solutions  # type: ignore
+    mp.solutions = mp_solutions
+except Exception:
+    pass
+
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
