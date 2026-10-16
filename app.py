@@ -23,7 +23,20 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from setup_db import setup_database
+# Protobuf/TensorFlow compatibility fix for Python 3.12
+try:
+    import google.protobuf.runtime_version
+except ImportError:
+    try:
+        import types
+        import google.protobuf
+        rv = types.ModuleType("google.protobuf.runtime_version")
+        rv.Domain = type("Domain", (), {"PUBLIC": 1, "INTERNAL": 2})
+        rv.ValidateProtobufRuntimeVersion = lambda *args, **kwargs: None
+        sys.modules["google.protobuf.runtime_version"] = rv
+        setattr(google.protobuf, "runtime_version", rv)
+    except Exception:
+        pass
 
 try:
     from inference_engine import InferenceEngine
@@ -48,6 +61,7 @@ def get_db():
     return conn
 
 # Initialize / migrate DB on startup
+from setup_db import setup_database
 setup_database()
 
 def get_lan_ip():
@@ -660,6 +674,10 @@ current_prediction = {
 
 @app.route('/api/prediction', methods=['GET'])
 def get_prediction():
+    if engine and hasattr(engine, 'latest_prediction') and engine.latest_prediction:
+        if engine.latest_prediction not in {'กำลังรอท่าทาง...', 'กำลังสะสมเฟรม...'}:
+            current_prediction['prediction'] = engine.latest_prediction
+            current_prediction['confidence'] = f"{engine.latest_confidence * 100:.1f}%"
     return jsonify(current_prediction)
 
 
@@ -672,6 +690,7 @@ def control_action():
         current_prediction['sentence'] = ''
         current_prediction['prediction'] = 'ล้างประโยคแล้ว'
         current_prediction['confidence'] = '0.0%'
+        current_prediction['last_confirmed'] = ''
     elif action == 'backspace':
         words = current_prediction['sentence'].strip().split(' ')
         if words and words[0] != '':
@@ -679,6 +698,7 @@ def control_action():
             current_prediction['sentence'] = ' '.join(words)
         current_prediction['prediction'] = 'ลบค่ำล่าสุดแล้ว'
         current_prediction['confidence'] = '0.0%'
+        current_prediction['last_confirmed'] = ''
 
     return jsonify(current_prediction)
 
@@ -692,33 +712,53 @@ def process_frame():
         return jsonify({'success': False, 'message': 'No image or engine not loaded'})
 
     try:
-        label, confidence = engine.process_base64_image(b64_str)
-        if label:
-            if label != current_prediction.get('last_confirmed', ''):
-                sentence = current_prediction.get('sentence', '')
-                words = sentence.split(' ') if sentence else []
-                words.append(label)
-                if len(words) > 7:
-                    words = words[-7:]
-                current_prediction['sentence'] = ' '.join(words).strip()
-                current_prediction['last_confirmed'] = label
+        res = engine.process_base64_image(b64_str)
+        if not res or res[0] is None:
+            return jsonify({'success': False, 'message': 'Frame decoding failed'})
+        label, confidence, client_landmarks = res
 
-                user_name = session.get('username') or 'Guest'
-                user_id = session.get('user_id')
-                try:
-                    with get_db() as conn:
-                        conn.execute(
-                            'INSERT INTO translation_logs (user_id, username, gesture_name, translation_text, confidence) VALUES (?, ?, ?, ?, ?)',
-                            (user_id, user_name, label, label, round(float(confidence * 100), 1))
-                        )
-                        conn.commit()
-                except Exception as log_err:
-                    print(f"[Log Error] {log_err}")
+        transient_states = {
+            'กำลังสะสมเฟรม...',
+            'กำลังทำท่า...',
+            'โหมดตรวจจับมือ (รอไฟล์โมเดล)',
+            'กำลังรอท่าทาง...',
+            'ไม่พบคำศัพท์',
+            'พร้อมตรวจจับ'
+        }
+
+        if label:
+            if label not in transient_states:
+                if label != current_prediction.get('last_confirmed', ''):
+                    sentence = current_prediction.get('sentence', '')
+                    words = sentence.split(' ') if sentence else []
+                    words.append(label)
+                    if len(words) > 7:
+                        words = words[-7:]
+                    current_prediction['sentence'] = ' '.join(words).strip()
+                    current_prediction['last_confirmed'] = label
+
+                    user_name = session.get('username') or 'Guest'
+                    user_id = session.get('user_id')
+                    try:
+                        with get_db() as conn:
+                            conn.execute(
+                                'INSERT INTO translation_logs (user_id, username, gesture_name, translation_text, confidence) VALUES (?, ?, ?, ?, ?)',
+                                (user_id, user_name, label, label, round(float(confidence * 100), 1))
+                            )
+                            conn.commit()
+                    except Exception as log_err:
+                        print(f"[Log Error] {log_err}")
 
             current_prediction['prediction'] = label
             current_prediction['confidence'] = f"{confidence*100:.1f}%"
 
-        return jsonify({'success': True, 'prediction': current_prediction.get('prediction', '')})
+        return jsonify({
+            'success': True,
+            'prediction': current_prediction.get('prediction', ''),
+            'confidence': current_prediction.get('confidence', '0.0%'),
+            'sentence': current_prediction.get('sentence', ''),
+            'landmarks': client_landmarks
+        })
     except Exception as e:
         print("Error processing frame:", e)
         return jsonify({'success': False, 'error': str(e)})

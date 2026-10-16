@@ -12,10 +12,12 @@ if sys.platform == "win32":
 try:
     import google.protobuf.runtime_version
 except ImportError:
+    import google.protobuf
     rv = types.ModuleType("google.protobuf.runtime_version")
     rv.Domain = type("Domain", (), {"PUBLIC": 1, "INTERNAL": 2})
     rv.ValidateProtobufRuntimeVersion = lambda *args, **kwargs: None
     sys.modules["google.protobuf.runtime_version"] = rv
+    setattr(google.protobuf, "runtime_version", rv)
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout, Masking

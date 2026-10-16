@@ -14,10 +14,15 @@ if sys.platform == "win32":
 try:
     import google.protobuf.runtime_version
 except ImportError:
-    rv = types.ModuleType("google.protobuf.runtime_version")
-    rv.Domain = type("Domain", (), {"PUBLIC": 1, "INTERNAL": 2})
-    rv.ValidateProtobufRuntimeVersion = lambda *args, **kwargs: None
-    sys.modules["google.protobuf.runtime_version"] = rv
+    try:
+        import google.protobuf
+        rv = types.ModuleType("google.protobuf.runtime_version")
+        rv.Domain = type("Domain", (), {"PUBLIC": 1, "INTERNAL": 2})
+        rv.ValidateProtobufRuntimeVersion = lambda *args, **kwargs: None
+        sys.modules["google.protobuf.runtime_version"] = rv
+        setattr(google.protobuf, "runtime_version", rv)
+    except Exception:
+        pass
 
 import threading
 import json
