@@ -27,7 +27,7 @@ err.txt
 test_*.py
 
 # Large Training Datasets & Binary Sequences
-*.npy
+
 
 # OS files
 Thumbs.db
