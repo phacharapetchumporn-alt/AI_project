@@ -248,7 +248,7 @@ def draw_arm_skeleton(frame, pose_landmarks):
             continue
         x1, y1 = int(p1.x * w), int(p1.y * h)
         x2, y2 = int(p2.x * w), int(p2.y * h)
-        cv2.line(frame, (x1, y1), (x2, y2), (0, 210, 180), 3, cv2.LINE_AA)
+        cv2.line(frame, (x1, y1), (x2, y2), (0, 210, 180), 1, cv2.LINE_AA)
 
     arm_joints = [
         mp_holistic.PoseLandmark.LEFT_SHOULDER,
@@ -263,8 +263,8 @@ def draw_arm_skeleton(frame, pose_landmarks):
         if p.visibility < 0.4:
             continue
         x, y = int(p.x * w), int(p.y * h)
-        cv2.circle(frame, (x, y), 7, (0, 230, 200), -1, cv2.LINE_AA)
-        cv2.circle(frame, (x, y), 7, (255, 255, 255), 1, cv2.LINE_AA)
+        cv2.circle(frame, (x, y), 2, (0, 230, 200), -1, cv2.LINE_AA)
+        cv2.circle(frame, (x, y), 2, (255, 255, 255), 1, cv2.LINE_AA)
 
 
 # =============================================================================
@@ -283,9 +283,9 @@ class RealtimeSignTranslator:
 
         # Hyperparameters
         self.sequence_len  = 30
-        self.threshold     = 0.88      # Minimum confidence
-        self.vote_window   = 15        # Voting window (frames)
-        self.confirm_votes = 10        # Winning votes required to confirm
+        self.threshold     = 0.70      # Minimum confidence
+        self.vote_window   = 10        # Voting window (frames)
+        self.confirm_votes = 6        # Winning votes required to confirm
         self.no_hand_reset = 20        # Frames without hand before reset
 
         # Queues & Buffers
@@ -476,7 +476,7 @@ class RealtimeSignTranslator:
                     vote_count = sum(1 for v in self.vote_buffer if v == best_idx)
                     if vote_count >= self.confirm_votes:
                         if current_label != self.last_confirmed:
-                            if current_label != 'Blank':
+                            if current_label not in ('Blank', 'null_act'):
                                 self.sentence.append(current_label)
                                 if len(self.sentence) > 7:
                                     self.sentence = self.sentence[-7:]
@@ -516,8 +516,8 @@ class RealtimeSignTranslator:
             if frame is None:
                 return None, 0.0, None
 
-            display_frame = cv2.flip(frame, 1)
-            pred, conf, is_confirmed, client_lm, _, _, _ = self.process_cv2_frame(display_frame)
+            # Process frame directly matching raw captureCanvas coordinates
+            pred, conf, is_confirmed, client_lm, _, _, _ = self.process_cv2_frame(frame)
             return pred, conf, client_lm
         except Exception as err:
             print(f"[AI Error] Base64 frame decode error: {err}")

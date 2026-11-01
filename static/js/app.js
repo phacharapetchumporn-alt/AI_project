@@ -65,7 +65,7 @@
     let localStream = null;
 
     // Realistic Thai sign language words
-    const mockWords = ["à¸ªà¸§à¸±à¸ªà¸”à¸µ", "à¸‚à¸­à¸šà¸„à¸¸à¸“", "à¸ªà¸šà¸²à¸¢à¸”à¸µ", "à¸¢à¸´à¸™à¸”à¸µà¸•à¹‰à¸­à¸™à¸£à¸±à¸š", "à¸‰à¸±à¸™à¸£à¸±à¸à¸„à¸¸à¸“", "à¹€à¸‚à¹‰à¸²à¹ƒà¸ˆà¹à¸¥à¹‰à¸§", "à¸‚à¸­à¸„à¸§à¸²à¸¡à¸Šà¹ˆà¸§à¸¢à¹€à¸«à¸¥à¸·à¸­", "à¹‚à¸šà¸ªà¸–à¹Œ", "1", "2", "3", "à¹ƒà¸Šà¹ˆ", "à¸•à¸à¸¥à¸‡"];
+    const mockWords = ["กรุงเทพ", "กลัว", "กิน", "ขนมปัง", "ขอบคุณ", "ขอโทษ", "ข้าว", "คุณ", "ง่วง", "ฉัน", "ชอบ", "ชื่อ", "ดี", "ด้วยกัน", "ตลาด", "ถาม", "ทำงาน", "ทำไม", "ที่ไหน", "น้อง", "น้า", "น้ำ", "บ้าน", "พรุ่งนี้", "พี่", "พ่อ", "ภาษามือ", "มะม่วง", "ยาย", "ร้อน", "วันนี้", "วันหยุด", "สบายดี", "สวัสดี", "หูหนวก", "อยู่บ้าน", "อย่า", "อะไร", "อ่าน", "เกิด", "เช้า", "เที่ยว", "เธอ", "เรียก", "เรียน", "เหงา", "เหนื่อย", "แต่งงาน", "แฟน", "แมว", "แม่", "โกรธ", "โรงเรียน", "โสด", "ไก่", "ไข่", "ไป"];
     let mockSentence = [];
 
     // Server origin
@@ -84,8 +84,8 @@
 
     // Thai Text-to-Speech (TTS)
     function speakText(text) {
-        if (!text || text === '...' || text === 'à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸ªà¸±à¸à¸à¸²à¸“à¸¡à¸·à¸­...') {
-            showToast('à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸‚à¹‰à¸­à¸„à¸§à¸²à¸¡à¸ªà¸³à¸«à¸£à¸±à¸šà¸à¸²à¸£à¸­à¹ˆà¸²à¸™à¸­à¸­à¸à¹€à¸ªà¸µà¸¢à¸‡');
+        if (!text || text === '...' || text === 'กำลังรอสัญญาณมือ...') {
+            showToast('ยังไม่มีข้อความสำหรับการอ่านออกเสียง');
             return;
         }
         if ('speechSynthesis' in window) {
@@ -95,9 +95,9 @@
             utterance.rate = 0.95;
             utterance.pitch = 1.0;
             window.speechSynthesis.speak(utterance);
-            showToast(`ðŸ”Š à¸à¸³à¸¥à¸±à¸‡à¸­à¹ˆà¸²à¸™à¸­à¸­à¸à¹€à¸ªà¸µà¸¢à¸‡: "${text}"`);
+            showToast(`ðŸ”Š กำลังอ่านออกเสียง: "${text}"`);
         } else {
-            showToast('à¸­à¸¸à¸›à¸à¸£à¸“à¹Œà¸‚à¸­à¸‡à¸„à¸¸à¸“à¹„à¸¡à¹ˆà¸£à¸­à¸‡à¸£à¸±à¸šà¸Ÿà¸±à¸‡à¸à¹Œà¸Šà¸±à¸™ Text-to-Speech');
+            showToast('อุปกรณ์ของคุณไม่รองรับฟังก์ชัน Text-to-Speech');
         }
     }
 
@@ -153,8 +153,8 @@
         // (require user gesture for camera permission on mobile browsers)
         if (isMobile) {
             showCameraFallback(
-                'à¹à¸•à¸°à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸à¸¥à¹‰à¸­à¸‡',
-                'à¸à¸”à¸›à¸¸à¹ˆà¸¡à¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¹€à¸žà¸·à¹ˆà¸­à¸­à¸™à¸¸à¸à¸²à¸•à¹ƒà¸«à¹‰à¹€à¸§à¹‡à¸šà¹„à¸‹à¸•à¹Œà¹€à¸‚à¹‰à¸²à¸–à¸¶à¸‡à¸à¸¥à¹‰à¸­à¸‡à¹‚à¸—à¸£à¸¨à¸±à¸žà¸—à¹Œà¸‚à¸­à¸‡à¸„à¸¸à¸“',
+                'แตะเพื่อเปิดกล้อง',
+                'กดปุ่มด้านล่างเพื่ออนุญาตให้เว็บไซต์เข้าถึงกล้องโทรศัพท์ของคุณ',
                 'fa-solid fa-camera'
             );
             // Show the fallback screen (override the display:none)
@@ -189,10 +189,10 @@
 
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             showCameraFallback(
-                'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸›à¸´à¸”à¸à¸¥à¹‰à¸­à¸‡à¹„à¸”à¹‰',
+                'ไม่สามารถเปิดกล้องได้',
                 isHttp && !isLocal
-                    ? 'à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œà¸šà¸™à¸¡à¸·à¸­à¸–à¸·à¸­à¸•à¹‰à¸­à¸‡à¸à¸²à¸£ HTTPS à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸à¸¥à¹‰à¸­à¸‡ à¸à¸£à¸¸à¸“à¸²à¹€à¸›à¸´à¸”à¸œà¹ˆà¸²à¸™ HTTPS (à¹à¸•à¸°à¸¥à¸´à¸‡à¸à¹Œà¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡)'
-                    : 'à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œà¸‚à¸­à¸‡à¸„à¸¸à¸“à¹„à¸¡à¹ˆà¸£à¸­à¸‡à¸£à¸±à¸šà¸à¸²à¸£à¹€à¸›à¸´à¸”à¸à¸¥à¹‰à¸­à¸‡à¸œà¹ˆà¸²à¸™ WebRTC à¸à¸£à¸¸à¸“à¸²à¸­à¸±à¸›à¹€à¸”à¸•à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œ',
+                    ? 'เบราว์เซอร์บนมือถือต้องการ HTTPS เพื่อเปิดกล้อง กรุณาเปิดผ่าน HTTPS (แตะลิงก์ด้านล่าง)'
+                    : 'เบราว์เซอร์ของคุณไม่รองรับการเปิดกล้องผ่าน WebRTC กรุณาอัปเดตเบราว์เซอร์',
                 'fa-solid fa-triangle-exclamation'
             );
             if (cameraFallbackScreen) cameraFallbackScreen.style.display = 'flex';
@@ -266,7 +266,7 @@
             if (cameraFallbackScreen) cameraFallbackScreen.style.display = 'none';
             if (scannerHud) scannerHud.style.display = 'block';
 
-            const camName = facingMode === 'user' ? 'à¸à¸¥à¹‰à¸­à¸‡à¸«à¸™à¹‰à¸²' : 'à¸à¸¥à¹‰à¸­à¸‡à¸«à¸¥à¸±à¸‡';
+            const camName = facingMode === 'user' ? 'กล้องหน้า' : 'กล้องหลัง';
             statusText.textContent = isBackendConnected ? `AI CONNECTED (${camName})` : `LIVE (${camName})`;
             statusDot.className = 'indicator-dot active';
             statusDot.style.backgroundColor = '#10b981';
@@ -275,7 +275,7 @@
             if (btnCameraPower) btnCameraPower.classList.add('active');
             if (iconCamPower) iconCamPower.className = 'fa-solid fa-video';
 
-            showToast(`à¹€à¸›à¸´à¸”${camName}à¸ªà¸³à¹€à¸£à¹‡à¸ˆà¹à¸¥à¹‰à¸§ à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­ AI TSL LSTM à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢`);
+            showToast(`เปิด${camName}สำเร็จแล้ว เชื่อมต่อ AI Transformer TSL เรียบร้อย`);
 
             if (isBackendConnected) {
                 startFrameCapture();
@@ -285,19 +285,19 @@
         } else {
             console.error("Camera access failed:", lastErr);
             isCameraRunning = false;
-            let errMsg = 'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸›à¸´à¸”à¸à¸¥à¹‰à¸­à¸‡à¹„à¸”à¹‰';
-            let errDesc = 'à¹‚à¸›à¸£à¸”à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¸à¸²à¸£à¸­à¸™à¸¸à¸à¸²à¸•à¸ªà¸´à¸—à¸˜à¸´à¹Œà¸à¸¥à¹‰à¸­à¸‡à¹ƒà¸™à¸à¸²à¸£à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²à¸‚à¸­à¸‡à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œ';
+            let errMsg = 'ไม่สามารถเปิดกล้องได้';
+            let errDesc = 'โปรดตรวจสอบการอนุญาตสิทธิ์กล้องในการตั้งค่าของเบราว์เซอร์';
 
             if (lastErr) {
                 if (lastErr.name === 'NotAllowedError' || lastErr.name === 'PermissionDeniedError') {
-                    errMsg = 'à¸ªà¸´à¸—à¸˜à¸´à¹Œà¸à¸²à¸£à¹ƒà¸Šà¹‰à¸à¸¥à¹‰à¸­à¸‡à¸–à¸¹à¸à¸›à¸à¸´à¹€à¸ªà¸˜';
-                    errDesc = 'à¹‚à¸›à¸£à¸”à¹à¸•à¸°à¸­à¸™à¸¸à¸à¸²à¸• (Allow) à¸à¸²à¸£à¹€à¸‚à¹‰à¸²à¸–à¸¶à¸‡à¸à¸¥à¹‰à¸­à¸‡à¹ƒà¸™à¸à¸²à¸£à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œ à¹à¸¥à¹‰à¸§à¹à¸•à¸°à¸›à¸¸à¹ˆà¸¡à¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¹€à¸žà¸·à¹ˆà¸­à¸¥à¸­à¸‡à¹ƒà¸«à¸¡à¹ˆ';
+                    errMsg = 'สิทธิ์การใช้กล้องถูกปฏิเสธ';
+                    errDesc = 'โปรดแตะอนุญาต (Allow) การเข้าถึงกล้องในการตั้งค่าเบราว์เซอร์ แล้วแตะปุ่มด้านล่างเพื่อลองใหม่';
                 } else if (lastErr.name === 'NotFoundError' || lastErr.name === 'DevicesNotFoundError') {
-                    errMsg = 'à¹„à¸¡à¹ˆà¸žà¸šà¸­à¸¸à¸›à¸à¸£à¸“à¹Œà¸à¸¥à¹‰à¸­à¸‡';
-                    errDesc = 'à¸­à¸¸à¸›à¸à¸£à¸“à¹Œà¸™à¸µà¹‰à¹„à¸¡à¹ˆà¸¡à¸µà¸à¸¥à¹‰à¸­à¸‡ à¸«à¸£à¸·à¸­à¸à¸¥à¹‰à¸­à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸­à¸¢à¸¹à¹ˆ';
+                    errMsg = 'ไม่พบอุปกรณ์กล้อง';
+                    errDesc = 'อุปกรณ์นี้ไม่มีกล้อง หรือกล้องไม่ได้เชื่อมต่ออยู่';
                 } else if (lastErr.name === 'NotReadableError' || lastErr.name === 'TrackStartError') {
-                    errMsg = 'à¸à¸¥à¹‰à¸­à¸‡à¸à¸³à¸¥à¸±à¸‡à¸–à¸¹à¸à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¸­à¸¢à¸¹à¹ˆ';
-                    errDesc = 'à¸à¸¥à¹‰à¸­à¸‡à¸­à¸²à¸ˆà¸–à¸¹à¸à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¹‚à¸”à¸¢à¹à¸­à¸›à¸žà¸¥à¸´à¹€à¸„à¸Šà¸±à¸™à¸­à¸·à¹ˆà¸™ à¹‚à¸›à¸£à¸”à¸›à¸´à¸”à¹à¸­à¸›à¸­à¸·à¹ˆà¸™à¹à¸¥à¹‰à¸§à¸¥à¸­à¸‡à¹ƒà¸«à¸¡à¹ˆà¸­à¸µà¸à¸„à¸£à¸±à¹‰à¸‡';
+                    errMsg = 'กล้องกำลังถูกใช้งานอยู่';
+                    errDesc = 'กล้องอาจถูกใช้งานโดยแอปพลิเคชันอื่น โปรดปิดแอปอื่นแล้วลองใหม่อีกครั้ง';
                 }
             }
 
@@ -316,8 +316,8 @@
         }
         if (apiInterval) clearInterval(apiInterval);
         if (mockInterval) clearInterval(mockInterval);
-        showCameraFallback('à¸à¸¥à¹‰à¸­à¸‡à¸–à¸¹à¸à¸›à¸´à¸”à¸­à¸¢à¸¹à¹ˆ', 'à¹à¸•à¸°à¸›à¸¸à¹ˆà¸¡à¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¸«à¸£à¸·à¸­à¹„à¸­à¸„à¸­à¸™à¸à¸¥à¹‰à¸­à¸‡à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸à¸²à¸£à¸—à¸³à¸‡à¸²à¸™à¹ƒà¸«à¸¡à¹ˆ');
-        showToast('à¸›à¸´à¸”à¸à¸²à¸£à¸—à¸³à¸‡à¸²à¸™à¸‚à¸­à¸‡à¸à¸¥à¹‰à¸­à¸‡à¹à¸¥à¹‰à¸§');
+        showCameraFallback('กล้องถูกปิดอยู่', 'แตะปุ่มด้านล่างหรือไอคอนกล้องเพื่อเปิดการทำงานใหม่');
+        showToast('ปิดการทำงานของกล้องแล้ว');
     }
 
     // Toggle Camera On/Off
@@ -344,7 +344,7 @@
             if (btnFlipCamBottom) btnFlipCamBottom.classList.remove('rotating');
         }, 600);
 
-        showToast(`à¸à¸³à¸¥à¸±à¸‡à¸ªà¸¥à¸±à¸šà¹„à¸›à¸¢à¸±à¸‡${currentFacingMode === 'user' ? 'à¸à¸¥à¹‰à¸­à¸‡à¸«à¸™à¹‰à¸²' : 'à¸à¸¥à¹‰à¸­à¸‡à¸«à¸¥à¸±à¸‡'}...`);
+        showToast(`กำลังสลับไปยัง${currentFacingMode === 'user' ? 'กล้องหน้า' : 'กล้องหลัง'}...`);
         startClientWebcam(currentFacingMode);
     }
 
@@ -370,54 +370,47 @@
     function drawSkeleton(landmarks) {
         if (!skeletonCanvas || !skeletonCtx || !clientWebcam) return;
 
-        // Container visible dimensions
+        // Container visible bounds
         const container = clientWebcam.parentElement;
-        const containerW = (container ? container.clientWidth : 0) || clientWebcam.clientWidth || 640;
-        const containerH = (container ? container.clientHeight : 0) || clientWebcam.clientHeight || 480;
+        const w = (container ? container.clientWidth : 0) || clientWebcam.clientWidth || 640;
+        const h = (container ? container.clientHeight : 0) || clientWebcam.clientHeight || 480;
 
-        // Video intrinsic stream dimensions
-        const videoW = clientWebcam.videoWidth || 640;
-        const videoH = clientWebcam.videoHeight || 480;
-
-        // Sync canvas internal resolution with CSS display size (1:1 mapping)
-        if (skeletonCanvas.width !== containerW || skeletonCanvas.height !== containerH) {
-            skeletonCanvas.width = containerW;
-            skeletonCanvas.height = containerH;
+        if (skeletonCanvas.width !== w || skeletonCanvas.height !== h) {
+            skeletonCanvas.width = w;
+            skeletonCanvas.height = h;
         }
 
-        skeletonCtx.clearRect(0, 0, containerW, containerH);
+        skeletonCtx.clearRect(0, 0, w, h);
         if (!landmarks) return;
 
-        // Calculate object-fit: cover scaling and cropping offsets
-        const videoAspect = videoW / videoH;
-        const containerAspect = containerW / containerH;
-        let scale = 1, offsetX = 0, offsetY = 0;
+        // Exact object-fit: cover coordinate transformer
+        const vW = clientWebcam.videoWidth || 640;
+        const vH = clientWebcam.videoHeight || 480;
+        const videoAspect = vW / vH;
+        const screenAspect = w / h;
 
-        if (containerAspect > videoAspect) {
-            // Container is wider: video is scaled to width and cropped top/bottom
-            scale = containerW / videoW;
-            offsetY = (containerH - videoH * scale) / 2;
+        let scale = 1, offX = 0, offY = 0;
+        if (screenAspect > videoAspect) {
+            scale = w / vW;
+            offY = (h - vH * scale) / 2;
         } else {
-            // Container is taller: video is scaled to height and cropped left/right
-            scale = containerH / videoH;
-            offsetX = (containerW - videoW * scale) / 2;
+            scale = h / vH;
+            offX = (w - vW * scale) / 2;
         }
 
-        // Coordinate transformer: converts normalized (0..1) coords to exact pixel position on canvas
         function mapCoord(normX, normY) {
-            // Backend process_base64_image flips horizontally (display_frame = cv2.flip(frame, 1))
-            // So landmarks returned are already mirrored for front camera display
-            const px = normX * videoW * scale + offsetX;
-            const py = normY * videoH * scale + offsetY;
-            return { x: px, y: py };
+            return {
+                x: (1.0 - normX) * vW * scale + offX,
+                y: normY * vH * scale + offY
+            };
         }
 
         // Draw Pose Connections
         if (landmarks.pose && landmarks.pose.length > 0) {
-            skeletonCtx.strokeStyle = 'rgba(99, 102, 241, 0.85)';
-            skeletonCtx.lineWidth = 3;
+            skeletonCtx.strokeStyle = 'rgba(99, 102, 241, 0.55)';
+            skeletonCtx.lineWidth = 1.2;
             skeletonCtx.shadowColor = '#6366f1';
-            skeletonCtx.shadowBlur = 8;
+            skeletonCtx.shadowBlur = 2;
 
             for (const [startIdx, endIdx] of POSE_CONNECTIONS) {
                 const p1 = landmarks.pose[startIdx];
@@ -433,13 +426,13 @@
             }
 
             // Pose Joints
-            skeletonCtx.shadowBlur = 4;
+            skeletonCtx.shadowBlur = 1;
             for (let i = 11; i <= 16; i++) {
                 const p = landmarks.pose[i];
                 if (p && (p.v === undefined || p.v > 0.35)) {
                     const c = mapCoord(p.x, p.y);
                     skeletonCtx.beginPath();
-                    skeletonCtx.arc(c.x, c.y, 4.5, 0, 2 * Math.PI);
+                    skeletonCtx.arc(c.x, c.y, 2, 0, 2 * Math.PI);
                     skeletonCtx.fillStyle = '#c084fc';
                     skeletonCtx.fill();
                 }
@@ -449,9 +442,9 @@
         function drawHand(points, lineColor, dotColor, glowColor) {
             if (!points || points.length === 0) return;
             skeletonCtx.strokeStyle = lineColor;
-            skeletonCtx.lineWidth = 3;
+            skeletonCtx.lineWidth = 1.2;
             skeletonCtx.shadowColor = glowColor || lineColor;
-            skeletonCtx.shadowBlur = 8;
+            skeletonCtx.shadowBlur = 2;
 
             for (const [s, e] of HAND_CONNECTIONS) {
                 const p1 = points[s];
@@ -466,13 +459,13 @@
                 }
             }
 
-            skeletonCtx.shadowBlur = 4;
+            skeletonCtx.shadowBlur = 1;
             for (let idx = 0; idx < points.length; idx++) {
                 const p = points[idx];
                 if (!p) continue;
                 const c = mapCoord(p.x, p.y);
                 skeletonCtx.beginPath();
-                const radius = (idx === 4 || idx === 8 || idx === 12 || idx === 16 || idx === 20) ? 5 : 3.5;
+                const radius = (idx === 4 || idx === 8 || idx === 12 || idx === 16 || idx === 20) ? 2.2 : 1.5;
                 skeletonCtx.arc(c.x, c.y, radius, 0, 2 * Math.PI);
                 skeletonCtx.fillStyle = dotColor;
                 skeletonCtx.fill();
@@ -481,12 +474,12 @@
 
         // Left Hand (Cyan glow)
         if (landmarks.leftHand && landmarks.leftHand.length > 0) {
-            drawHand(landmarks.leftHand, 'rgba(6, 182, 212, 0.95)', '#67e8f9', '#06b6d4');
+            drawHand(landmarks.leftHand, 'rgba(6, 182, 212, 0.65)', '#67e8f9', '#06b6d4');
         }
 
         // Right Hand (Neon Green glow)
         if (landmarks.rightHand && landmarks.rightHand.length > 0) {
-            drawHand(landmarks.rightHand, 'rgba(16, 185, 129, 0.95)', '#34d399', '#10b981');
+            drawHand(landmarks.rightHand, 'rgba(16, 185, 129, 0.65)', '#34d399', '#10b981');
         }
     }
 
@@ -502,7 +495,7 @@
                 captureCanvas.width = 480;
                 captureCanvas.height = 360;
                 captureCtx.drawImage(clientWebcam, 0, 0, captureCanvas.width, captureCanvas.height);
-                const b64 = captureCanvas.toDataURL('image/jpeg', 0.65);
+                const b64 = captureCanvas.toDataURL('image/jpeg', 0.55);
 
                 const response = await fetch(`${serverUrl}/api/process_frame`, {
                     method: 'POST',
@@ -524,7 +517,7 @@
             } finally {
                 isFrameSending = false;
             }
-        }, 100); // 10 FPS real-time
+        }, 45); // ~22 FPS responsive real-time tracking
     }
 
     function stopFrameCapture() {
@@ -553,7 +546,7 @@
             if (btnCameraPower) btnCameraPower.classList.add('active');
             if (iconCamPower) iconCamPower.className = 'fa-solid fa-video';
 
-            if (streamSourceText) streamSourceText.textContent = 'à¸à¸¥à¹‰à¸­à¸‡ OpenCV';
+            if (streamSourceText) streamSourceText.textContent = 'กล้อง OpenCV';
             if (streamSourceIcon) streamSourceIcon.className = 'fa-solid fa-server';
             statusText.textContent = 'SERVER STREAM (OpenCV)';
             statusDot.className = 'indicator-dot active';
@@ -563,7 +556,7 @@
             if (apiInterval) clearInterval(apiInterval);
             apiInterval = setInterval(pollBackendPrediction, 250);
 
-            showToast('à¸ªà¸¥à¸±à¸šà¹„à¸›à¸¢à¸±à¸‡à¸à¸¥à¹‰à¸­à¸‡à¹€à¸‹à¸´à¸£à¹Œà¸Ÿà¹€à¸§à¸­à¸£à¹Œ OpenCV Direct à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢');
+            showToast('สลับไปยังกล้องเซิร์ฟเวอร์ OpenCV Direct เรียบร้อย');
         } else {
             if (flaskStream) {
                 flaskStream.src = '';
@@ -571,12 +564,12 @@
             }
             if (clientWebcam) clientWebcam.style.display = 'block';
             if (skeletonCanvas) skeletonCanvas.style.display = 'block';
-            if (streamSourceText) streamSourceText.textContent = 'à¸à¸¥à¹‰à¸­à¸‡à¹€à¸§à¹‡à¸š';
+            if (streamSourceText) streamSourceText.textContent = 'กล้องเว็บ';
             if (streamSourceIcon) streamSourceIcon.className = 'fa-solid fa-desktop';
 
             if (apiInterval) clearInterval(apiInterval);
             startClientWebcam(currentFacingMode);
-            showToast('à¸ªà¸¥à¸±à¸šà¹„à¸›à¸¢à¸±à¸‡à¸à¸¥à¹‰à¸­à¸‡à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œ à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢');
+            showToast('สลับไปยังกล้องเบราว์เซอร์ เรียบร้อย');
         }
     }
 
@@ -619,7 +612,7 @@
 
                 updateUI(randomWord, `${randomConfidence}%`, mockSentence.join(' '));
             } else {
-                updateUI("à¸£à¸­à¸à¸¥à¸¸à¹ˆà¸¡à¸—à¹ˆà¸²à¸—à¸²à¸‡...", "0.0%", mockSentence.join(' ') || "...");
+                updateUI("รอกลุ่มท่าทาง...", "0.0%", mockSentence.join(' ') || "...");
             }
         }, 2200);
     }
@@ -627,7 +620,7 @@
     // Update UI Elements with smooth animation feedback
     let prevWord = "";
     function updateUI(word, confidence, sentence) {
-        if (word !== prevWord && word !== "à¸£à¸­à¸à¸¥à¸¸à¹ˆà¸¡à¸—à¹ˆà¸²à¸—à¸²à¸‡..." && word !== "à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸ªà¸±à¸à¸à¸²à¸“à¸¡à¸·à¸­...") {
+        if (word !== prevWord && word !== "รอกลุ่มท่าทาง..." && word !== "กำลังรอสัญญาณมือ...") {
             predictionWord.style.transform = 'scale(1.08)';
             predictionWord.style.transition = 'transform 0.15s ease-out';
             setTimeout(() => {
@@ -665,13 +658,13 @@
         } else {
             if (action === 'clear') {
                 mockSentence = [];
-                updateUI("à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¹‚à¸¢à¸„à¹à¸¥à¹‰à¸§", "0.0%", "...");
-                showToast('à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¹‚à¸¢à¸„à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸ªà¸³à¹€à¸£à¹‡à¸ˆ');
+                updateUI("ล้างประโยคแล้ว", "0.0%", "...");
+                showToast('ล้างประโยคทั้งหมดสำเร็จ');
             } else if (action === 'backspace') {
                 if (mockSentence.length > 0) {
                     mockSentence.pop();
-                    updateUI("à¸¥à¸šà¸„à¸³à¸¥à¹ˆà¸²à¸ªà¸¸à¸”à¹à¸¥à¹‰à¸§", "0.0%", mockSentence.join(' ') || "...");
-                    showToast('à¸¥à¸šà¸„à¸³à¸¥à¹ˆà¸²à¸ªà¸¸à¸”à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢');
+                    updateUI("ลบคำล่าสุดแล้ว", "0.0%", mockSentence.join(' ') || "...");
+                    showToast('ลบคำล่าสุดเรียบร้อย');
                 }
             }
         }
@@ -726,13 +719,13 @@
                 btnToggleTranslate.style.backgroundColor = '#ffffff';
                 btnToggleTranslate.style.boxShadow = '0 10px 20px rgba(255, 255, 255, 0.15)';
                 btnToggleTranslate.querySelector('i').style.color = '#0a0b10';
-                showToast('à¹€à¸›à¸´à¸”à¸£à¸°à¸šà¸šà¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸šà¸ à¸²à¸©à¸²à¸¡à¸·à¸­');
+                showToast('เปิดระบบตรวจจับภาษามือ');
             } else {
                 transOverlay.classList.add('hidden');
                 btnToggleTranslate.style.backgroundColor = '#ef4444';
                 btnToggleTranslate.style.boxShadow = '0 10px 20px rgba(239, 68, 68, 0.3)';
                 btnToggleTranslate.querySelector('i').style.color = '#ffffff';
-                showToast('à¸›à¸´à¸”à¸£à¸°à¸šà¸šà¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸šà¸ à¸²à¸©à¸²à¸¡à¸·à¸­à¸Šà¸±à¹ˆà¸§à¸„à¸£à¸²à¸§');
+                showToast('ปิดระบบตรวจจับภาษามือชั่วคราว');
             }
         });
     }
@@ -780,7 +773,7 @@
                 qrCodeImage.style.display = 'block';
             };
             qrCodeImage.onerror = () => {
-                qrLoading.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹‚à¸«à¸¥à¸”à¸£à¸¹à¸› QR Code à¹„à¸”à¹‰ (à¸žà¸´à¸¡à¸žà¹Œà¸¥à¸´à¸‡à¸à¹Œà¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¸¥à¸‡à¹ƒà¸™à¸¡à¸·à¸­à¸–à¸·à¸­)';
+                qrLoading.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถโหลดรูป QR Code ได้ (พิมพ์ลิงก์ด้านล่างลงในมือถือ)';
             };
         }
     }
@@ -804,11 +797,11 @@
         btnCopyUrl.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(mobileUrlInput.value);
-                showToast('à¸„à¸±à¸”à¸¥à¸­à¸à¸¥à¸´à¸‡à¸à¹Œà¸ªà¸³à¸«à¸£à¸±à¸šà¸¡à¸·à¸­à¸–à¸·à¸­à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§');
+                showToast('คัดลอกลิงก์สำหรับมือถือเรียบร้อยแล้ว');
             } catch (err) {
                 mobileUrlInput.select();
                 document.execCommand('copy');
-                showToast('à¸„à¸±à¸”à¸¥à¸­à¸à¸¥à¸´à¸‡à¸à¹Œà¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢');
+                showToast('คัดลอกลิงก์เรียบร้อย');
             }
         });
     }
@@ -840,8 +833,8 @@
     const dropdownUsername = document.getElementById('dropdown-username');
     const dropdownEmail = document.getElementById('dropdown-email');
     const btnLogout = document.getElementById('btn-logout');
-    const btnGive = document.getElementById('btn-give'); // à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š button
-    const btnPlan = document.getElementById('btn-plan'); // à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸ button
+    const btnGive = document.getElementById('btn-give'); // เข้าสู่ระบบ button
+    const btnPlan = document.getElementById('btn-plan'); // สมัครสมาชิก button
     const btnSocialGoogle = document.getElementById('btn-social-google');
     const btnSocialGithub = document.getElementById('btn-social-github');
 
@@ -884,8 +877,8 @@
             tabRegister.setAttribute('aria-selected', 'false');
             formLogin.style.display = 'flex';
             formRegister.style.display = 'none';
-            authModalTitle.textContent = 'à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š SignSubs';
-            authModalSubtitle.textContent = 'à¹€à¸žà¸·à¹ˆà¸­à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¸£à¸°à¸šà¸šà¹à¸›à¸¥à¸ à¸²à¸©à¸²à¸¡à¸·à¸­à¹€à¸£à¸µà¸¢à¸¥à¹„à¸—à¸¡à¹Œà¹à¸¥à¸°à¸šà¸±à¸™à¸—à¸¶à¸à¸›à¸£à¸°à¸§à¸±à¸•à¸´';
+            authModalTitle.textContent = 'เข้าสู่ระบบ SignSubs';
+            authModalSubtitle.textContent = 'เพื่อใช้งานระบบแปลภาษามือเรียลไทม์และบันทึกประวัติ';
         } else {
             tabRegister.classList.add('active');
             tabRegister.setAttribute('aria-selected', 'true');
@@ -893,8 +886,8 @@
             tabLogin.setAttribute('aria-selected', 'false');
             formLogin.style.display = 'none';
             formRegister.style.display = 'flex';
-            authModalTitle.textContent = 'à¸ªà¸£à¹‰à¸²à¸‡à¸šà¸±à¸à¸Šà¸µ SignSubs à¹ƒà¸«à¸¡à¹ˆ';
-            authModalSubtitle.textContent = 'à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸à¸Ÿà¸£à¸µà¹€à¸žà¸·à¹ˆà¸­à¹€à¸‚à¹‰à¸²à¸–à¸¶à¸‡à¸Ÿà¸µà¹€à¸ˆà¸­à¸£à¹Œà¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸šà¸ à¸²à¸©à¸²à¸¡à¸·à¸­à¸„à¸£à¸šà¸„à¸£à¸±à¸™';
+            authModalTitle.textContent = 'สร้างบัญชี SignSubs ใหม่';
+            authModalSubtitle.textContent = 'สมัครสมาชิกฟรีเพื่อเข้าถึงฟีเจอร์ตรวจจับภาษามือครบครัน';
         }
     }
 
@@ -950,8 +943,8 @@
     function applyLoggedInUser(user) {
         if (authButtonsGroup) authButtonsGroup.style.display = 'none';
         if (userProfileWidget) userProfileWidget.style.display = 'block';
-        if (userDisplayName) userDisplayName.textContent = user.username || user.name || 'à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™';
-        if (dropdownUsername) dropdownUsername.textContent = user.username || user.name || 'à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™';
+        if (userDisplayName) userDisplayName.textContent = user.username || user.name || 'ผู้ใช้งาน';
+        if (dropdownUsername) dropdownUsername.textContent = user.username || user.name || 'ผู้ใช้งาน';
         if (dropdownEmail) dropdownEmail.textContent = user.email || 'user@signsubs.ai';
     }
 
@@ -992,7 +985,7 @@
                 console.log("Logout backend request bypassed:", err);
             }
             applyLoggedOutUser();
-            showToast('à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸šà¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§');
+            showToast('ออกจากระบบเรียบร้อยแล้ว');
         });
     }
     //
@@ -1000,18 +993,18 @@
         if (authButtonsGroup) authButtonsGroup.style.display = 'none';
         if (userProfileWidget) userProfileWidget.style.display = 'block';
 
-        if (userDisplayName) userDisplayName.textContent = user.username || 'à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™';
-        if (dropdownUsername) dropdownUsername.textContent = user.username || 'à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™';
+        if (userDisplayName) userDisplayName.textContent = user.username || 'ผู้ใช้งาน';
+        if (dropdownUsername) dropdownUsername.textContent = user.username || 'ผู้ใช้งาน';
         if (dropdownEmail) dropdownEmail.textContent = user.email || 'user@signsubs.ai';
         console.log(user);
 
-        // --- à¸„à¸§à¸šà¸„à¸¸à¸¡à¸à¸²à¸£à¹à¸ªà¸”à¸‡à¸›à¸¸à¹ˆà¸¡ ADMIN à¸•à¸²à¸¡ Role ---
+        // --- ควบคุมการแสดงปุ่ม ADMIN ตาม Role ---
         const adminMenuItem = document.getElementById('admin-menu-item');
         if (adminMenuItem) {
             if (user.role === 'admin') {
-                adminMenuItem.style.display = 'flex'; // à¸«à¸£à¸·à¸­ 'block' à¸•à¸²à¸¡à¸”à¸µà¹„à¸‹à¸™à¹Œà¹€à¸”à¸´à¸¡à¸‚à¸­à¸‡à¸„à¸¸à¸“
+                adminMenuItem.style.display = 'flex'; // หรือ 'block' ตามดีไซน์เดิมของคุณ
             } else {
-                adminMenuItem.style.display = 'none'; // à¸‹à¹ˆà¸­à¸™à¸–à¹‰à¸²à¹„à¸¡à¹ˆà¹ƒà¸Šà¹ˆà¹à¸­à¸”à¸¡à¸´à¸™
+                adminMenuItem.style.display = 'none'; // ซ่อนถ้าไม่ใช่แอดมิน
             }
         }
     }
@@ -1027,12 +1020,12 @@
             const submitBtn = document.getElementById('btn-submit-login');
 
             if (!usernameInput || !passwordInput) {
-                showAuthAlert('à¸à¸£à¸¸à¸“à¸²à¸à¸£à¸­à¸à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¹à¸¥à¸°à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹ƒà¸«à¹‰à¸„à¸£à¸šà¸–à¹‰à¸§à¸™');
+                showAuthAlert('กรุณากรอกชื่อผู้ใช้และรหัสผ่านให้ครบถ้วน');
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> à¸à¸³à¸¥à¸±à¸‡à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸š...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังตรวจสอบ...';
 
             let loginSuccess = false;
             let loggedInUserData = null;
@@ -1063,11 +1056,11 @@
             // Attempt Backend Login if not authenticated via Supabase and not local file
             if (!loginSuccess && !isLocalFile) {
                 try {
-                    // à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¸ªà¸–à¸²à¸™à¸°à¸à¸²à¸£à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸œà¹ˆà¸²à¸™ Supabase
+                    // ตรวจสอบสถานะการเข้าสู่ระบบผ่าน Supabase
                     if (!loginSuccess) {
-                        showAuthAlert('à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹„à¸¡à¹ˆà¸–à¸¹à¸à¸•à¹‰à¸­à¸‡');
+                        showAuthAlert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
                         submitBtn.disabled = false;
-                        submitBtn.innerHTML = '<span>à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š</span> <i class="fa-solid fa-arrow-right"></i>';
+                        submitBtn.innerHTML = '<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right"></i>';
                         return;
                     }
                     const data = await res.json();
@@ -1075,9 +1068,9 @@
                         loginSuccess = true;
                         loggedInUserData = data.user;
                     } else if (res.status === 401) {
-                        showAuthAlert(data.message || 'à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹„à¸¡à¹ˆà¸–à¸¹à¸à¸•à¹‰à¸­à¸‡');
+                        showAuthAlert(data.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
                         submitBtn.disabled = false;
-                        submitBtn.innerHTML = '<span>à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š</span> <i class="fa-solid fa-arrow-right"></i>';
+                        submitBtn.innerHTML = '<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right"></i>';
                         return;
                     }
                 } catch (err) {
@@ -1105,9 +1098,9 @@
                         email: usernameInput.includes('@') ? usernameInput : `${usernameInput}@signsubs.ai`
                     };
                 } else {
-                    showAuthAlert('à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¸•à¹‰à¸­à¸‡à¸¡à¸µà¸„à¸§à¸²à¸¡à¸¢à¸²à¸§à¸­à¸¢à¹ˆà¸²à¸‡à¸™à¹‰à¸­à¸¢ 4 à¸•à¸±à¸§à¸­à¸±à¸à¸©à¸£');
+                    showAuthAlert('รหัสผ่านต้องมีความยาวอย่างน้อย 4 ตัวอักษร');
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<span>à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š</span> <i class="fa-solid fa-arrow-right"></i>';
+                    submitBtn.innerHTML = '<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right"></i>';
                     return;
                 }
             }
@@ -1121,12 +1114,12 @@
 
                 applyLoggedInUser(loggedInUserData);
                 closeAuthModal();
-                showToast(`à¸¢à¸´à¸™à¸”à¸µà¸•à¹‰à¸­à¸™à¸£à¸±à¸šà¸„à¸¸à¸“ ${loggedInUserData.username} à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸ªà¸³à¹€à¸£à¹‡à¸ˆ`);
+                showToast(`ยินดีต้อนรับคุณ ${loggedInUserData.username} เข้าสู่ระบบสำเร็จ`);
                 formLogin.reset();
             }
 
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<span>à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š</span> <i class="fa-solid fa-arrow-right"></i>';
+            submitBtn.innerHTML = '<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right"></i>';
         });
     }
 
@@ -1143,28 +1136,28 @@
             const submitBtn = document.getElementById('btn-submit-register');
 
             if (username.length < 3) {
-                showAuthAlert('à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¸•à¹‰à¸­à¸‡à¸¡à¸µà¸„à¸§à¸²à¸¡à¸¢à¸²à¸§à¸­à¸¢à¹ˆà¸²à¸‡à¸™à¹‰à¸­à¸¢ 3 à¸•à¸±à¸§à¸­à¸±à¸à¸©à¸£');
+                showAuthAlert('ชื่อผู้ใช้งานต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
                 return;
             }
 
             if (password.length < 6) {
-                showAuthAlert('à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¸•à¹‰à¸­à¸‡à¸¡à¸µà¸„à¸§à¸²à¸¡à¸¢à¸²à¸§à¸­à¸¢à¹ˆà¸²à¸‡à¸™à¹‰à¸­à¸¢ 6 à¸•à¸±à¸§à¸­à¸±à¸à¸©à¸£');
+                showAuthAlert('รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร');
                 return;
             }
 
             if (password !== confirmPassword) {
-                showAuthAlert('à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹à¸¥à¸°à¸à¸²à¸£à¸¢à¸·à¸™à¸¢à¸±à¸™à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹„à¸¡à¹ˆà¸•à¸£à¸‡à¸à¸±à¸™');
+                showAuthAlert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> à¸à¸³à¸¥à¸±à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¸šà¸±à¸à¸Šà¸µ...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้างบัญชี...';
 
             let regSuccess = false;
             let newUser = { username, email };
             let supabaseRegistered = false;
 
-            // 1. Supabase Registration (à¸ˆà¸±à¸”à¸à¸²à¸£à¸šà¸±à¸™à¸—à¸¶à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸—à¸µà¹ˆà¸™à¸µà¹ˆ)
+            // 1. Supabase Registration (จัดการบันทึกข้อมูลผู้ใช้ทั้งหมดที่นี่)
             if (supabaseClient) {
                 try {
                     const { data: sbData, error: sbError } = await supabaseClient
@@ -1174,28 +1167,28 @@
                     if (sbError) {
                         console.error('Supabase registration error:', sbError);
                         if (sbError.code === '23505' || (sbError.message && sbError.message.toLowerCase().includes('duplicate'))) {
-                            showAuthAlert('à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸­à¸µà¹€à¸¡à¸¥à¸™à¸µà¹‰à¸¡à¸µà¸­à¸¢à¸¹à¹ˆà¹ƒà¸™à¸£à¸°à¸šà¸š Supabase à¹à¸¥à¹‰à¸§');
+                            showAuthAlert('ชื่อผู้ใช้หรืออีเมลนี้มีอยู่ในระบบ Supabase แล้ว');
                         } else {
-                            showAuthAlert('à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”: ' + sbError.message);
+                            showAuthAlert('เกิดข้อผิดพลาด: ' + sbError.message);
                         }
                         submitBtn.disabled = false;
-                        submitBtn.innerHTML = '<span>à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸</span> <i class="fa-solid fa-user-check"></i>';
+                        submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
                         return;
                     } else {
-                        // à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸à¸ªà¸³à¹€à¸£à¹‡à¸ˆ
+                        // สมัครสมาชิกสำเร็จ
                         regSuccess = true;
                         window.location.href = 'index.html';
                     }
                 } catch (sbErr) {
                     console.error("Supabase registration exception:", sbErr);
-                    showAuthAlert('à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”à¹ƒà¸™à¸à¸²à¸£à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥');
+                    showAuthAlert('เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล');
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<span>à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸</span> <i class="fa-solid fa-user-check"></i>';
+                    submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
                 }
             } else {
-                showAuthAlert('à¹„à¸¡à¹ˆà¸žà¸šà¸à¸²à¸£à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ Supabase');
+                showAuthAlert('ไม่พบการเชื่อมต่อฐานข้อมูล Supabase');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸</span> <i class="fa-solid fa-user-check"></i>';
+                submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
             }
 
             // 3. Fallback: Local storage
@@ -1204,9 +1197,9 @@
                 const exists = storedUsers.some(u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === email.toLowerCase());
 
                 if (exists) {
-                    showAuthAlert('à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸­à¸µà¹€à¸¡à¸¥à¸™à¸µà¹‰à¸¡à¸µà¸­à¸¢à¸¹à¹ˆà¹ƒà¸™à¸£à¸°à¸šà¸šà¹à¸¥à¹‰à¸§');
+                    showAuthAlert('ชื่อผู้ใช้หรืออีเมลนี้มีอยู่ในระบบแล้ว');
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<span>à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸</span> <i class="fa-solid fa-user-check"></i>';
+                    submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
                     return;
                 }
 
@@ -1219,12 +1212,12 @@
                 localStorage.setItem('signsubs_current_user', JSON.stringify(newUser));
                 applyLoggedInUser(newUser);
                 closeAuthModal();
-                showToast(`à¸ªà¸£à¹‰à¸²à¸‡à¸šà¸±à¸à¸Šà¸µà¸ªà¸³à¹€à¸£à¹‡à¸ˆ à¸¢à¸´à¸™à¸”à¸µà¸•à¹‰à¸­à¸™à¸£à¸±à¸šà¸„à¸¸à¸“ ${newUser.username}!`);
+                showToast(`สร้างบัญชีสำเร็จ ยินดีต้อนรับคุณ ${newUser.username}!`);
                 formRegister.reset();
             }
 
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<span>à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸</span> <i class="fa-solid fa-user-check"></i>';
+            submitBtn.innerHTML = '<span>สมัครสมาชิก</span> <i class="fa-solid fa-user-check"></i>';
         });
     }
 
@@ -1238,7 +1231,7 @@
             localStorage.setItem('signsubs_current_user', JSON.stringify(googleUser));
             applyLoggedInUser(googleUser);
             closeAuthModal();
-            showToast('à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸”à¹‰à¸§à¸¢ Google Account à¸ªà¸³à¹€à¸£à¹‡à¸ˆ');
+            showToast('เข้าสู่ระบบด้วย Google Account สำเร็จ');
         });
     }
 
@@ -1251,7 +1244,7 @@
             localStorage.setItem('signsubs_current_user', JSON.stringify(githubUser));
             applyLoggedInUser(githubUser);
             closeAuthModal();
-            showToast('à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸”à¹‰à¸§à¸¢ GitHub Account à¸ªà¸³à¹€à¸£à¹‡à¸ˆ');
+            showToast('เข้าสู่ระบบด้วย GitHub Account สำเร็จ');
         });
     }
 
@@ -1286,7 +1279,7 @@
 
     checkExistingAuth();
 
-    // Toggle Almost Fullscreen (à¹€à¸à¸·à¸­à¸šà¹€à¸•à¹‡à¸¡à¸ˆà¸­ / Theater Mode)
+    // Toggle Almost Fullscreen (เกือบเต็มจอ / Theater Mode)
     function toggleTheaterMode(forceState = null) {
         if (!cameraCard) return;
         const isTheater = forceState !== null ? forceState : !cameraCard.classList.contains('theater-mode');
@@ -1294,15 +1287,15 @@
         if (isTheater) {
             cameraCard.classList.add('theater-mode');
             if (expandIcon) expandIcon.className = 'fa-solid fa-compress';
-            if (expandText) expandText.textContent = 'à¸¢à¹ˆà¸­à¸‚à¸™à¸²à¸”';
-            if (btnExpandCam) btnExpandCam.title = 'à¸¢à¹ˆà¸­à¸‚à¸™à¸²à¸”à¸ˆà¸­à¸à¸¥à¹‰à¸­à¸‡ (Esc)';
-            showToast('à¸‚à¸¢à¸²à¸¢à¸ˆà¸­à¸à¸¥à¹‰à¸­à¸‡à¹€à¸à¸·à¸­à¸šà¹€à¸•à¹‡à¸¡à¸ˆà¸­ (à¸à¸” Esc à¸«à¸£à¸·à¸­à¸„à¸¥à¸´à¸à¸‹à¹‰à¸³à¹€à¸žà¸·à¹ˆà¸­à¸¢à¹ˆà¸­)');
+            if (expandText) expandText.textContent = 'ย่อขนาด';
+            if (btnExpandCam) btnExpandCam.title = 'ย่อขนาดจอกล้อง (Esc)';
+            showToast('ขยายจอกล้องเกือบเต็มจอ (กด Esc หรือคลิกซ้ำเพื่อย่อ)');
         } else {
             cameraCard.classList.remove('theater-mode');
             if (expandIcon) expandIcon.className = 'fa-solid fa-expand';
-            if (expandText) expandText.textContent = 'à¸‚à¸¢à¸²à¸¢à¹€à¸à¸·à¸­à¸šà¹€à¸•à¹‡à¸¡à¸ˆà¸­';
-            if (btnExpandCam) btnExpandCam.title = 'à¸‚à¸¢à¸²à¸¢à¹€à¸à¸·à¸­à¸šà¹€à¸•à¹‡à¸¡à¸ˆà¸­ (F)';
-            showToast('à¸¢à¹ˆà¸­à¸ˆà¸­à¸à¸¥à¹‰à¸­à¸‡à¸ªà¸¹à¹ˆà¸‚à¸™à¸²à¸”à¸›à¸à¸•à¸´');
+            if (expandText) expandText.textContent = 'ขยายเกือบเต็มจอ';
+            if (btnExpandCam) btnExpandCam.title = 'ขยายเกือบเต็มจอ (F)';
+            showToast('ย่อจอกล้องสู่ขนาดปกติ');
         }
     }
 
@@ -1311,7 +1304,7 @@
     }
 
     // ==========================================================================
-    // About Our Website Modal System (à¹€à¸à¸µà¹ˆà¸¢à¸§à¸à¸±à¸šà¹€à¸§à¹‡à¸šà¸‚à¸­à¸‡à¹€à¸£à¸²)
+    // About Our Website Modal System (เกี่ยวกับเว็บของเรา)
     // ==========================================================================
     const aboutModalOverlay = document.getElementById('about-modal-overlay');
     const btnCloseAboutModal = document.getElementById('btn-close-about-modal');
@@ -1491,7 +1484,7 @@
         if (!isCameraRunning) {
             startClientWebcam(currentFacingMode);
         } else {
-            showToast('à¸à¸¥à¹‰à¸­à¸‡à¸à¸³à¸¥à¸±à¸‡à¸—à¸³à¸‡à¸²à¸™à¸­à¸¢à¸¹à¹ˆà¹à¸¥à¹‰à¸§ à¸žà¸£à¹‰à¸­à¸¡à¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸šà¸ à¸²à¸©à¸²à¸¡à¸·à¸­');
+            showToast('กล้องกำลังทำงานอยู่แล้ว พร้อมตรวจจับภาษามือ');
         }
     }
 
