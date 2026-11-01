@@ -27,8 +27,6 @@ err.txt
 test_*.py
 
 # Large Training Datasets & Binary Sequences
-sequences/
-record_AI/sequences/
 *.npy
 
 # OS files
