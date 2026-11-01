@@ -23,7 +23,20 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from setup_db import setup_database
+# Protobuf/TensorFlow compatibility fix for Python 3.12
+try:
+    import google.protobuf.runtime_version
+except ImportError:
+    try:
+        import types
+        import google.protobuf
+        rv = types.ModuleType("google.protobuf.runtime_version")
+        rv.Domain = type("Domain", (), {"PUBLIC": 1, "INTERNAL": 2})
+        rv.ValidateProtobufRuntimeVersion = lambda *args, **kwargs: None
+        sys.modules["google.protobuf.runtime_version"] = rv
+        setattr(google.protobuf, "runtime_version", rv)
+    except Exception:
+        pass
 
 try:
     from inference_engine import InferenceEngine
@@ -48,6 +61,7 @@ def get_db():
     return conn
 
 # Initialize / migrate DB on startup
+from setup_db import setup_database
 setup_database()
 
 def get_lan_ip():
@@ -660,6 +674,17 @@ current_prediction = {
 
 @app.route('/api/prediction', methods=['GET'])
 def get_prediction():
+    if engine and hasattr(engine, 'get_state'):
+        state = engine.get_state()
+        if state.get('prediction') and state.get('prediction') not in {'กำลังรอสัญญาณมือ...', 'กำลังรอท่าทาง...', 'กำลังสะสมเฟรม...'}:
+            current_prediction['prediction'] = state['prediction']
+            current_prediction['confidence'] = state['confidence']
+            if state.get('sentence'):
+                current_prediction['sentence'] = state['sentence']
+    elif engine and hasattr(engine, 'latest_prediction') and engine.latest_prediction:
+        if engine.latest_prediction not in {'กำลังรอท่าทาง...', 'กำลังสะสมเฟรม...'}:
+            current_prediction['prediction'] = engine.latest_prediction
+            current_prediction['confidence'] = f"{engine.latest_confidence * 100:.1f}%"
     return jsonify(current_prediction)
 
 
@@ -668,17 +693,24 @@ def control_action():
     data = request.get_json() or {}
     action = data.get('action')
 
+    if engine and hasattr(engine, 'clear_sentence') and action == 'clear':
+        engine.clear_sentence()
+    elif engine and hasattr(engine, 'backspace_sentence') and action == 'backspace':
+        engine.backspace_sentence()
+
     if action == 'clear':
         current_prediction['sentence'] = ''
         current_prediction['prediction'] = 'ล้างประโยคแล้ว'
         current_prediction['confidence'] = '0.0%'
+        current_prediction['last_confirmed'] = ''
     elif action == 'backspace':
         words = current_prediction['sentence'].strip().split(' ')
         if words and words[0] != '':
             words.pop()
             current_prediction['sentence'] = ' '.join(words)
-        current_prediction['prediction'] = 'ลบค่ำล่าสุดแล้ว'
+        current_prediction['prediction'] = 'ลบคำล่าสุดแล้ว'
         current_prediction['confidence'] = '0.0%'
+        current_prediction['last_confirmed'] = ''
 
     return jsonify(current_prediction)
 
@@ -692,33 +724,55 @@ def process_frame():
         return jsonify({'success': False, 'message': 'No image or engine not loaded'})
 
     try:
-        label, confidence = engine.process_base64_image(b64_str)
-        if label:
-            if label != current_prediction.get('last_confirmed', ''):
-                sentence = current_prediction.get('sentence', '')
-                words = sentence.split(' ') if sentence else []
-                words.append(label)
-                if len(words) > 7:
-                    words = words[-7:]
-                current_prediction['sentence'] = ' '.join(words).strip()
-                current_prediction['last_confirmed'] = label
+        res = engine.process_base64_image(b64_str)
+        if not res or res[0] is None:
+            return jsonify({'success': False, 'message': 'Frame decoding failed'})
+        label, confidence, client_landmarks = res
 
-                user_name = session.get('username') or 'Guest'
-                user_id = session.get('user_id')
-                try:
-                    with get_db() as conn:
-                        conn.execute(
-                            'INSERT INTO translation_logs (user_id, username, gesture_name, translation_text, confidence) VALUES (?, ?, ?, ?, ?)',
-                            (user_id, user_name, label, label, round(float(confidence * 100), 1))
-                        )
-                        conn.commit()
-                except Exception as log_err:
-                    print(f"[Log Error] {log_err}")
+        transient_states = {
+            'กำลังสะสมเฟรม...',
+            'กำลังทำท่า...',
+            'โหมดตรวจจับมือ (รอไฟล์โมเดล)',
+            'กำลังรอท่าทาง...',
+            'กำลังรอสัญญาณมือ...',
+            'ไม่พบคำศัพท์',
+            'พร้อมตรวจจับ',
+            'Blank'
+        }
+
+        if label:
+            if label not in transient_states:
+                if label != current_prediction.get('last_confirmed', ''):
+                    sentence = current_prediction.get('sentence', '')
+                    words = sentence.split(' ') if sentence else []
+                    words.append(label)
+                    if len(words) > 7:
+                        words = words[-7:]
+                    current_prediction['sentence'] = ' '.join(words).strip()
+                    current_prediction['last_confirmed'] = label
+
+                    user_name = session.get('username') or 'Guest'
+                    user_id = session.get('user_id')
+                    try:
+                        with get_db() as conn:
+                            conn.execute(
+                                'INSERT INTO translation_logs (user_id, username, gesture_name, translation_text, confidence) VALUES (?, ?, ?, ?, ?)',
+                                (user_id, user_name, label, label, round(float(confidence * 100), 1))
+                            )
+                            conn.commit()
+                    except Exception as log_err:
+                        print(f"[Log Error] {log_err}")
 
             current_prediction['prediction'] = label
             current_prediction['confidence'] = f"{confidence*100:.1f}%"
 
-        return jsonify({'success': True, 'prediction': current_prediction.get('prediction', '')})
+        return jsonify({
+            'success': True,
+            'prediction': current_prediction.get('prediction', ''),
+            'confidence': current_prediction.get('confidence', '0.0%'),
+            'sentence': current_prediction.get('sentence', ''),
+            'landmarks': client_landmarks
+        })
     except Exception as e:
         print("Error processing frame:", e)
         return jsonify({'success': False, 'error': str(e)})
@@ -726,10 +780,14 @@ def process_frame():
 
 @app.route('/video_feed')
 def video_feed():
-    """Proxy /video_feed from server.py (FastAPI port 8000) or fallback to local InferenceEngine."""
+    """Video feed generated by realtime_predict.py (with fallback to proxy if needed)."""
+    if engine:
+        try:
+            return Response(engine.generate_video_stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        except Exception as e:
+            print(f"[AI] Local stream notice: {e}")
     import urllib.request
     try:
-        # Check if server.py is running on port 8000
         req = urllib.request.urlopen('http://127.0.0.1:8000/video_feed', timeout=2)
         def generate():
             while True:
@@ -739,11 +797,6 @@ def video_feed():
                 yield chunk
         return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
     except Exception:
-        if engine:
-            try:
-                return Response(engine.generate_video_stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
-            except Exception as e:
-                return Response(f"Inference error: {e}", status=500)
         return Response(b'', status=503)
 
 
