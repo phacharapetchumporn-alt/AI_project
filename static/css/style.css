@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
     --bg-dark: #0a0b10;
@@ -323,7 +323,7 @@ main {
     box-shadow: var(--card-shadow), 0 0 50px rgba(99, 102, 241, 0.2);
 }
 
-/* Almost Fullscreen (เกือบเต็มจอ) Mode */
+/* Almost Fullscreen (à¹€à¸à¸·à¸­à¸šà¹€à¸•à¹‡à¸¡à¸ˆà¸­) Mode */
 .camera-card.theater-mode {
     position: fixed;
     top: 24px;
