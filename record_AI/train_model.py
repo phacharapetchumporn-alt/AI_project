@@ -1,5 +1,6 @@
-import os
+﻿import os
 import sys
+import json
 import shutil
 import pickle
 import numpy as np
@@ -9,7 +10,14 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import (
+    confusion_matrix,
+    classification_report,
+    f1_score,
+    accuracy_score,
+    precision_score,
+    recall_score
+)
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -46,6 +54,9 @@ SAVE_PATH       = os.path.join(ROOT_DIR, "action_model.pth")
 BEST_MODEL_PATH = os.path.join(ROOT_DIR, "action_model.pth")
 SCALER_PATH     = os.path.join(ROOT_DIR, "scaler.pkl")
 LABEL_ENC_PATH  = os.path.join(ROOT_DIR, "label_encoder.pkl")
+REPORT_TXT_PATH = os.path.join(ROOT_DIR, "evaluation_report.txt")
+REPORT_JSON_PATH= os.path.join(ROOT_DIR, "evaluation_report.json")
+CONFUSION_PATH  = os.path.join(ROOT_DIR, "confusion_matrix.png")
 
 # =========================
 # 2. โหลดข้อมูล .npy ทั้งหมด
@@ -57,6 +68,11 @@ print(f"  Output Model: {SAVE_PATH}")
 print("=" * 65)
 
 X, y = [], []
+if not os.path.exists(DATA_PATH):
+    print(f"\n[ERROR] ไม่พบโฟลเดอร์ข้อมูล: {DATA_PATH}")
+    print("  กรุณารัน convert_tsl51.py หรือจัดเตรียมข้อมูล .npy ก่อนเริ่มเทรน")
+    sys.exit(1)
+
 folders = [d for d in os.listdir(DATA_PATH) if os.path.isdir(os.path.join(DATA_PATH, d))]
 
 label_map = {}
@@ -102,7 +118,7 @@ with open(SCALER_PATH, 'wb') as f:
 print(f"✅ บันทึก scaler.pkl ที่: {SCALER_PATH}")
 
 # =========================
-# 4. Label Encoding & Split
+# 4. Label Encoding & Split (Train 80% / Test 20%)
 # =========================
 label_encoder = LabelEncoder()
 y_encoded = label_encoder.fit_transform(y)
@@ -116,11 +132,14 @@ print(f"✅ บันทึก label_encoder.pkl ({num_classes} classes) ที�
 counts = np.bincount(y_encoded)
 can_stratify = bool(counts.min() >= 2)
 
+# สัดส่วน Train 80% / Test 20%
 X_train, X_test, y_train, y_test = train_test_split(
-    X_norm, y_encoded, test_size=0.15, random_state=42,
+    X_norm, y_encoded, test_size=0.20, random_state=42,
     stratify=y_encoded if can_stratify else None
 )
-print(f"[*] Train set: {len(X_train)}  |  Test set: {len(X_test)}")
+train_pct = (len(X_train) / len(X_norm)) * 100
+test_pct = (len(X_test) / len(X_norm)) * 100
+print(f"[*] Train set: {len(X_train)} samples ({train_pct:.1f}%) | Test set: {len(X_test)} samples ({test_pct:.1f}%)")
 
 # =========================
 # 5. Dataset & DataLoader
@@ -281,7 +300,7 @@ for epoch in range(EPOCHS):
         break
 
 # =========================
-# 9. Evaluate Best Model
+# 9. Evaluate Best Model & F1-Scores
 # =========================
 print(f"\n--- โหลดโมเดลดีที่สุด: {BEST_MODEL_PATH} ---")
 model.load_state_dict(torch.load(BEST_MODEL_PATH, map_location=device))
@@ -296,10 +315,89 @@ with torch.no_grad():
         all_preds.extend(preds.cpu().numpy())
         all_labels.extend(labels.numpy())
 
-print("\n📊 Classification Report (Sample):")
-print(classification_report(all_labels, all_preds,
-                             target_names=label_encoder.classes_,
-                             zero_division=0))
+all_preds = np.array(all_preds)
+all_labels = np.array(all_labels)
 
-print(f"\n🎉 Training เสร็จสิ้นสมบูรณ์!")
+# Metrics calculation
+test_accuracy = accuracy_score(all_labels, all_preds)
+macro_precision = precision_score(all_labels, all_preds, average='macro', zero_division=0)
+macro_recall = recall_score(all_labels, all_preds, average='macro', zero_division=0)
+macro_f1 = f1_score(all_labels, all_preds, average='macro', zero_division=0)
+weighted_f1 = f1_score(all_labels, all_preds, average='weighted', zero_division=0)
+micro_f1 = f1_score(all_labels, all_preds, average='micro', zero_division=0)
+
+print("\n" + "=" * 65)
+print("  EVALUATION METRICS SUMMARY (Test Set: 20%)")
+print("=" * 65)
+print(f"  Test Accuracy:    {test_accuracy * 100:.2f}%")
+print(f"  Macro Precision:  {macro_precision:.4f}")
+print(f"  Macro Recall:     {macro_recall:.4f}")
+print(f"  Macro F1-Score:   {macro_f1:.4f}  (ค่าเฉลี่ย F1 เท่ากันทุกคลาส)")
+print(f"  Weighted F1-Score:{weighted_f1:.4f}  (ค่าเฉลี่ย F1 ถ่วงน้ำหนักตามจำนวนข้อมูล)")
+print(f"  Micro F1-Score:   {micro_f1:.4f}")
+print("=" * 65)
+
+report_text = classification_report(
+    all_labels, all_preds,
+    target_names=label_encoder.classes_,
+    zero_division=0
+)
+print("\n📊 Classification Report (รายละเอียดรายคำศัพท์):")
+print(report_text)
+
+# Save evaluation report to text file
+with open(REPORT_TXT_PATH, "w", encoding="utf-8") as f:
+    f.write("TSL-51 Sign Language Model Evaluation Report\n")
+    f.write("=" * 65 + "\n")
+    f.write(f"Split: Train 80% ({len(X_train)} samples) / Test 20% ({len(X_test)} samples)\n")
+    f.write(f"Total Samples: {len(X_norm)} | Classes: {num_classes}\n")
+    f.write("-" * 65 + "\n")
+    f.write(f"Test Accuracy:     {test_accuracy * 100:.2f}%\n")
+    f.write(f"Macro Precision:   {macro_precision:.4f}\n")
+    f.write(f"Macro Recall:      {macro_recall:.4f}\n")
+    f.write(f"Macro F1-Score:    {macro_f1:.4f}\n")
+    f.write(f"Weighted F1-Score: {weighted_f1:.4f}\n")
+    f.write(f"Micro F1-Score:    {micro_f1:.4f}\n")
+    f.write("=" * 65 + "\n\n")
+    f.write("Detailed Classification Report:\n")
+    f.write(report_text)
+print(f"✅ บันทึกรายงานสรุปที่: {REPORT_TXT_PATH}")
+
+# Save metrics to JSON format for easy programmatic access
+report_dict = classification_report(
+    all_labels, all_preds,
+    target_names=label_encoder.classes_,
+    output_dict=True,
+    zero_division=0
+)
+metrics_json = {
+    "split": {"train_ratio": 0.80, "test_ratio": 0.20, "train_samples": len(X_train), "test_samples": len(X_test)},
+    "accuracy": float(test_accuracy),
+    "macro_f1": float(macro_f1),
+    "weighted_f1": float(weighted_f1),
+    "micro_f1": float(micro_f1),
+    "macro_precision": float(macro_precision),
+    "macro_recall": float(macro_recall),
+    "detailed_report": report_dict
+}
+with open(REPORT_JSON_PATH, "w", encoding="utf-8") as f:
+    json.dump(metrics_json, f, indent=2, ensure_ascii=False)
+print(f"✅ บันทึก JSON Metrics ที่: {REPORT_JSON_PATH}")
+
+# Save Confusion Matrix Heatmap if possible
+try:
+    cm = confusion_matrix(all_labels, all_preds)
+    fig, ax = plt.subplots(figsize=(max(10, num_classes // 3), max(8, num_classes // 3)))
+    sns.heatmap(cm, annot=False, cmap="Blues", fmt="d", cbar=True, ax=ax)
+    ax.set_title(f"Confusion Matrix (Test Set 20% | Acc: {test_accuracy*100:.1f}%)")
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("True")
+    plt.tight_layout()
+    plt.savefig(CONFUSION_PATH, dpi=200)
+    plt.close()
+    print(f"✅ บันทึก Confusion Matrix ภาพที่: {CONFUSION_PATH}")
+except Exception as e:
+    print(f"  ⚠️ ข้ามการบันทึกรูปภาพ Confusion Matrix: {e}")
+
+print(f"\n🎉 Training และ Evaluation เสร็จสิ้นสมบูรณ์!")
 print(f"✅ บันทึกโมเดลไว้ที่: {BEST_MODEL_PATH}")
