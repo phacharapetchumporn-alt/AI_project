@@ -26,6 +26,10 @@ from sklearn.metrics import (
 )
 import matplotlib
 matplotlib.use('Agg')
+<<<<<<< HEAD
+import matplotlib.pyplot as plt
+import seaborn as sns
+=======
 import warnings
 warnings.filterwarnings('ignore')
 import matplotlib.pyplot as plt
@@ -34,6 +38,7 @@ try:
     HAS_SEABORN = True
 except ImportError:
     HAS_SEABORN = False
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 # Ensure UTF-8 output on Windows
 if sys.platform == "win32":
@@ -53,6 +58,46 @@ NUM_LAYERS      = 3
 DROPOUT         = 0.3
 
 
+<<<<<<< HEAD
+class TemporalAttention(nn.Module):
+    def __init__(self, hidden_size):
+        super().__init__()
+        self.attn = nn.Linear(hidden_size, 1)
+
+    def forward(self, lstm_out):
+        scores = self.attn(lstm_out)
+        weights = torch.softmax(scores, dim=1)
+        context = (lstm_out * weights).sum(dim=1)
+        return context, weights
+
+
+class BiLSTMAttentionModel(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, num_classes, dropout=0.3):
+        super().__init__()
+        self.lstm = nn.LSTM(
+            input_size, hidden_size, num_layers,
+            batch_first=True,
+            bidirectional=True,
+            dropout=dropout if num_layers > 1 else 0.0
+        )
+        self.attention = TemporalAttention(hidden_size * 2)
+        self.norm      = nn.LayerNorm(hidden_size * 2)
+        self.dropout   = nn.Dropout(dropout)
+        self.fc1       = nn.Linear(hidden_size * 2, 128)
+        self.bn1       = nn.BatchNorm1d(128)
+        self.fc2       = nn.Linear(128, 64)
+        self.fc3       = nn.Linear(64, num_classes)
+
+    def forward(self, x):
+        lstm_out, _ = self.lstm(x)
+        context, _  = self.attention(lstm_out)
+        context     = self.norm(context)
+        out         = self.dropout(context)
+        out         = F.relu(self.bn1(self.fc1(out)))
+        out         = self.dropout(out)
+        out         = F.relu(self.fc2(out))
+        return self.fc3(out)
+=======
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len=100, dropout=0.1):
         super().__init__()
@@ -102,6 +147,7 @@ class TransformerEncoderModel(nn.Module):
         weights = torch.softmax(self.attn_pool(h), dim=1)
         pooled = (h * weights).sum(dim=1)
         return self.classifier(pooled)
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 
 class EvalDataset(Dataset):
@@ -186,12 +232,19 @@ def evaluate(data_dir, model_path, scaler_path, label_enc_path, output_dir, test
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"[*] Inference Device: {'GPU (CUDA)' if torch.cuda.is_available() else 'CPU'}")
 
+<<<<<<< HEAD
+    model = BiLSTMAttentionModel(
+        input_size=INPUT_SIZE,
+        hidden_size=HIDDEN_SIZE,
+        num_layers=NUM_LAYERS,
+=======
     model = TransformerEncoderModel(
         input_size=INPUT_SIZE,
         d_model=128,
         nhead=4,
         num_layers=3,
         dim_feedforward=256,
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
         num_classes=num_classes,
         dropout=DROPOUT
     ).to(device)
@@ -280,11 +333,15 @@ def evaluate(data_dir, model_path, scaler_path, label_enc_path, output_dir, test
     try:
         cm = confusion_matrix(all_labels, all_preds)
         fig, ax = plt.subplots(figsize=(max(10, num_classes // 3), max(8, num_classes // 3)))
+<<<<<<< HEAD
+        sns.heatmap(cm, annot=False, cmap="Blues", fmt="d", cbar=True, ax=ax)
+=======
         if HAS_SEABORN:
             sns.heatmap(cm, annot=False, cmap="Blues", fmt="d", cbar=True, ax=ax)
         else:
             cax = ax.matshow(cm, cmap="Blues")
             fig.colorbar(cax)
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
         ax.set_title(f"Confusion Matrix (Test Acc: {acc*100:.2f}% | Macro F1: {macro_f1:.3f})")
         ax.set_xlabel("Predicted")
         ax.set_ylabel("True")
@@ -318,6 +375,9 @@ if __name__ == "__main__":
         test_size=args.test_size,
         random_state=args.random_state
     )
+<<<<<<< HEAD
+=======
 
 
 
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
