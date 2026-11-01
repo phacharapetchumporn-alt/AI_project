@@ -1,31 +1,28 @@
-# Project Task Roadmap: Clean & Professional Project Organization
+# Project Task Roadmap: TSL-51 Thai Sign Language AI Model Integration
 
 ## Overview
-- **Objective**: คัดแยกและลบไฟล์ที่ไม่เกี่ยวข้องกับระบบหน้าเว็บ (Web Application) จัดระเบียบโครงสร้างโฟลเดอร์ให้สวยงาม มีมาตรฐานแบบมืออาชีพ และป้องกันไฟล์ขยะไม่ให้เข้า Git
-- **Target Scope**: ไฟล์และโฟลเดอร์ทั้งหมดใน `d:\project1.1`
+- **Objective**: นำเข้าชุดข้อมูลภาษามือไทย TSL-51 (51 คำศัพท์ + 1 null_act) แปลงพิกัดมือ 126 Features เข้าสู่ระบบ ฝึกสอนโมเดล Bi-LSTM ใหม่ และเชื่อมต่อกับระบบเว็บ SignSubs
+- **Dataset Source**: `Namonpas/thai-sign-language-tsl51` ใน `C:\TSL-51`
+- **Target Files**: `record_AI/convert_tsl51.py`, `record_AI/train_model.py`, `action_model.pth`, `label_encoder.pkl`, `scaler.pkl`
 
 ---
 
-## Phase 1: Analysis & File Audit
-- [x] Task 1.1: ตรวจสอบความเชื่อมโยงของไฟล์ระบบเว็บ (`app.py`, `templates/`, `static/`, `inference_engine.py`, `setup_db.py`, `signsubs.db`, `cert.pem`, `key.pem`)
-- [x] Task 1.2: ระบุไฟล์ขยะชั่วคราวและไฟล์ซ้ำซ้อน (`err.txt`, `test_import.py`, โมเดลซ้ำระหว่าง Root กับ `record_AI/`)
-- [x] Task 1.3: ระบุไฟล์ชุดข้อมูลเทรนโมเดลที่ไม่เกี่ยวข้องกับหน้าเว็บ (`sequences/`, `tflite_output/`, `node_modules/`)
+## Phase 1: Dataset Acquisition & Cleanup in C:\TSL-51
+- [x] Task 1.1: ลบไฟล์ขยะที่ค้าง/ไม่สมบูรณ์ (.incomplete, .lock) และไฟล์ที่ไม่จำเป็น (`landmarks/user_sentence/`) ใน `C:\TSL-51` เพื่อคืนพื้นที่ดิสก์
+- [x] Task 1.2: ดาวน์โหลดไฟล์จำเป็นให้ครบสมบูรณ์ (`metadata/*`, `landmarks/user_sign/*` 638 ไฟล์)
 
-## Phase 2: Safe Cleanup (ลบไฟล์ส่วนเกินและไฟล์ขยะ)
-- [x] Task 2.1: ลบไฟล์ชั่วคราว/ทดสอบเฉพาะกิจ (`err.txt`, `test_import.py`)
-- [x] Task 2.2: ลบไฟล์ขยะ `node_modules/` (เนื่องจากหน้าเว็บใช้ CDN Supabase ทั้งหมดแล้ว)
-- [x] Task 2.3: เคลียร์/จัดการชุดข้อมูลเทรน `sequences/` (ย้ายไป `record_AI/sequences/`) และไฟล์ส่งออกที่ไม่ใช้ `tflite_output/`
+## Phase 2: Data Preprocessing & Conversion Pipeline
+- [x] Task 2.1: สร้างสคริปต์ `record_AI/convert_tsl51.py` สำหรับแปลงไฟล์ CSV จาก TSL-51 เป็น `.npy`
+- [x] Task 2.2: ดึงข้อมูลพิกัดมือซ้าย 63 ค่า (`lh`) + มือขวา 63 ค่า (`rh`) รวม 126 ค่า เติม 0 ในเฟรมที่ไม่มีมือ
+- [x] Task 2.3: ปรับจำนวนเฟรมของแต่ละ sample ให้เป็น 30 frames ด้วย Linear Interpolation
+- [x] Task 2.4: แม็ปรหัสท่าทางเข้ากับชื่อคำศัพท์ภาษาไทยจริงจาก Metadata และบันทึกลง `record_AI/sequences/` (แปลงสำเร็จ 638 ตัวอย่าง 58 คำศัพท์)
 
-## Phase 3: Directory Structuring & Deduplication (จัดระเบียบโครงสร้าง)
-- [x] Task 3.1: ขจัดไฟล์โมเดลซ้ำซ้อน ให้ระบบ Web และ AI ชี้ไปที่แหล่งเดียวที่ชัดเจน
-- [x] Task 3.2: จัดหมวดหมู่โฟลเดอร์ AI/Data ให้เป็นระเบียบ เป็นสัดส่วนแยกจาก Web Application (`record_AI/` รวบรวม `collect_data.py`, `train_model.py`, `sequences/`)
-- [x] Task 3.3: ตรวจสอบ Path การเรียกใช้งานใน `inference_engine.py` และ `realtime_predict.py` ให้ถูกต้อง ไม่แตกหัก
+## Phase 3: Model Architecture & Training
+- [x] Task 3.1: ปรับแต่ง `record_AI/train_model.py` ให้รองรับ 58 classes (57 คำศัพท์ภาษาไทย + 1 ท่าพัก null_act)
+- [x] Task 3.2: คำนวณค่า Mean/Std สากล และสร้าง `scaler.pkl` และ `label_encoder.pkl` ภาษาไทย
+- [x] Task 3.3: ฝึกสอนโมเดล Bi-LSTM Attention (80 Epochs, Val Acc 96.9%, Train Acc 100%) และบันทึก `action_model.pth`
 
-## Phase 4: Git Configuration & Hygiene
-- [x] Task 4.1: ปรับปรุงไฟล์ `.gitignore` ให้ครอบคลุม `__pycache__/`, SSL certs, databases, และ temporary files
-- [x] Task 4.2: ทำความสะอาด Git index จากไฟล์ที่ถูกละเว้น
-
-## Phase 5: Verification & Quality Assurance
-- [x] Task 5.1: ทดสอบ Import `app.py` และ `InferenceEngine` เพื่อยืนยันว่าโหลดโมเดลและรันได้ปกติ (ผ่านเรียบร้อยด้วย Python 3.12)
-- [x] Task 5.2: ตรวจสอบการแสดงผลหน้าเว็บ `index.html`, `admin.html`, `admin_login.html` และ asset ต่างๆ (ครบถ้วนสมบูรณ์)
-- [x] Task 5.3: สรุปโครงสร้างใหม่หลังจัดระเบียบเสร็จสมบูรณ์
+## Phase 4: Integration & Web Verification
+- [x] Task 4.1: อัปเดตไฟล์โมเดลชุดใหม่ (`action_model.pth`, `label_encoder.pkl`, `scaler.pkl`) เข้าสู่ระบบ
+- [x] Task 4.2: ทดสอบโหลด `InferenceEngine` ยืนยันการอ่าน 58 classes ภาษาไทย (Ready: True, BiLSTMAttentionModel)
+- [ ] Task 4.3: ทดสอบการทำงานของ Web Server และ Real-time prediction ผ่านกล้อง

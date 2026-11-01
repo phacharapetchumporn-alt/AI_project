@@ -1,4 +1,7 @@
 import os
+import sys
+import shutil
+import pickle
 import numpy as np
 import torch
 import torch.nn as nn
@@ -7,64 +10,66 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import confusion_matrix, classification_report
-import pickle
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Ensure UTF-8 printing on Windows
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
+
 # =========================
 # 1. ตั้งค่าไฮเปอร์พารามิเตอร์
 # =========================
-DATA_PATH       = "sequences"
+DATA_PATH       = os.path.join(BASE_DIR, "sequences")
 SEQUENCE_LENGTH = 30
 INPUT_SIZE      = 126       # 21 landmarks * 3 coords * 2 hands
 HIDDEN_SIZE     = 192
 NUM_LAYERS      = 3
-EPOCHS          = 100
+EPOCHS          = 80
 BATCH_SIZE      = 32
 LEARNING_RATE   = 0.001
 DROPOUT         = 0.3
-PATIENCE        = 12        # Early Stopping patience
+PATIENCE        = 15        # Early Stopping patience
 NOISE_STD       = 0.005     # Data Augmentation: gaussian noise std
 WEIGHT_DECAY    = 1e-4      # L2 regularization
 
-SAVE_PATH       = "action_model.pth"
-BEST_MODEL_PATH = "action_model_best.pth"
+SAVE_PATH       = os.path.join(ROOT_DIR, "action_model.pth")
+BEST_MODEL_PATH = os.path.join(ROOT_DIR, "action_model.pth")
+SCALER_PATH     = os.path.join(ROOT_DIR, "scaler.pkl")
+LABEL_ENC_PATH  = os.path.join(ROOT_DIR, "label_encoder.pkl")
 
 # =========================
 # 2. โหลดข้อมูล .npy ทั้งหมด
 # =========================
-print("=" * 55)
-print("  Sign Language Model Training")
-print("=" * 55)
+print("=" * 65)
+print("  TSL-51 Sign Language Model Training (PyTorch Bi-LSTM)")
+print(f"  Data Path: {DATA_PATH}")
+print(f"  Output Model: {SAVE_PATH}")
+print("=" * 65)
 
 X, y = [], []
 folders = [d for d in os.listdir(DATA_PATH) if os.path.isdir(os.path.join(DATA_PATH, d))]
 
-# แยก Label จากชื่อโฟลเดอร์แบบ "label_YYYYMMDD_HHMMSS"
-# รองรับทั้งชื่อที่มี timestamp และชื่อธรรมดา
-def parse_label(folder_name: str) -> str:
-    """ดึงชื่อ label จากชื่อโฟลเดอร์ เช่น '5_20260826_153744' → '5'"""
-    parts = folder_name.split("_")
-    # ถ้ามีส่วนท้ายเป็นตัวเลข 8 หลัก (date) ให้ตัดออก
-    if len(parts) >= 3 and parts[-1].isdigit() and len(parts[-1]) == 6:
-        label_parts = parts[:-2]  # ตัด timestamp ออก (date + time)
-    else:
-        label_parts = parts  # ใช้ทั้งชื่อ
-    return "_".join(label_parts)
-
 label_map = {}
 for folder in folders:
-    label = parse_label(folder)
+    label = folder.strip()
     folder_path = os.path.join(DATA_PATH, folder)
     npy_files = [f for f in os.listdir(folder_path) if f.endswith('.npy')]
     label_map.setdefault(label, []).append((folder_path, npy_files))
 
-print(f"\nพบคำศัพท์ทั้งหมด {len(label_map)} คำ:")
+print(f"\n[*] พบคำศัพท์ทั้งหมด {len(label_map)} คำ:")
 for lbl, folders_data in sorted(label_map.items()):
     count = sum(len(files) for _, files in folders_data)
-    print(f"  [{lbl}] → {count} samples  (จาก {len(folders_data)} โฟลเดอร์)")
+    print(f"  [{lbl}] → {count} samples")
 
 for label, folders_data in label_map.items():
     for folder_path, npy_files in folders_data:
@@ -77,25 +82,24 @@ for label, folders_data in label_map.items():
                 print(f"  ⚠️  ข้าม {fname}: shape={data.shape} (คาดหวัง ({SEQUENCE_LENGTH}, {INPUT_SIZE}))")
 
 if len(X) == 0:
-    print("\nERROR: ไม่พบข้อมูล .npy ที่ถูกต้อง กรุณา collect_data ก่อน")
-    exit()
+    print("\n[ERROR] ไม่พบข้อมูล .npy ที่ถูกต้อง กรุณา convert_tsl51.py ก่อน")
+    sys.exit(1)
 
 X = np.array(X, dtype=np.float32)
-print(f"\nข้อมูลทั้งหมด: {X.shape}  →  {X.shape[0]} samples")
+print(f"\n[+] ข้อมูลทั้งหมด: {X.shape}  →  {X.shape[0]} samples")
 
 # =========================
 # 3. Normalize (Per-Feature Standardization)
 # =========================
-# คำนวณ mean/std จากทุก frame และทุก sample
 X_flat = X.reshape(-1, INPUT_SIZE)
 mean = X_flat.mean(axis=0)
 std  = X_flat.std(axis=0) + 1e-8   # กันหาร 0
 X_norm = (X - mean) / std
 
-# บันทึก scaler ไว้ใช้ใน realtime_predict
-with open('scaler.pkl', 'wb') as f:
+# บันทึก scaler
+with open(SCALER_PATH, 'wb') as f:
     pickle.dump({'mean': mean, 'std': std}, f)
-print("✅ บันทึก scaler.pkl สำเร็จ")
+print(f"✅ บันทึก scaler.pkl ที่: {SCALER_PATH}")
 
 # =========================
 # 4. Label Encoding & Split
@@ -104,14 +108,19 @@ label_encoder = LabelEncoder()
 y_encoded = label_encoder.fit_transform(y)
 num_classes = len(label_encoder.classes_)
 
-with open('label_encoder.pkl', 'wb') as f:
+with open(LABEL_ENC_PATH, 'wb') as f:
     pickle.dump(label_encoder, f)
-print(f"✅ บันทึก label_encoder.pkl ({num_classes} classes)")
+print(f"✅ บันทึก label_encoder.pkl ({num_classes} classes) ที่: {LABEL_ENC_PATH}")
+
+# Check minimum samples per class for stratification
+counts = np.bincount(y_encoded)
+can_stratify = bool(counts.min() >= 2)
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X_norm, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
+    X_norm, y_encoded, test_size=0.15, random_state=42,
+    stratify=y_encoded if can_stratify else None
 )
-print(f"Train: {len(X_train)}  |  Test: {len(X_test)}")
+print(f"[*] Train set: {len(X_train)}  |  Test set: {len(X_test)}")
 
 # =========================
 # 5. Dataset & DataLoader
@@ -128,7 +137,6 @@ class SignLanguageDataset(Dataset):
     def __getitem__(self, idx):
         x = self.X[idx]
         if self.augment:
-            # Gaussian Noise Augmentation
             noise = torch.randn_like(x) * NOISE_STD
             x = x + noise
         return x, self.y[idx]
@@ -137,23 +145,21 @@ class SignLanguageDataset(Dataset):
 train_dataset = SignLanguageDataset(X_train, y_train, augment=True)
 test_dataset  = SignLanguageDataset(X_test,  y_test,  augment=False)
 
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True,  num_workers=0, pin_memory=True)
-test_loader  = DataLoader(test_dataset,  batch_size=BATCH_SIZE, shuffle=False, num_workers=0, pin_memory=True)
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True,  num_workers=0)
+test_loader  = DataLoader(test_dataset,  batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
 
 # =========================
 # 6. Attention Layer
 # =========================
 class TemporalAttention(nn.Module):
-    """Self-attention ตาม time steps ของ LSTM output"""
     def __init__(self, hidden_size):
         super().__init__()
         self.attn = nn.Linear(hidden_size, 1)
 
     def forward(self, lstm_out):
-        # lstm_out: (batch, seq_len, hidden)
-        scores = self.attn(lstm_out)          # (batch, seq_len, 1)
-        weights = torch.softmax(scores, dim=1) # normalize ตาม time axis
-        context = (lstm_out * weights).sum(dim=1)  # weighted sum → (batch, hidden)
+        scores = self.attn(lstm_out)
+        weights = torch.softmax(scores, dim=1)
+        context = (lstm_out * weights).sum(dim=1)
         return context, weights
 
 
@@ -178,89 +184,82 @@ class BiLSTMAttentionModel(nn.Module):
         self.fc3       = nn.Linear(64, num_classes)
 
     def forward(self, x):
-        # x: (batch, seq_len, input_size)
-        lstm_out, _ = self.lstm(x)                    # (batch, seq, hidden*2)
-        context, _  = self.attention(lstm_out)         # (batch, hidden*2)
+        lstm_out, _ = self.lstm(x)
+        context, _  = self.attention(lstm_out)
         context     = self.norm(context)
         out         = self.dropout(context)
         out         = F.relu(self.bn1(self.fc1(out)))
         out         = self.dropout(out)
         out         = F.relu(self.fc2(out))
-        out         = self.fc3(out)
-        return out
+        return self.fc3(out)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f"\n🖥️  Device: {device}")
+print(f"[*] Training Device: {'GPU (CUDA)' if torch.cuda.is_available() else 'CPU'}")
 
-model = BiLSTMAttentionModel(INPUT_SIZE, HIDDEN_SIZE, NUM_LAYERS, num_classes, DROPOUT)
-model.to(device)
+model = BiLSTMAttentionModel(
+    input_size=INPUT_SIZE,
+    hidden_size=HIDDEN_SIZE,
+    num_layers=NUM_LAYERS,
+    num_classes=num_classes,
+    dropout=DROPOUT
+).to(device)
 
-total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print(f"📐 Model parameters: {total_params:,}")
-
-criterion  = nn.CrossEntropyLoss(label_smoothing=0.05)
-optimizer  = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
-scheduler  = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, mode='min', factor=0.5, patience=5, verbose=True
+criterion = nn.CrossEntropyLoss(label_smoothing=0.05)
+optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    optimizer, mode='min', factor=0.5, patience=5, min_lr=1e-5
 )
 
 # =========================
 # 8. Training Loop
 # =========================
-print(f"\n=== เริ่มการเทรนโมเดล (max {EPOCHS} epochs, early stop patience={PATIENCE}) ===\n")
-
-history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
-best_val_loss  = float('inf')
+best_val_loss = float('inf')
 patience_count = 0
+history = {"train_loss": [], "val_loss": [], "train_acc": [], "val_acc": []}
 
+print(f"\n🚀 เริ่มต้นเทรนโมเดล {EPOCHS} Epochs...")
 for epoch in range(EPOCHS):
-    # --- Train ---
     model.train()
-    train_loss, correct, total = 0.0, 0, 0
-
+    total_train_loss, correct_train, total_train = 0.0, 0, 0
     for inputs, labels in train_loader:
         inputs, labels = inputs.to(device), labels.to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
         loss = criterion(outputs, labels)
         loss.backward()
-        nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        nn.utils.clip_grad_norm_(model.parameters(), max_norm=2.0)
         optimizer.step()
 
-        train_loss += loss.item()
-        _, predicted = torch.max(outputs, 1)
-        total   += labels.size(0)
-        correct += (predicted == labels).sum().item()
+        total_train_loss += loss.item() * inputs.size(0)
+        _, preds = torch.max(outputs, 1)
+        correct_train += (preds == labels).sum().item()
+        total_train += labels.size(0)
 
-    avg_train_loss = train_loss / len(train_loader)
-    train_acc      = 100.0 * correct / total
+    avg_train_loss = total_train_loss / total_train
+    train_acc = (correct_train / total_train) * 100
 
-    # --- Validation ---
     model.eval()
-    val_loss, val_correct, val_total = 0.0, 0, 0
-
+    total_val_loss, correct_val, total_val = 0.0, 0, 0
     with torch.no_grad():
         for inputs, labels in test_loader:
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
-            loss    = criterion(outputs, labels)
-            val_loss += loss.item()
-            _, predicted = torch.max(outputs, 1)
-            val_total   += labels.size(0)
-            val_correct += (predicted == labels).sum().item()
+            loss = criterion(outputs, labels)
+            total_val_loss += loss.item() * inputs.size(0)
+            _, preds = torch.max(outputs, 1)
+            correct_val += (preds == labels).sum().item()
+            total_val += labels.size(0)
 
-    avg_val_loss = val_loss / len(test_loader)
-    val_acc      = 100.0 * val_correct / val_total
-
+    avg_val_loss = total_val_loss / total_val
+    val_acc = (correct_val / total_val) * 100
     scheduler.step(avg_val_loss)
 
     history["train_loss"].append(avg_train_loss)
-    history["train_acc"].append(train_acc)
     history["val_loss"].append(avg_val_loss)
+    history["train_acc"].append(train_acc)
     history["val_acc"].append(val_acc)
 
-    # Best Model Checkpoint
     if avg_val_loss < best_val_loss:
         best_val_loss = avg_val_loss
         patience_count = 0
@@ -270,22 +269,21 @@ for epoch in range(EPOCHS):
         patience_count += 1
         best_marker = ""
 
-    if (epoch + 1) % 5 == 0 or epoch == 0:
+    if (epoch + 1) % 5 == 0 or epoch == 0 or best_marker != "":
         lr = optimizer.param_groups[0]['lr']
-        print(f"Epoch [{epoch+1:3d}/{EPOCHS}]  "
+        print(f"Epoch [{epoch+1:2d}/{EPOCHS}]  "
               f"Loss: {avg_train_loss:.4f}  Acc: {train_acc:.1f}%  |  "
               f"Val Loss: {avg_val_loss:.4f}  Val Acc: {val_acc:.1f}%  "
               f"LR: {lr:.6f}{best_marker}")
 
-    # Early Stopping
     if patience_count >= PATIENCE:
-        print(f"\n⏹️  Early Stopping ที่ Epoch {epoch + 1} (val_loss ไม่ดีขึ้นมา {PATIENCE} รอบ)")
+        print(f"\n⏹️ Early Stopping ที่ Epoch {epoch + 1} (val_loss ไม่ดีขึ้นมา {PATIENCE} รอบ)")
         break
 
 # =========================
-# 9. โหลด Best Model & Evaluate
+# 9. Evaluate Best Model
 # =========================
-print(f"\n--- โหลด Best Model: {BEST_MODEL_PATH} ---")
+print(f"\n--- โหลดโมเดลดีที่สุด: {BEST_MODEL_PATH} ---")
 model.load_state_dict(torch.load(BEST_MODEL_PATH, map_location=device))
 model.eval()
 
@@ -294,59 +292,14 @@ with torch.no_grad():
     for inputs, labels in test_loader:
         inputs = inputs.to(device)
         outputs = model(inputs)
-        _, predicted = torch.max(outputs, 1)
-        all_preds.extend(predicted.cpu().numpy())
+        _, preds = torch.max(outputs, 1)
+        all_preds.extend(preds.cpu().numpy())
         all_labels.extend(labels.numpy())
 
-print("\n📊 Classification Report:")
+print("\n📊 Classification Report (Sample):")
 print(classification_report(all_labels, all_preds,
                              target_names=label_encoder.classes_,
                              zero_division=0))
 
-# =========================
-# 10. Confusion Matrix
-# =========================
-cm = confusion_matrix(all_labels, all_preds)
-fig, ax = plt.subplots(figsize=(max(6, num_classes), max(5, num_classes - 1)))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-            xticklabels=label_encoder.classes_,
-            yticklabels=label_encoder.classes_,
-            ax=ax)
-ax.set_xlabel("Predicted")
-ax.set_ylabel("Actual")
-ax.set_title("Confusion Matrix")
-plt.tight_layout()
-plt.savefig("confusion_matrix.png", dpi=120)
-print("✅ บันทึก confusion_matrix.png สำเร็จ")
-
-# =========================
-# 11. Training Curves
-# =========================
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-epochs_ran = range(1, len(history["train_loss"]) + 1)
-
-ax1.plot(epochs_ran, history["train_loss"], label="Train Loss")
-ax1.plot(epochs_ran, history["val_loss"],   label="Val Loss")
-ax1.set_title("Loss")
-ax1.set_xlabel("Epoch")
-ax1.legend()
-ax1.grid(True, alpha=0.3)
-
-ax2.plot(epochs_ran, history["train_acc"], label="Train Acc")
-ax2.plot(epochs_ran, history["val_acc"],   label="Val Acc")
-ax2.set_title("Accuracy (%)")
-ax2.set_xlabel("Epoch")
-ax2.legend()
-ax2.grid(True, alpha=0.3)
-
-plt.tight_layout()
-plt.savefig("training_curves.png", dpi=120)
-print("✅ บันทึก training_curves.png สำเร็จ")
-
-# =========================
-# 12. บันทึกโมเดลสุดท้าย (.pth)
-# =========================
-torch.save(model.state_dict(), SAVE_PATH)
-print(f"\n✅ บันทึกโมเดลสุดท้ายที่: {SAVE_PATH}")
-print(f"✅ บันทึก Best Model ที่: {BEST_MODEL_PATH}")
-print(f"\n🎉 Training เสร็จสิ้น  |  Best Val Loss: {best_val_loss:.4f}")
+print(f"\n🎉 Training เสร็จสิ้นสมบูรณ์!")
+print(f"✅ บันทึกโมเดลไว้ที่: {BEST_MODEL_PATH}")
