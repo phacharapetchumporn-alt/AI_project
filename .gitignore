@@ -1,4 +1,4 @@
-# Python cache
+# Python cache & build
 __pycache__/
 *.py[cod]
 *$py.class
@@ -11,11 +11,25 @@ env/
 venv/
 ENV/
 
+# Node & Package Managers
+node_modules/
+package-lock.json
+
 # IDE / Editor
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Temporary & Log files
+err.txt
+*.log
+test_*.py
+
+# Large Training Datasets & Binary Sequences
+sequences/
+record_AI/sequences/
+*.npy
 
 # OS files
 Thumbs.db
