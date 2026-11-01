@@ -1,0 +1,37 @@
+# Python cache & build
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Node & Package Managers
+node_modules/
+package-lock.json
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary & Log files
+err.txt
+*.log
+test_*.py
+
+# Large Training Datasets & Binary Sequences
+
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
