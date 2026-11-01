@@ -62,7 +62,11 @@ CONFUSION_PATH  = os.path.join(ROOT_DIR, "confusion_matrix.png")
 # 2. โหลดข้อมูล .npy ทั้งหมด
 # =========================
 print("=" * 65)
+<<<<<<< HEAD
 print("  TSL-51 Sign Language Model Training (PyTorch Bi-LSTM)")
+=======
+print("  TSL-51 Sign Language Model Training (PyTorch Transformer Encoder)")
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 print(f"  Data Path: {DATA_PATH}")
 print(f"  Output Model: {SAVE_PATH}")
 print("=" * 65)
@@ -168,6 +172,7 @@ train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True,  n
 test_loader  = DataLoader(test_dataset,  batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
 
 # =========================
+<<<<<<< HEAD
 # 6. Attention Layer
 # =========================
 class TemporalAttention(nn.Module):
@@ -211,15 +216,81 @@ class BiLSTMAttentionModel(nn.Module):
         out         = self.dropout(out)
         out         = F.relu(self.fc2(out))
         return self.fc3(out)
+=======
+# 6. Positional Encoding & Transformer Encoder Model
+# =========================
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len=100, dropout=0.1):
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-np.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0)  # (1, max_len, d_model)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x):
+        # x: (batch_size, seq_len, d_model)
+        x = x + self.pe[:, :x.size(1), :]
+        return self.dropout(x)
+
+
+class TransformerEncoderModel(nn.Module):
+    def __init__(self, input_size=126, d_model=128, nhead=4, num_layers=3, dim_feedforward=256, num_classes=58, dropout=0.2):
+        super().__init__()
+        self.input_proj = nn.Linear(input_size, d_model)
+        self.pos_encoder = PositionalEncoding(d_model, max_len=SEQUENCE_LENGTH, dropout=dropout)
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=nhead,
+            dim_feedforward=dim_feedforward,
+            dropout=dropout,
+            batch_first=True,
+            activation='gelu'
+        )
+        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.norm = nn.LayerNorm(d_model)
+        self.attn_pool = nn.Linear(d_model, 1)
+        self.classifier = nn.Sequential(
+            nn.Linear(d_model, 128),
+            nn.BatchNorm1d(128),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x):
+        # x: (batch, seq_len, input_size)
+        h = self.input_proj(x)
+        h = self.pos_encoder(h)
+        h = self.transformer_encoder(h)
+        h = self.norm(h)
+        
+        # Attention Pooling over sequence length
+        weights = torch.softmax(self.attn_pool(h), dim=1) # (batch, seq_len, 1)
+        pooled = (h * weights).sum(dim=1)                 # (batch, d_model)
+        return self.classifier(pooled)
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"[*] Training Device: {'GPU (CUDA)' if torch.cuda.is_available() else 'CPU'}")
 
+<<<<<<< HEAD
 model = BiLSTMAttentionModel(
     input_size=INPUT_SIZE,
     hidden_size=HIDDEN_SIZE,
     num_layers=NUM_LAYERS,
+=======
+model = TransformerEncoderModel(
+    input_size=INPUT_SIZE,
+    d_model=128,
+    nhead=4,
+    num_layers=3,
+    dim_feedforward=256,
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     num_classes=num_classes,
     dropout=DROPOUT
 ).to(device)
@@ -401,3 +472,8 @@ except Exception as e:
 
 print(f"\n🎉 Training และ Evaluation เสร็จสิ้นสมบูรณ์!")
 print(f"✅ บันทึกโมเดลไว้ที่: {BEST_MODEL_PATH}")
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
