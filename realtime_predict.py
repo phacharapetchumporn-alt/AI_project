@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import sys
-=======
 ﻿import sys
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 import os
 import cv2
 import numpy as np
@@ -108,11 +104,7 @@ def draw_thai_text(img, text, position, font_size=30, color=(255, 255, 255)):
 # Model Architectures
 # =========================
 class BiLSTMModel(nn.Module):
-<<<<<<< HEAD
-    """โมเดล 2-Layer Bi-LSTM (โครงสร้างดั้งเดิมของ action_model.pth)"""
-=======
     """à¹‚à¸¡à¹€à¸”à¸¥ 2-Layer Bi-LSTM (à¹‚à¸„à¸£à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¸”à¸±à¹‰à¸‡à¹€à¸”à¸´à¸¡à¸‚à¸­à¸‡ action_model.pth)"""
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     def __init__(self, input_size=126, hidden_size=128, num_layers=2, num_classes=6, dropout=0.2):
         super().__init__()
         self.lstm = nn.LSTM(
@@ -147,10 +139,6 @@ class TemporalAttention(nn.Module):
         return context, weights
 
 
-<<<<<<< HEAD
-class BiLSTMAttentionModel(nn.Module):
-    """โมเดล 3-Layer Bi-LSTM with Temporal Attention"""
-=======
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len=100, dropout=0.1):
         super().__init__()
@@ -203,7 +191,6 @@ class TransformerEncoderModel(nn.Module):
         return self.classifier(pooled)
 class BiLSTMAttentionModel(nn.Module):
     """à¹‚à¸¡à¹€à¸”à¸¥ 3-Layer Bi-LSTM with Temporal Attention"""
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     def __init__(self, input_size=126, hidden_size=192, num_layers=3, num_classes=10, dropout=0.3):
         super().__init__()
         self.lstm = nn.LSTM(
@@ -249,11 +236,7 @@ _POSE_ARM_CONNS = [
 
 
 def draw_arm_skeleton(frame, pose_landmarks):
-<<<<<<< HEAD
-    """วาดเส้น skeleton แขนทั้งสองข้าง (ไหล่ -> ข้อศอก -> ข้อมือ)"""
-=======
     """à¸§à¸²à¸”à¹€à¸ªà¹‰à¸™ skeleton à¹à¸‚à¸™à¸—à¸±à¹‰à¸‡à¸ªà¸­à¸‡à¸‚à¹‰à¸²à¸‡ (à¹„à¸«à¸¥à¹ˆ -> à¸‚à¹‰à¸­à¸¨à¸­à¸ -> à¸‚à¹‰à¸­à¸¡à¸·à¸­)"""
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     if pose_landmarks is None:
         return
     h, w = frame.shape[:2]
@@ -313,11 +296,7 @@ class RealtimeSignTranslator:
         self.no_hand_frames = 0
 
         # State output
-<<<<<<< HEAD
-        self.latest_prediction = "พร้อมตรวจจับ"
-=======
         self.latest_prediction = "à¸žà¸£à¹‰à¸­à¸¡à¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸š"
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
         self.latest_confidence = 0.0
         self.latest_probabilities = []
         self.is_ready = False
@@ -357,15 +336,11 @@ class RealtimeSignTranslator:
         if os.path.exists(model_path):
             try:
                 checkpoint = torch.load(model_path, map_location=self.device, weights_only=True)
-<<<<<<< HEAD
-                if 'norm.weight' in checkpoint or 'fc3.weight' in checkpoint:
-=======
                 if 'transformer_encoder.layers.0.self_attn.in_proj_weight' in checkpoint or 'input_proj.weight' in checkpoint:
                     print("[AI] Architecture: TransformerEncoderModel")
                     self.model = TransformerEncoderModel(num_classes=self.num_classes)
                     self.use_scaler = (self.scaler is not None)
                 elif 'norm.weight' in checkpoint or 'fc3.weight' in checkpoint:
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
                     print("[AI] Architecture: BiLSTMAttentionModel")
                     self.model = BiLSTMAttentionModel(num_classes=self.num_classes)
                     self.use_scaler = (self.scaler is not None)
@@ -398,11 +373,7 @@ class RealtimeSignTranslator:
         with self.lock:
             self.sequence.clear()
             self.vote_buffer.clear()
-<<<<<<< HEAD
-            self.latest_prediction = "พร้อมตรวจจับ"
-=======
             self.latest_prediction = "à¸žà¸£à¹‰à¸­à¸¡à¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸š"
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             self.latest_confidence = 0.0
 
     def extract_features(self, results):
@@ -514,20 +485,12 @@ class RealtimeSignTranslator:
                             self.vote_buffer.clear()
             elif not has_hand:
                 if self.no_hand_frames > 5:
-<<<<<<< HEAD
-                    current_label = "กำลังรอสัญญาณมือ..."
-=======
                     current_label = "à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸ªà¸±à¸à¸à¸²à¸“à¸¡à¸·à¸­..."
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
                     confidence = 0.0
 
             client_landmarks = self.extract_landmarks_for_client(results)
             return (
-<<<<<<< HEAD
-                self.latest_prediction if has_hand else "กำลังรอสัญญาณมือ...",
-=======
                 self.latest_prediction if has_hand else "à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸ªà¸±à¸à¸à¸²à¸“à¸¡à¸·à¸­...",
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
                 self.latest_confidence,
                 is_confirmed,
                 client_landmarks,
@@ -605,11 +568,7 @@ class RealtimeSignTranslator:
         # Thai Sentence
         full_sentence = " ".join(self.sentence)
         frame = draw_thai_text(
-<<<<<<< HEAD
-            frame, full_sentence if full_sentence else "กำลังรอสะสมประโยค...",
-=======
             frame, full_sentence if full_sentence else "à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸ªà¸°à¸ªà¸¡à¸›à¸£à¸°à¹‚à¸¢à¸„...",
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             (10, h - 28), font_size=28, color=(255, 220, 80)
         )
         return frame
@@ -714,11 +673,7 @@ class RealtimeSignTranslator:
             self.sentence.clear()
             self.vote_buffer.clear()
             self.last_confirmed = None
-<<<<<<< HEAD
-            self.latest_prediction = "ล้างประโยคแล้ว"
-=======
             self.latest_prediction = "à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¹‚à¸¢à¸„à¹à¸¥à¹‰à¸§"
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             self.latest_confidence = 0.0
 
     def backspace_sentence(self):
@@ -727,11 +682,7 @@ class RealtimeSignTranslator:
                 self.sentence.pop()
                 self.last_confirmed = self.sentence[-1] if self.sentence else None
             self.vote_buffer.clear()
-<<<<<<< HEAD
-            self.latest_prediction = "ลบคำล่าสุดแล้ว"
-=======
             self.latest_prediction = "à¸¥à¸šà¸„à¸³à¸¥à¹ˆà¸²à¸ªà¸¸à¸”à¹à¸¥à¹‰à¸§"
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             self.latest_confidence = 0.0
 
     def get_state(self):
@@ -757,15 +708,9 @@ class RealtimeSignTranslator:
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
         prev_time = time.time()
-<<<<<<< HEAD
-        print(f"\n🚀 เริ่มระบบแปลภาษามือเรียลไทม์ (PyTorch Bi-LSTM)")
-        print(f"📦 จำนวนคำศัพท์: {len(self.actions)} classes {self.actions}")
-        print("⌨️  คีย์ลัด: [C] ล้างประโยค | [Backspace] ลบคำล่าสุด | [Q] ออก\n")
-=======
         print(f"\nðŸš€ à¹€à¸£à¸´à¹ˆà¸¡à¸£à¸°à¸šà¸šà¹à¸›à¸¥à¸ à¸²à¸©à¸²à¸¡à¸·à¸­à¹€à¸£à¸µà¸¢à¸¥à¹„à¸—à¸¡à¹Œ (PyTorch Bi-LSTM)")
         print(f"ðŸ“¦ à¸ˆà¸³à¸™à¸§à¸™à¸„à¸³à¸¨à¸±à¸žà¸—à¹Œ: {len(self.actions)} classes {self.actions}")
         print("âŒ¨ï¸  à¸„à¸µà¸¢à¹Œà¸¥à¸±à¸”: [C] à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¹‚à¸¢à¸„ | [Backspace] à¸¥à¸šà¸„à¸³à¸¥à¹ˆà¸²à¸ªà¸¸à¸” | [Q] à¸­à¸­à¸\n")
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
         while cap.isOpened():
             success, frame = cap.read()
@@ -787,16 +732,6 @@ class RealtimeSignTranslator:
                 break
             elif key == ord('c'):
                 self.clear_sentence()
-<<<<<<< HEAD
-                print("🗑️  ล้างประโยคแล้ว")
-            elif key == 8:  # Backspace
-                self.backspace_sentence()
-                print(f"⬅️  ลบคำล่าสุด: ประโยคปัจจุบัน = {' '.join(self.sentence)}")
-
-        cap.release()
-        cv2.destroyAllWindows()
-        print("\n👋 ปิดโปรแกรมเรียบร้อย")
-=======
                 print("ðŸ—‘ï¸  à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¹‚à¸¢à¸„à¹à¸¥à¹‰à¸§")
             elif key == 8:  # Backspace
                 self.backspace_sentence()
@@ -805,7 +740,6 @@ class RealtimeSignTranslator:
         cap.release()
         cv2.destroyAllWindows()
         print("\nðŸ‘‹ à¸›à¸´à¸”à¹‚à¸›à¸£à¹à¸à¸£à¸¡à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢")
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 
 # Alias for compatibility with inference_engine
@@ -818,7 +752,4 @@ InferenceEngine = RealtimeSignTranslator
 if __name__ == '__main__':
     translator = RealtimeSignTranslator()
     translator.run_standalone()
-<<<<<<< HEAD
-=======
 
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9

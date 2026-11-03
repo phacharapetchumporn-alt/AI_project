@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-"""
-=======
 ﻿"""
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 SignSubs - Flask Backend Server with SQLite Authentication & Admin Backoffice
 Includes user registration, secure password hashing, login sessions,
 full Admin Backoffice management (Users, Gestures, Logs, Settings, Statistics),
@@ -86,11 +82,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not is_admin():
-<<<<<<< HEAD
-            return jsonify({'success': False, 'message': 'ต้องเข้าสู่ระบบในฐานะผู้ดูแล (Admin) ก่อนทำรายการ'}), 403
-=======
             return jsonify({'success': False, 'message': 'à¸•à¹‰à¸­à¸‡à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¹ƒà¸™à¸à¸²à¸™à¸°à¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥ (Admin) à¸à¹ˆà¸­à¸™à¸—à¸³à¸£à¸²à¸¢à¸à¸²à¸£'}), 403
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
         return f(*args, **kwargs)
     return decorated_function
 
@@ -144,11 +136,7 @@ def api_register():
         cursor.execute("SELECT value FROM system_settings WHERE key = 'allow_registration'")
         setting = cursor.fetchone()
         if setting and setting['value'] == 'false':
-<<<<<<< HEAD
-            return jsonify({'success': False, 'message': 'ระบบปิดรับการสมัครสมาชิกชั่วคราว'}), 403
-=======
             return jsonify({'success': False, 'message': 'à¸£à¸°à¸šà¸šà¸›à¸´à¸”à¸£à¸±à¸šà¸à¸²à¸£à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸à¸Šà¸±à¹ˆà¸§à¸„à¸£à¸²à¸§'}), 403
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     data = request.get_json() or {}
     username = data.get('username', '').strip()
@@ -156,15 +144,6 @@ def api_register():
     password = data.get('password', '')
 
     if not username or len(username) < 3:
-<<<<<<< HEAD
-        return jsonify({'success': False, 'message': 'ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร'}), 400
-
-    if not email or '@' not in email:
-        return jsonify({'success': False, 'message': 'รูปแบบอีเมลไม่ถูกต้อง'}), 400
-
-    if not password or len(password) < 6:
-        return jsonify({'success': False, 'message': 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร'}), 400
-=======
         return jsonify({'success': False, 'message': 'à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸•à¹‰à¸­à¸‡à¸¡à¸µà¸­à¸¢à¹ˆà¸²à¸‡à¸™à¹‰à¸­à¸¢ 3 à¸•à¸±à¸§à¸­à¸±à¸à¸©à¸£'}), 400
 
     if not email or '@' not in email:
@@ -172,7 +151,6 @@ def api_register():
 
     if not password or len(password) < 6:
         return jsonify({'success': False, 'message': 'à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¸•à¹‰à¸­à¸‡à¸¡à¸µà¸­à¸¢à¹ˆà¸²à¸‡à¸™à¹‰à¸­à¸¢ 6 à¸•à¸±à¸§à¸­à¸±à¸à¸©à¸£'}), 400
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     password_hash = generate_password_hash(password)
 
@@ -186,11 +164,7 @@ def api_register():
             user_id = cursor.lastrowid
             conn.commit()
 
-<<<<<<< HEAD
-        log_audit('User Registered', username, f'ผู้ใช้ใหม่ {username} สมัครสมาชิก')
-=======
         log_audit('User Registered', username, f'à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¹ƒà¸«à¸¡à¹ˆ {username} à¸ªà¸¡à¸±à¸„à¸£à¸ªà¸¡à¸²à¸Šà¸´à¸')
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
         session['user_id'] = user_id
         session['username'] = username
@@ -198,24 +172,14 @@ def api_register():
 
         return jsonify({
             'success': True,
-<<<<<<< HEAD
-            'message': 'สร้างบัญชีสำเร็จ',
-=======
             'message': 'à¸ªà¸£à¹‰à¸²à¸‡à¸šà¸±à¸à¸Šà¸µà¸ªà¸³à¹€à¸£à¹‡à¸ˆ',
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             'user': {'id': user_id, 'username': username, 'email': email, 'role': 'user'}
         }), 201
 
     except sqlite3.IntegrityError:
-<<<<<<< HEAD
-        return jsonify({'success': False, 'message': 'ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้งานแล้ว'}), 409
-    except Exception as e:
-        return jsonify({'success': False, 'message': f'เกิดข้อผิดพลาด: {str(e)}'}), 500
-=======
         return jsonify({'success': False, 'message': 'à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸­à¸µà¹€à¸¡à¸¥à¸™à¸µà¹‰à¸–à¸¹à¸à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¹à¸¥à¹‰à¸§'}), 409
     except Exception as e:
         return jsonify({'success': False, 'message': f'à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”: {str(e)}'}), 500
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 
 @app.route('/api/login', methods=['POST'])
@@ -225,11 +189,7 @@ def api_login():
     password = data.get('password', '')
 
     if not identifier or not password:
-<<<<<<< HEAD
-        return jsonify({'success': False, 'message': 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน'}), 400
-=======
         return jsonify({'success': False, 'message': 'à¸à¸£à¸¸à¸“à¸²à¸à¸£à¸­à¸à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¹à¸¥à¸°à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™'}), 400
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     with get_db() as conn:
         cursor = conn.cursor()
@@ -241,11 +201,7 @@ def api_login():
 
     if user and check_password_hash(user['password_hash'], password):
         if user['status'] == 'banned':
-<<<<<<< HEAD
-            return jsonify({'success': False, 'message': 'บัญชีนี้ถูกระงับการใช้งาน'}), 403
-=======
             return jsonify({'success': False, 'message': 'à¸šà¸±à¸à¸Šà¸µà¸™à¸µà¹‰à¸–à¸¹à¸à¸£à¸°à¸‡à¸±à¸šà¸à¸²à¸£à¹ƒà¸Šà¹‰à¸‡à¸²à¸™'}), 403
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
         with get_db() as conn:
             conn.execute('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?', (user['id'],))
@@ -255,19 +211,11 @@ def api_login():
         session['username'] = user['username']
         session['role'] = user['role']
 
-<<<<<<< HEAD
-        log_audit('User Login', user['username'], 'เข้าสู่ระบบสำเร็จ')
-
-        return jsonify({
-            'success': True,
-            'message': 'เข้าสู่ระบบสำเร็จ',
-=======
         log_audit('User Login', user['username'], 'à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸ªà¸³à¹€à¸£à¹‡à¸ˆ')
 
         return jsonify({
             'success': True,
             'message': 'à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸ªà¸³à¹€à¸£à¹‡à¸ˆ',
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             'user': {
                 'id': user['id'],
                 'username': user['username'],
@@ -276,11 +224,7 @@ def api_login():
             }
         })
     else:
-<<<<<<< HEAD
-        return jsonify({'success': False, 'message': 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'}), 401
-=======
         return jsonify({'success': False, 'message': 'à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹„à¸¡à¹ˆà¸–à¸¹à¸à¸•à¹‰à¸­à¸‡'}), 401
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 
 @app.route('/api/me', methods=['GET'])
@@ -311,15 +255,9 @@ def api_me():
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
     if session.get('username'):
-<<<<<<< HEAD
-        log_audit('User Logout', session.get('username'), 'ออกจากระบบ')
-    session.clear()
-    return jsonify({'success': True, 'message': 'ออกจากระบบแล้ว'})
-=======
         log_audit('User Logout', session.get('username'), 'à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸š')
     session.clear()
     return jsonify({'success': True, 'message': 'à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸šà¹à¸¥à¹‰à¸§'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 
 # -----------------------------------------------------------------------------
@@ -345,11 +283,7 @@ def admin_login_page():
     password = data.get('password', '')
 
     if not identifier or not password:
-<<<<<<< HEAD
-        return jsonify({'success': False, 'message': 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน'}), 400
-=======
         return jsonify({'success': False, 'message': 'à¸à¸£à¸¸à¸“à¸²à¸à¸£à¸­à¸à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¹à¸¥à¸°à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™'}), 400
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     with get_db() as conn:
         cursor = conn.cursor()
@@ -361,15 +295,9 @@ def admin_login_page():
 
     if user and check_password_hash(user['password_hash'], password):
         if user['role'] != 'admin':
-<<<<<<< HEAD
-            return jsonify({'success': False, 'message': 'บัญชีนี้ไม่มีสิทธิ์เข้าถึงระบบผู้ดูแลระบบ (Admin Only)'}), 403
-        if user['status'] == 'banned':
-            return jsonify({'success': False, 'message': 'บัญชีนี้ถูกระงับการใช้งาน'}), 403
-=======
             return jsonify({'success': False, 'message': 'à¸šà¸±à¸à¸Šà¸µà¸™à¸µà¹‰à¹„à¸¡à¹ˆà¸¡à¸µà¸ªà¸´à¸—à¸˜à¸´à¹Œà¹€à¸‚à¹‰à¸²à¸–à¸¶à¸‡à¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸£à¸°à¸šà¸š (Admin Only)'}), 403
         if user['status'] == 'banned':
             return jsonify({'success': False, 'message': 'à¸šà¸±à¸à¸Šà¸µà¸™à¸µà¹‰à¸–à¸¹à¸à¸£à¸°à¸‡à¸±à¸šà¸à¸²à¸£à¹ƒà¸Šà¹‰à¸‡à¸²à¸™'}), 403
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
         with get_db() as conn:
             conn.execute('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?', (user['id'],))
@@ -379,43 +307,25 @@ def admin_login_page():
         session['username'] = user['username']
         session['role'] = user['role']
 
-<<<<<<< HEAD
-        log_audit('Admin Login', user['username'], 'เข้าสู่ระบบผู้ดูแลหลังบ้านสำเร็จ')
-
-        return jsonify({'success': True, 'redirect': '/admin'})
-    else:
-        return jsonify({'success': False, 'message': 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'}), 401
-=======
         log_audit('Admin Login', user['username'], 'à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸«à¸¥à¸±à¸‡à¸šà¹‰à¸²à¸™à¸ªà¸³à¹€à¸£à¹‡à¸ˆ')
 
         return jsonify({'success': True, 'redirect': '/admin'})
     else:
         return jsonify({'success': False, 'message': 'à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™à¹„à¸¡à¹ˆà¸–à¸¹à¸à¸•à¹‰à¸­à¸‡'}), 401
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 @app.route('/admin/logout')
 def admin_logout():
     if session.get('username'):
-<<<<<<< HEAD
-        log_audit('Admin Logout', session.get('username'), 'ออกจากระบบผู้ดูแลหลังบ้าน')
-=======
         log_audit('Admin Logout', session.get('username'), 'à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸«à¸¥à¸±à¸‡à¸šà¹‰à¸²à¸™')
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     session.clear()
     return redirect(url_for('admin_login_page'))
 
 @app.route('/api/admin/logout', methods=['POST'])
 def api_admin_logout():
     if session.get('username'):
-<<<<<<< HEAD
-        log_audit('Admin Logout', session.get('username'), 'ออกจากระบบผู้ดูแลหลังบ้าน')
-    session.clear()
-    return jsonify({'success': True, 'message': 'ออกจากระบบแล้ว'})
-=======
         log_audit('Admin Logout', session.get('username'), 'à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸«à¸¥à¸±à¸‡à¸šà¹‰à¸²à¸™')
     session.clear()
     return jsonify({'success': True, 'message': 'à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸šà¹à¸¥à¹‰à¸§'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 
 # -----------------------------------------------------------------------------
@@ -506,11 +416,7 @@ def api_admin_users():
     status = data.get('status', 'active')
 
     if not username or not email or not password:
-<<<<<<< HEAD
-        return jsonify({'success': False, 'message': 'กรุณากรอกชื่อผู้ใช้ อีเมล และรหัสผ่าน'}), 400
-=======
         return jsonify({'success': False, 'message': 'à¸à¸£à¸¸à¸“à¸²à¸à¸£à¸­à¸à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰ à¸­à¸µà¹€à¸¡à¸¥ à¹à¸¥à¸°à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™'}), 400
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     password_hash = generate_password_hash(password)
     try:
@@ -522,19 +428,11 @@ def api_admin_users():
             )
             conn.commit()
 
-<<<<<<< HEAD
-        log_audit('Create User', details=f'สร้างผู้ใช้งานใหม่: {username} (สิทธิ์: {role})')
-        return jsonify({'success': True, 'message': f'เพิ่มผู้ใช้งาน {username} สำเร็จ'})
-
-    except sqlite3.IntegrityError:
-        return jsonify({'success': False, 'message': 'ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้งานแล้ว'}), 409
-=======
         log_audit('Create User', details=f'à¸ªà¸£à¹‰à¸²à¸‡à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¹ƒà¸«à¸¡à¹ˆ: {username} (à¸ªà¸´à¸—à¸˜à¸´à¹Œ: {role})')
         return jsonify({'success': True, 'message': f'à¹€à¸žà¸´à¹ˆà¸¡à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ {username} à¸ªà¸³à¹€à¸£à¹‡à¸ˆ'})
 
     except sqlite3.IntegrityError:
         return jsonify({'success': False, 'message': 'à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸«à¸£à¸·à¸­à¸­à¸µà¹€à¸¡à¸¥à¸™à¸µà¹‰à¸–à¸¹à¸à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¹à¸¥à¹‰à¸§'}), 409
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
@@ -543,32 +441,19 @@ def api_admin_users():
 def api_admin_user_detail(user_id):
     if request.method == 'DELETE':
         if session.get('user_id') == user_id:
-<<<<<<< HEAD
-            return jsonify({'success': False, 'message': 'ไม่สามารถลบบัญชีผู้ดูแลที่กำลังใช้งานอยู่ได้'}), 400
-=======
             return jsonify({'success': False, 'message': 'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸¥à¸šà¸šà¸±à¸à¸Šà¸µà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸—à¸µà¹ˆà¸à¸³à¸¥à¸±à¸‡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¸­à¸¢à¸¹à¹ˆà¹„à¸”à¹‰'}), 400
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
         with get_db() as conn:
             cursor = conn.cursor()
             user = cursor.execute('SELECT username FROM users WHERE id = ?', (user_id,)).fetchone()
             if not user:
-<<<<<<< HEAD
-                return jsonify({'success': False, 'message': 'ไม่พบผู้ใช้นี้ในระบบ'}), 404
-=======
                 return jsonify({'success': False, 'message': 'à¹„à¸¡à¹ˆà¸žà¸šà¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸™à¸µà¹‰à¹ƒà¸™à¸£à¸°à¸šà¸š'}), 404
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
             cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
             conn.commit()
 
-<<<<<<< HEAD
-        log_audit('Delete User', details=f'ลบผู้ใช้งาน ID {user_id} ({user["username"]})')
-        return jsonify({'success': True, 'message': f'ลบผู้ใช้ {user["username"]} เรียบร้อย'})
-=======
         log_audit('Delete User', details=f'à¸¥à¸šà¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ ID {user_id} ({user["username"]})')
         return jsonify({'success': True, 'message': f'à¸¥à¸šà¸œà¸¹à¹‰à¹ƒà¸Šà¹‰ {user["username"]} à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     # PUT - Update user
     data = request.get_json() or {}
@@ -581,11 +466,7 @@ def api_admin_user_detail(user_id):
         cursor = conn.cursor()
         user = cursor.execute('SELECT username FROM users WHERE id = ?', (user_id,)).fetchone()
         if not user:
-<<<<<<< HEAD
-            return jsonify({'success': False, 'message': 'ไม่พบผู้ใช้นี้ในระบบ'}), 404
-=======
             return jsonify({'success': False, 'message': 'à¹„à¸¡à¹ˆà¸žà¸šà¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸™à¸µà¹‰à¹ƒà¸™à¸£à¸°à¸šà¸š'}), 404
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
         if password and len(password.strip()) >= 6:
             pw_hash = generate_password_hash(password.strip())
@@ -600,13 +481,8 @@ def api_admin_user_detail(user_id):
             )
         conn.commit()
 
-<<<<<<< HEAD
-    log_audit('Update User', details=f'อัปเดตข้อมูลผู้ใช้ ID {user_id} ({user["username"]})')
-    return jsonify({'success': True, 'message': 'อัปเดตข้อมูลผู้ใช้สำเร็จ'})
-=======
     log_audit('Update User', details=f'à¸­à¸±à¸›à¹€à¸”à¸•à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰ ID {user_id} ({user["username"]})')
     return jsonify({'success': True, 'message': 'à¸­à¸±à¸›à¹€à¸”à¸•à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¸ªà¸³à¹€à¸£à¹‡à¸ˆ'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 # --- Admin Gestures Management ---
 
@@ -626,22 +502,13 @@ def api_admin_gestures():
     gesture_key = data.get('gesture_key', '').strip()
     name_th = data.get('name_th', '').strip()
     name_en = data.get('name_en', '').strip()
-<<<<<<< HEAD
-    category = data.get('category', 'ทั่วไป')
-    difficulty = data.get('difficulty', 'ง่าย')
-=======
     category = data.get('category', 'à¸—à¸±à¹ˆà¸§à¹„à¸›')
     difficulty = data.get('difficulty', 'à¸‡à¹ˆà¸²à¸¢')
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     description = data.get('description', '').strip()
     is_active = int(data.get('is_active', 1))
 
     if not gesture_key or not name_th:
-<<<<<<< HEAD
-        return jsonify({'success': False, 'message': 'กรุณาระบุรหัสคีย์และคำแปลภาษาไทย'}), 400
-=======
         return jsonify({'success': False, 'message': 'à¸à¸£à¸¸à¸“à¸²à¸£à¸°à¸šà¸¸à¸£à¸«à¸±à¸ªà¸„à¸µà¸¢à¹Œà¹à¸¥à¸°à¸„à¸³à¹à¸›à¸¥à¸ à¸²à¸©à¸²à¹„à¸—à¸¢'}), 400
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     try:
         with get_db() as conn:
@@ -652,19 +519,11 @@ def api_admin_gestures():
             ''', (gesture_key, name_th, name_en, category, difficulty, description, is_active))
             conn.commit()
 
-<<<<<<< HEAD
-        log_audit('Create Gesture', details=f'เพิ่มคำศัพท์ภาษามือ: {name_th} ({gesture_key})')
-        return jsonify({'success': True, 'message': f'เพิ่มคำศัพท์ "{name_th}" สำเร็จ'})
-
-    except sqlite3.IntegrityError:
-        return jsonify({'success': False, 'message': f'รหัสคีย์ "{gesture_key}" มีอยู่ในระบบแล้ว'}), 409
-=======
         log_audit('Create Gesture', details=f'à¹€à¸žà¸´à¹ˆà¸¡à¸„à¸³à¸¨à¸±à¸žà¸—à¹Œà¸ à¸²à¸©à¸²à¸¡à¸·à¸­: {name_th} ({gesture_key})')
         return jsonify({'success': True, 'message': f'à¹€à¸žà¸´à¹ˆà¸¡à¸„à¸³à¸¨à¸±à¸žà¸—à¹Œ "{name_th}" à¸ªà¸³à¹€à¸£à¹‡à¸ˆ'})
 
     except sqlite3.IntegrityError:
         return jsonify({'success': False, 'message': f'à¸£à¸«à¸±à¸ªà¸„à¸µà¸¢à¹Œ "{gesture_key}" à¸¡à¸µà¸­à¸¢à¸¹à¹ˆà¹ƒà¸™à¸£à¸°à¸šà¸šà¹à¸¥à¹‰à¸§'}), 409
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
@@ -676,34 +535,20 @@ def api_admin_gesture_detail(gesture_id):
             cursor = conn.cursor()
             gesture = cursor.execute('SELECT name_th FROM gestures WHERE id = ?', (gesture_id,)).fetchone()
             if not gesture:
-<<<<<<< HEAD
-                return jsonify({'success': False, 'message': 'ไม่พบคำศัพท์นี้'}), 404
-=======
                 return jsonify({'success': False, 'message': 'à¹„à¸¡à¹ˆà¸žà¸šà¸„à¸³à¸¨à¸±à¸žà¸—à¹Œà¸™à¸µà¹‰'}), 404
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
             cursor.execute('DELETE FROM gestures WHERE id = ?', (gesture_id,))
             conn.commit()
 
-<<<<<<< HEAD
-        log_audit('Delete Gesture', details=f'ลบคำศัพท์ภาษามือ ID {gesture_id} ({gesture["name_th"]})')
-        return jsonify({'success': True, 'message': f'ลบคำศัพท์ "{gesture["name_th"]}" เรียบร้อย'})
-=======
         log_audit('Delete Gesture', details=f'à¸¥à¸šà¸„à¸³à¸¨à¸±à¸žà¸—à¹Œà¸ à¸²à¸©à¸²à¸¡à¸·à¸­ ID {gesture_id} ({gesture["name_th"]})')
         return jsonify({'success': True, 'message': f'à¸¥à¸šà¸„à¸³à¸¨à¸±à¸žà¸—à¹Œ "{gesture["name_th"]}" à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     # PUT - Update gesture
     data = request.get_json() or {}
     name_th = data.get('name_th', '').strip()
     name_en = data.get('name_en', '').strip()
-<<<<<<< HEAD
-    category = data.get('category', 'ทั่วไป')
-    difficulty = data.get('difficulty', 'ง่าย')
-=======
     category = data.get('category', 'à¸—à¸±à¹ˆà¸§à¹„à¸›')
     difficulty = data.get('difficulty', 'à¸‡à¹ˆà¸²à¸¢')
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     description = data.get('description', '').strip()
     is_active = int(data.get('is_active', 1))
 
@@ -716,13 +561,8 @@ def api_admin_gesture_detail(gesture_id):
         ''', (name_th, name_en, category, difficulty, description, is_active, gesture_id))
         conn.commit()
 
-<<<<<<< HEAD
-    log_audit('Update Gesture', details=f'อัปเดตคำศัพท์ภาษามือ ID {gesture_id} ({name_th})')
-    return jsonify({'success': True, 'message': 'อัปเดตคำศัพท์เรียบร้อย'})
-=======
     log_audit('Update Gesture', details=f'à¸­à¸±à¸›à¹€à¸”à¸•à¸„à¸³à¸¨à¸±à¸žà¸—à¹Œà¸ à¸²à¸©à¸²à¸¡à¸·à¸­ ID {gesture_id} ({name_th})')
     return jsonify({'success': True, 'message': 'à¸­à¸±à¸›à¹€à¸”à¸•à¸„à¸³à¸¨à¸±à¸žà¸—à¹Œà¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 # --- Admin Translation Logs & Export ---
 
@@ -742,11 +582,7 @@ def api_admin_translation_delete(log_id):
     with get_db() as conn:
         conn.execute('DELETE FROM translation_logs WHERE id = ?', (log_id,))
         conn.commit()
-<<<<<<< HEAD
-    return jsonify({'success': True, 'message': 'ลบรายการสำเร็จ'})
-=======
     return jsonify({'success': True, 'message': 'à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸ªà¸³à¹€à¸£à¹‡à¸ˆ'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 @app.route('/api/admin/translations/clear', methods=['POST'])
 @admin_required
@@ -755,13 +591,8 @@ def api_admin_translations_clear():
         conn.execute('DELETE FROM translation_logs')
         conn.commit()
 
-<<<<<<< HEAD
-    log_audit('Clear Translations', details='ล้างประวัติการแปลทั้งหมด')
-    return jsonify({'success': True, 'message': 'ล้างประวัติการแปลทั้งหมดเรียบร้อยแล้ว'})
-=======
     log_audit('Clear Translations', details='à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸à¸²à¸£à¹à¸›à¸¥à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”')
     return jsonify({'success': True, 'message': 'à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸à¸²à¸£à¹à¸›à¸¥à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 @app.route('/api/admin/export/translations', methods=['GET'])
 @admin_required
@@ -795,13 +626,8 @@ def api_admin_logs():
         with get_db() as conn:
             conn.execute('DELETE FROM system_logs')
             conn.commit()
-<<<<<<< HEAD
-        log_audit('Clear Logs', details='ล้างบันทึกกิจกรรมระบบทั้งหมด')
-        return jsonify({'success': True, 'message': 'ล้างบันทึกกิจกรรมเรียบร้อย'})
-=======
         log_audit('Clear Logs', details='à¸¥à¹‰à¸²à¸‡à¸šà¸±à¸™à¸—à¸¶à¸à¸à¸´à¸ˆà¸à¸£à¸£à¸¡à¸£à¸°à¸šà¸šà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”')
         return jsonify({'success': True, 'message': 'à¸¥à¹‰à¸²à¸‡à¸šà¸±à¸™à¸—à¸¶à¸à¸à¸´à¸ˆà¸à¸£à¸£à¸¡à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
     with get_db() as conn:
         cursor = conn.cursor()
@@ -833,30 +659,19 @@ def api_admin_settings():
             )
         conn.commit()
 
-<<<<<<< HEAD
-    log_audit('Update Settings', details='อัปเดตการตั้งค่าระบบ')
-    return jsonify({'success': True, 'message': 'บันทึกการตั้งค่าสำเร็จ'})
-=======
     log_audit('Update Settings', details='à¸­à¸±à¸›à¹€à¸”à¸•à¸à¸²à¸£à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²à¸£à¸°à¸šà¸š')
     return jsonify({'success': True, 'message': 'à¸šà¸±à¸™à¸—à¸¶à¸à¸à¸²à¸£à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²à¸ªà¸³à¹€à¸£à¹‡à¸ˆ'})
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 
 # -----------------------------------------------------------------------------
 # Sign Language Prediction & Control Endpoints
 # -----------------------------------------------------------------------------
 
 current_prediction = {
-<<<<<<< HEAD
-    'prediction': 'พร้อมตรวจจับ',
-=======
     'prediction': 'à¸žà¸£à¹‰à¸­à¸¡à¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸š',
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
     'confidence': '99.0%',
     'sentence': ''
 }
 
-<<<<<<< HEAD
-=======
 @app.route('/api/gestures', methods=['GET'])
 def get_public_gestures():
     """Public endpoint to fetch supported Thai sign gestures for index.html"""
@@ -872,26 +687,17 @@ def get_public_gestures():
     })
 
 
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
 @app.route('/api/prediction', methods=['GET'])
 def get_prediction():
     if engine and hasattr(engine, 'get_state'):
         state = engine.get_state()
-<<<<<<< HEAD
-        if state.get('prediction') and state.get('prediction') not in {'กำลังรอสัญญาณมือ...', 'กำลังรอท่าทาง...', 'กำลังสะสมเฟรม...'}:
-=======
         if state.get('prediction') and state.get('prediction') not in {'à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸ªà¸±à¸à¸à¸²à¸“à¸¡à¸·à¸­...', 'à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸—à¹ˆà¸²à¸—à¸²à¸‡...', 'à¸à¸³à¸¥à¸±à¸‡à¸ªà¸°à¸ªà¸¡à¹€à¸Ÿà¸£à¸¡...'}:
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             current_prediction['prediction'] = state['prediction']
             current_prediction['confidence'] = state['confidence']
             if state.get('sentence'):
                 current_prediction['sentence'] = state['sentence']
     elif engine and hasattr(engine, 'latest_prediction') and engine.latest_prediction:
-<<<<<<< HEAD
-        if engine.latest_prediction not in {'กำลังรอท่าทาง...', 'กำลังสะสมเฟรม...'}:
-=======
         if engine.latest_prediction not in {'à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸—à¹ˆà¸²à¸—à¸²à¸‡...', 'à¸à¸³à¸¥à¸±à¸‡à¸ªà¸°à¸ªà¸¡à¹€à¸Ÿà¸£à¸¡...'}:
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             current_prediction['prediction'] = engine.latest_prediction
             current_prediction['confidence'] = f"{engine.latest_confidence * 100:.1f}%"
     return jsonify(current_prediction)
@@ -909,11 +715,7 @@ def control_action():
 
     if action == 'clear':
         current_prediction['sentence'] = ''
-<<<<<<< HEAD
-        current_prediction['prediction'] = 'ล้างประโยคแล้ว'
-=======
         current_prediction['prediction'] = 'à¸¥à¹‰à¸²à¸‡à¸›à¸£à¸°à¹‚à¸¢à¸„à¹à¸¥à¹‰à¸§'
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
         current_prediction['confidence'] = '0.0%'
         current_prediction['last_confirmed'] = ''
     elif action == 'backspace':
@@ -921,11 +723,7 @@ def control_action():
         if words and words[0] != '':
             words.pop()
             current_prediction['sentence'] = ' '.join(words)
-<<<<<<< HEAD
-        current_prediction['prediction'] = 'ลบคำล่าสุดแล้ว'
-=======
         current_prediction['prediction'] = 'à¸¥à¸šà¸„à¸³à¸¥à¹ˆà¸²à¸ªà¸¸à¸”à¹à¸¥à¹‰à¸§'
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
         current_prediction['confidence'] = '0.0%'
         current_prediction['last_confirmed'] = ''
 
@@ -947,15 +745,6 @@ def process_frame():
         label, confidence, client_landmarks = res
 
         transient_states = {
-<<<<<<< HEAD
-            'กำลังสะสมเฟรม...',
-            'กำลังทำท่า...',
-            'โหมดตรวจจับมือ (รอไฟล์โมเดล)',
-            'กำลังรอท่าทาง...',
-            'กำลังรอสัญญาณมือ...',
-            'ไม่พบคำศัพท์',
-            'พร้อมตรวจจับ',
-=======
             'à¸à¸³à¸¥à¸±à¸‡à¸ªà¸°à¸ªà¸¡à¹€à¸Ÿà¸£à¸¡...',
             'à¸à¸³à¸¥à¸±à¸‡à¸—à¸³à¸—à¹ˆà¸²...',
             'à¹‚à¸«à¸¡à¸”à¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸šà¸¡à¸·à¸­ (à¸£à¸­à¹„à¸Ÿà¸¥à¹Œà¹‚à¸¡à¹€à¸”à¸¥)',
@@ -963,7 +752,6 @@ def process_frame():
             'à¸à¸³à¸¥à¸±à¸‡à¸£à¸­à¸ªà¸±à¸à¸à¸²à¸“à¸¡à¸·à¸­...',
             'à¹„à¸¡à¹ˆà¸žà¸šà¸„à¸³à¸¨à¸±à¸žà¸—à¹Œ',
             'à¸žà¸£à¹‰à¸­à¸¡à¸•à¸£à¸§à¸ˆà¸ˆà¸±à¸š',
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
             'Blank'
         }
 
@@ -1122,11 +910,7 @@ if __name__ == '__main__':
     print(f"[*] Admin Backoffice:         {protocol}://localhost:5000/admin")
     print("-" * 65)
     if use_ssl:
-<<<<<<< HEAD
-        print("[!] HTTPS is ACTIVE — Mobile camera is ENABLED!")
-=======
         print("[!] HTTPS is ACTIVE â€” Mobile camera is ENABLED!")
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
         print("    On mobile browser: tap 'Advanced' -> 'Proceed to site'")
     else:
         print("[i] Running HTTP mode (Direct PC access: http://localhost:5000/admin)")
@@ -1137,7 +921,4 @@ if __name__ == '__main__':
 
     app.run(host='0.0.0.0', port=5000, debug=False, threaded=True, ssl_context=ssl_context)
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 1c1b13c353673fda383318dfad7b9144f1dd70d9
