@@ -399,8 +399,10 @@
         }
 
         function mapCoord(normX, normY) {
+            // clientWebcam displays unmirrored raw video in CSS (no scaleX(-1)),
+            // so we directly map normX to screen coordinate without (1.0 - normX) flip.
             return {
-                x: (1.0 - normX) * vW * scale + offX,
+                x: normX * vW * scale + offX,
                 y: normY * vH * scale + offY
             };
         }
